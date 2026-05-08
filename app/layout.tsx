@@ -4,6 +4,7 @@ import "./globals.css";
 import GAScript from "@/components/analytics/GAScript";
 import CookieConsent from "@/components/consent/CookieConsent";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -74,7 +75,8 @@ export default function RootLayout({
       <body>
         <div className="flex min-h-screen flex-col">
           <Navbar />
-          {children}
+          <div className="flex-1">{children}</div>
+          <Footer />
         </div>
         {/*
          * GA loads only after cookie consent. Reading the env here on the
