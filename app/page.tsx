@@ -17,6 +17,7 @@ import DishCarousel from "@/components/sections/DishCarousel";
 import NumbersBand from "@/components/sections/NumbersBand";
 import StoryTease from "@/components/sections/StoryTease";
 import Reviews from "@/components/sections/Reviews";
+import FranchiseTease from "@/components/sections/FranchiseTease";
 
 export default function HomePage() {
   return (
@@ -26,6 +27,7 @@ export default function HomePage() {
       <NumbersBand />
       <StoryTease />
       <Reviews />
+      <FranchiseTease />
     </main>
   );
 }
