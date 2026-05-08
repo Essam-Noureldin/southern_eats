@@ -13,6 +13,14 @@
  * COMMON MISTAKE: failing loudly when a bot is detected. Show the bot
  *       a fake success and silently drop the message — that's how you
  *       avoid them adapting around the trap.
+ *
+ * POLICY NOTE (re: real users who copy-paste fast): this module only
+ *       *reports* signals. The contact-form server action decides what
+ *       to do with them. A *single* signal alone — especially timing —
+ *       must NOT silently drop the message. Treat honeypot-triggered as
+ *       a hard block; treat too-fast as a soft block only when combined
+ *       with another signal (rate-limit hit, suspicious payload, etc.)
+ *       so a fast paster still gets through.
  */
 
 /**
