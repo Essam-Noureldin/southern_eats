@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
+import GAScript from "@/components/analytics/GAScript";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -70,6 +71,13 @@ export default function RootLayout({
     <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
       <body>
         <div className="flex min-h-screen flex-col">{children}</div>
+        {/*
+         * GA loads only after cookie consent. Reading the env here on the
+         * server and passing as a prop keeps the client component free of
+         * direct process.env access. Empty/unset NEXT_PUBLIC_GA_ID =>
+         * GAScript renders nothing => analytics flow dormant.
+         */}
+        <GAScript gaId={process.env.NEXT_PUBLIC_GA_ID} />
       </body>
     </html>
   );
