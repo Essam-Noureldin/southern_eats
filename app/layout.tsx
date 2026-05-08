@@ -3,6 +3,7 @@ import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
 import GAScript from "@/components/analytics/GAScript";
 import CookieConsent from "@/components/consent/CookieConsent";
+import Navbar from "@/components/layout/Navbar";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -71,7 +72,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
       <body>
-        <div className="flex min-h-screen flex-col">{children}</div>
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          {children}
+        </div>
         {/*
          * GA loads only after cookie consent. Reading the env here on the
          * server and passing as a prop keeps the client component free of
