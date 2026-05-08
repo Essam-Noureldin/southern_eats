@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
 import GAScript from "@/components/analytics/GAScript";
+import CookieConsent from "@/components/consent/CookieConsent";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -78,6 +79,7 @@ export default function RootLayout({
          * GAScript renders nothing => analytics flow dormant.
          */}
         <GAScript gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        <CookieConsent />
       </body>
     </html>
   );
