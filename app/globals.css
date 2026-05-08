@@ -1,0 +1,101 @@
+/**
+ * WHAT: Tailwind v4 entry + brand design tokens via @theme block.
+ * WHY:  v4 moved config from JS to CSS-first @theme. Brand tokens and
+ *       font variables become Tailwind utilities (bg-cream, font-display).
+ *       Brand palette and typography lifted verbatim from the Lovable demo.
+ * IF REMOVED: site loses brand colors, fonts default to sans-serif,
+ *       Tailwind utilities don't generate.
+ * COMMON MISTAKE: hardcoding hex in components instead of using token
+ *       utilities; the whole point of @theme is one source of truth.
+ */
+@import "tailwindcss";
+
+@theme {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Brand colors (lifted verbatim from lovable-demo/src/styles.css) */
+  --color-sams-red: #c11127;
+  --color-cream: #f5ebdc;
+  --color-charcoal: #1f1a14;
+  --color-butter: #e8b048;
+  --color-moss: #3f4f2f;
+
+  /* Semantic tokens mapped to brand via :root */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Fonts wired to next/font CSS variables (self-hosted at build time) */
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: #f5ebdc;       /* cream */
+  --foreground: #1f1a14;       /* charcoal */
+  --card: #fbf5ea;
+  --card-foreground: #1f1a14;
+  --popover: #fbf5ea;
+  --popover-foreground: #1f1a14;
+  --primary: #c11127;          /* sam's red */
+  --primary-foreground: #f5ebdc;
+  --secondary: #e8b048;        /* butter */
+  --secondary-foreground: #1f1a14;
+  --muted: #ece0cc;
+  --muted-foreground: #6b5e4c;
+  --accent: #3f4f2f;           /* moss */
+  --accent-foreground: #f5ebdc;
+  --destructive: #c11127;
+  --destructive-foreground: #f5ebdc;
+  --border: #e0d2bb;
+  --input: #e0d2bb;
+  --ring: #c11127;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
