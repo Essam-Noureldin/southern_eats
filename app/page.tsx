@@ -13,11 +13,13 @@
  *       so they remain testable in isolation.
  */
 import Hero from "@/components/sections/Hero";
+import DishCarousel from "@/components/sections/DishCarousel";
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
+      <DishCarousel />
     </main>
   );
 }
