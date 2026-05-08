@@ -1,23 +1,23 @@
 /**
- * WHAT: Homepage placeholder. Real composition (Hero → DishCarousel →
- *       NumbersBand → StoryTease → Reviews → FranchiseTease) lands
- *       branch-by-branch starting with feature-hero.
- * WHY:  Bootstrap branch ships a working app you can `npm run dev` on,
- *       without committing to homepage layout decisions yet.
+ * WHAT: Homepage. Composes the homepage section components in the
+ *       order the user scrolls them: Hero -> (DishCarousel ->
+ *       NumbersBand -> StoryTease -> Reviews -> FranchiseTease) as
+ *       each future feature branch lands.
+ * WHY:  Pages own their own <main> landmark — RootLayout deliberately
+ *       doesn't render one (axe would flag two <main> elements).
+ *       Composing sections here keeps each section a self-contained,
+ *       independently testable unit.
  * IF REMOVED: route `/` 404s.
+ * COMMON MISTAKE: stuffing section markup directly into this file.
+ *       Sections live in components/sections/ and are imported here
+ *       so they remain testable in isolation.
  */
+import Hero from "@/components/sections/Hero";
+
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
-      <p className="font-display text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-        Sam&apos;s Southern Eatery
-      </p>
-      <h1 className="font-display text-5xl md:text-7xl text-primary">
-        Home of the jumbo shrimp.
-      </h1>
-      <p className="mt-6 max-w-xl text-muted-foreground">
-        Site under construction. Bootstrap complete — sections land branch by branch.
-      </p>
+    <main>
+      <Hero />
     </main>
   );
 }
