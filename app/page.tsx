@@ -14,12 +14,14 @@
  */
 import Hero from "@/components/sections/Hero";
 import DishCarousel from "@/components/sections/DishCarousel";
+import NumbersBand from "@/components/sections/NumbersBand";
 
 export default function HomePage() {
   return (
     <main>
       <Hero />
       <DishCarousel />
+      <NumbersBand />
     </main>
   );
 }
