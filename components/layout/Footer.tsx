@@ -35,7 +35,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="mt-20 bg-charcoal pb-12 pt-16 text-cream">
+    <footer className="mt-20 bg-charcoal pb-24 pt-16 text-cream md:pb-12">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3 md:px-8">
         <div>
           <p className="font-display text-3xl font-black italic text-butter">

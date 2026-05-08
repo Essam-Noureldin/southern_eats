@@ -5,6 +5,7 @@ import GAScript from "@/components/analytics/GAScript";
 import CookieConsent from "@/components/consent/CookieConsent";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import MobileOrderBar from "@/components/layout/MobileOrderBar";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -86,6 +87,7 @@ export default function RootLayout({
          */}
         <GAScript gaId={process.env.NEXT_PUBLIC_GA_ID} />
         <CookieConsent />
+        <MobileOrderBar />
       </body>
     </html>
   );
