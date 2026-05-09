@@ -1,11 +1,15 @@
 "use client";
 
 /**
- * WHAT: MapLibre GL canvas with a marker per location, synced to the
- *       shared `hoveredId` highlight state.
+ * WHAT: 3D globe-projected MapLibre canvas with a marker per location,
+ *       synced to the shared `hoveredId` highlight state. Tilted 40°
+ *       for visual depth; cinematically flies over a pin when hovered.
  * WHY:  Provides spatial context the list can't — visitors instantly
  *       see whether the franchise covers their state. Free Carto basemap
- *       (no API key, no auth) keeps the demo deploy zero-config.
+ *       (no API key, no auth) keeps the demo deploy zero-config. Globe
+ *       projection + pitch + sky give the map a premium, hand-built
+ *       feel rather than the templated flat-Mercator look every chain
+ *       site ships.
  * IF REMOVED: the page degrades to list-only — still functional, just
  *       less useful for spatial scanning.
  * COMMON MISTAKE: importing maplibre-gl at module top inside a "use client"
@@ -64,11 +68,34 @@ export default function LocationMap({ locations, hoveredId, origin }: Props) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       style: CARTO_STYLE as any,
       center: [-90, 33], // roughly Mississippi/Louisiana — covers the franchise footprint
-      zoom: 4.4,
+      zoom: 3.6,
+      pitch: 40, // tilt the camera for visual depth
+      bearing: -8, // slight angle so the South curves naturally
       attributionControl: { compact: true },
+      maxPitch: 75,
     });
 
-    map.addControl(new maplibregl.NavigationControl({}), "top-right");
+    // Globe projection — Earth as a curved sphere instead of a flat
+    // Mercator rectangle. MapLibre v5 supports this with raster styles.
+    map.on("style.load", () => {
+      try {
+        map.setProjection({ type: "globe" });
+        // Atmospheric sky around the globe; subtle blue glow.
+        map.setSky({
+          "sky-color": "#bfd6e6",
+          "horizon-color": "#f5ebdc",
+          "fog-color": "#f5ebdc",
+          "sky-horizon-blend": 0.5,
+          "horizon-fog-blend": 0.5,
+          "fog-ground-blend": 0.5,
+        });
+      } catch {
+        // Older MapLibre versions or unsupported environments — fall back
+        // to flat Mercator silently. The map still renders.
+      }
+    });
+
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
 
     mapRef.current = map;
 
@@ -109,27 +136,53 @@ export default function LocationMap({ locations, hoveredId, origin }: Props) {
     }
   }, [locations]);
 
-  // Highlight whichever marker matches hoveredId.
+  // Highlight whichever marker matches hoveredId, AND cinematically
+  // tilt the camera over the active pin.
   useEffect(() => {
     for (const [id, marker] of Object.entries(markersRef.current)) {
       const el = marker.getElement();
       if (id === hoveredId) {
-        el.style.transform = (el.style.transform || "") + " scale(1.6)";
+        el.style.transform = (el.style.transform || "") + " scale(1.7)";
         el.style.zIndex = "10";
+        el.style.boxShadow = "0 0 0 4px rgba(193, 17, 39, 0.25)";
       } else {
         el.style.transform = el.style.transform.replace(/ scale\([\d.]+\)/g, "");
         el.style.zIndex = "1";
+        el.style.boxShadow = "";
       }
     }
+
+    // When a card is hovered, fly to its pin with a more dramatic tilt
+    // and slight zoom-in. Honours user prefers-reduced-motion: the
+    // matchMedia check makes this a snap-pan instead of a flight.
+    const map = mapRef.current;
+    if (!map || !hoveredId) return;
+    const hovered = markersRef.current[hoveredId];
+    if (!hovered) return;
+    const ll = hovered.getLngLat();
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    map.easeTo({
+      center: [ll.lng, ll.lat],
+      zoom: Math.max(map.getZoom(), 5.2),
+      pitch: 55,
+      duration: reduced ? 0 : 900,
+    });
   }, [hoveredId]);
 
   // Recenter on user origin once we have it.
   useEffect(() => {
     if (!origin || !mapRef.current) return;
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     mapRef.current.flyTo({
       center: [origin.lng, origin.lat],
-      zoom: 7,
-      duration: 1200,
+      zoom: 6.5,
+      pitch: 50,
+      duration: reduced ? 0 : 1500,
+      essential: true,
     });
   }, [origin]);
 

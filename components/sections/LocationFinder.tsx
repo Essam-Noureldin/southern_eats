@@ -44,9 +44,19 @@ interface Props {
 type GeoState =
   | { kind: "idle" }
   | { kind: "requesting" }
-  | { kind: "ready"; origin: LatLng }
+  | { kind: "ready"; origin: LatLng; label: string }
   | { kind: "denied" }
   | { kind: "unsupported" };
+
+// City presets — work as a fallback when geolocation is unavailable
+// (HTTP origin, browser permission denied, visitor outside the US testing
+// the demo). Each preset acts identically to a successful geolocation.
+const CITY_PRESETS: { id: string; label: string; coords: LatLng }[] = [
+  { id: "shreveport", label: "Shreveport", coords: { lat: 32.5252, lng: -93.7502 } },
+  { id: "houston", label: "Houston", coords: { lat: 29.7604, lng: -95.3698 } },
+  { id: "atlanta", label: "Atlanta", coords: { lat: 33.749, lng: -84.388 } },
+  { id: "nyc", label: "New York", coords: { lat: 40.7128, lng: -74.006 } },
+];
 
 export default function LocationFinder({ locations }: Props) {
   const [active, setActive] = useState<DietaryTag[]>([]);
@@ -79,11 +89,16 @@ export default function LocationFinder({ locations }: Props) {
       (pos) =>
         setGeo({
           kind: "ready",
+          label: "your location",
           origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
         }),
       () => setGeo({ kind: "denied" }),
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
     );
+  };
+
+  const selectCityPreset = (preset: (typeof CITY_PRESETS)[number]) => {
+    setGeo({ kind: "ready", origin: preset.coords, label: preset.label });
   };
 
   return (
@@ -109,7 +124,7 @@ export default function LocationFinder({ locations }: Props) {
           </p>
         </div>
 
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <DietaryFilter active={active} onToggle={toggle} />
           <button
             type="button"
@@ -120,9 +135,31 @@ export default function LocationFinder({ locations }: Props) {
             {geo.kind === "requesting"
               ? "Locating…"
               : geo.kind === "ready"
-                ? "Sorted by your location ✓"
+                ? `Sorted by ${geo.label} ✓`
                 : "Use my location"}
           </button>
+        </div>
+
+        <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-charcoal/70">
+          <span className="font-medium">Or jump to:</span>
+          {CITY_PRESETS.map((p) => {
+            const isActive =
+              geo.kind === "ready" && geo.label === p.label;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => selectCityPreset(p)}
+                className={
+                  isActive
+                    ? "rounded-full border border-sams-red bg-sams-red px-3 py-1 text-xs font-semibold text-cream"
+                    : "rounded-full border border-charcoal/15 bg-cream px-3 py-1 text-xs font-semibold text-charcoal hover:border-charcoal/40"
+                }
+              >
+                {p.label}
+              </button>
+            );
+          })}
         </div>
 
         {geo.kind === "denied" ? (

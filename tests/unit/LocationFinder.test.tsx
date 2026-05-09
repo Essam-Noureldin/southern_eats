@@ -82,4 +82,29 @@ describe("LocationFinder", () => {
     render(<LocationFinder locations={LOCATIONS} />);
     expect(screen.getByTestId("location-map-stub")).toBeInTheDocument();
   });
+
+  it("offers city preset buttons for visitors who can't or won't share location", () => {
+    render(<LocationFinder locations={LOCATIONS} />);
+    // At least 3 well-known Southern cities visible as preset buttons.
+    expect(
+      screen.getByRole("button", { name: /shreveport/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /houston/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /atlanta/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("clicking a city preset re-sorts the list nearest-first to that city", async () => {
+    const user = userEvent.setup();
+    render(<LocationFinder locations={LOCATIONS} />);
+
+    await user.click(screen.getByRole("button", { name: /atlanta/i }));
+
+    // First card after sort should be Atlanta itself (distance ~0 km).
+    const headings = screen.getAllByRole("heading", { level: 2 });
+    expect(headings[0].textContent).toMatch(/atlanta/i);
+  });
 });
