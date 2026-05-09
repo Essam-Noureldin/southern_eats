@@ -49,11 +49,13 @@ describe("security headers", () => {
     );
   });
 
-  it("denies camera, microphone, and geolocation via Permissions-Policy", () => {
+  it("denies camera + microphone, allows same-origin geolocation, via Permissions-Policy", () => {
     const value = headerValue("Permissions-Policy");
     expect(value).toContain("camera=()");
     expect(value).toContain("microphone=()");
-    expect(value).toContain("geolocation=()");
+    // geolocation deliberately allowed for same-origin scripts so /locations
+    // can sort branches by proximity to the visitor.
+    expect(value).toContain("geolocation=(self)");
   });
 
   it("sets HSTS with includeSubDomains and preload", () => {

@@ -24,8 +24,12 @@ const cspDirectives = [
   "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
-  "img-src 'self' data: https://www.google-analytics.com",
-  "connect-src 'self' https://www.google-analytics.com https://o*.ingest.sentry.io",
+  // basemaps.cartocdn.com — MapLibre raster tile provider (free, no key).
+  // blob: — MapLibre paints into off-screen canvases that read back as blob URLs.
+  "img-src 'self' data: blob: https://www.google-analytics.com https://*.basemaps.cartocdn.com",
+  "connect-src 'self' https://www.google-analytics.com https://o*.ingest.sentry.io https://*.basemaps.cartocdn.com",
+  // MapLibre instantiates its tile-decoding Web Worker from a blob URL.
+  "worker-src 'self' blob:",
   "frame-src 'none'",
   "object-src 'none'",
   "base-uri 'self'",
@@ -40,8 +44,11 @@ export const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
+    // geolocation=(self) — same-origin scripts may call navigator.geolocation
+    // (used by /locations to sort branches by proximity to the visitor).
+    // Camera + microphone remain fully denied.
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=()",
+    value: "camera=(), microphone=(), geolocation=(self)",
   },
   {
     key: "Strict-Transport-Security",

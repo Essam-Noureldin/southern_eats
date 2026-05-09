@@ -64,4 +64,26 @@ describe("next.config.ts withSentryConfig wrap", () => {
     const result = await nextConfig.headers!();
     expect(result.some((r) => r.source === "/(.*)")).toBe(true);
   });
+
+  it("CSP allows MapLibre Carto basemap tiles via img-src", async () => {
+    const result = await nextConfig.headers!();
+    const allHeaders = result.flatMap((rule) => rule.headers);
+    const csp = allHeaders.find((h) => h.key === "Content-Security-Policy");
+    expect(csp!.value).toMatch(/img-src[^;]+basemaps\.cartocdn\.com/);
+  });
+
+  it("CSP allows blob: img + worker URLs (MapLibre internal canvases/workers)", async () => {
+    const result = await nextConfig.headers!();
+    const allHeaders = result.flatMap((rule) => rule.headers);
+    const csp = allHeaders.find((h) => h.key === "Content-Security-Policy");
+    expect(csp!.value).toMatch(/img-src[^;]+blob:/);
+    expect(csp!.value).toMatch(/worker-src[^;]+blob:/);
+  });
+
+  it("Permissions-Policy allows same-origin geolocation (self)", async () => {
+    const result = await nextConfig.headers!();
+    const allHeaders = result.flatMap((rule) => rule.headers);
+    const pp = allHeaders.find((h) => h.key === "Permissions-Policy");
+    expect(pp!.value).toContain("geolocation=(self)");
+  });
 });
