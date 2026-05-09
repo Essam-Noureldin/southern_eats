@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.52.0",
     "next": "^16.0.0",
     "next-sitemap": "^4.2.3",
     "react": "^19.0.0",
