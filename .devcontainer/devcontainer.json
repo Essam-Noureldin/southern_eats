@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "Sam's Southern Eatery — dev",
+
+  // Microsoft's prebuilt Node 20 dev image. Bullseye base = Debian 11.
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bullseye",
+
+  // One-shot install on first codespace creation (cached afterwards).
+  "postCreateCommand": "npm install",
+
+  // Boots the Next.js dev server in a dedicated terminal panel every time
+  // the codespace is attached. The object-form (vs. plain string) runs
+  // it in a NEW terminal so it does NOT block your interactive shell.
+  "postAttachCommand": {
+    "dev-server": "npm run dev"
+  },
+
+  // Auto-forward the dev server port. `visibility: public` means the
+  // URL works WITHOUT a GitHub login — you can open it on your phone,
+  // share it for client demos, etc. Codespaces still serves it over
+  // HTTPS, so geolocation, service workers, and other secure-context
+  // APIs work properly.
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js dev server",
+      "onAutoForward": "openPreview",
+      "visibility": "public"
+    }
+  },
+
+  // Tooling parity with the host machine.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "eslint.validate": ["typescript", "typescriptreact"]
+      }
+    }
+  }
+}
