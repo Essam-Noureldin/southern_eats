@@ -1,12 +1,14 @@
 "use client";
 
 /**
- * WHAT: Top-level /locations section — orchestrates filter chips,
- *       proximity sort, geolocation prompt, list, and (lazy-loaded)
+ * WHAT: Top-level /locations section — orchestrates filter chips, state
+ *       presets that act as proximity origins, list, and (lazy-loaded)
  *       map. Holds the shared filter + hover + origin state.
  * WHY:  All three child views (filter, list, map) react to the same
  *       state — keeping it here keeps the children dumb and trivially
- *       testable.
+ *       testable. State presets are derived from LOCATIONS so adding
+ *       a branch in a new state automatically surfaces a chip — no
+ *       manual sync.
  * IF REMOVED: /locations has nothing to render.
  * COMMON MISTAKE: importing the map at module top — that pulls
  *       maplibre-gl into the server bundle, which crashes because the
@@ -41,27 +43,45 @@ interface Props {
   locations: readonly Location[];
 }
 
-type GeoState =
-  | { kind: "idle" }
-  | { kind: "requesting" }
-  | { kind: "ready"; origin: LatLng; label: string }
-  | { kind: "denied" }
-  | { kind: "unsupported" };
+// Full state names for the eight (currently) US states Sam's operates in.
+// Reads as: pick a state → list re-sorts nearest-first to that state's
+// flagship branch in our dataset.
+const STATE_LABELS: Record<string, string> = {
+  LA: "Louisiana",
+  TX: "Texas",
+  MS: "Mississippi",
+  TN: "Tennessee",
+  AL: "Alabama",
+  GA: "Georgia",
+  AR: "Arkansas",
+  OK: "Oklahoma",
+};
 
-// City presets — work as a fallback when geolocation is unavailable
-// (HTTP origin, browser permission denied, visitor outside the US testing
-// the demo). Each preset acts identically to a successful geolocation.
-const CITY_PRESETS: { id: string; label: string; coords: LatLng }[] = [
-  { id: "shreveport", label: "Shreveport", coords: { lat: 32.5252, lng: -93.7502 } },
-  { id: "houston", label: "Houston", coords: { lat: 29.7604, lng: -95.3698 } },
-  { id: "atlanta", label: "Atlanta", coords: { lat: 33.749, lng: -84.388 } },
-  { id: "nyc", label: "New York", coords: { lat: 40.7128, lng: -74.006 } },
-];
+function deriveStatePresets(
+  locations: readonly Location[],
+): { code: string; label: string; coords: LatLng }[] {
+  // One preset per unique state, using the first matching branch's coords
+  // as the origin. Computed from data so the chip list stays in sync
+  // automatically when real franchise data swaps in (deduped by state).
+  const seen = new Set<string>();
+  const out: { code: string; label: string; coords: LatLng }[] = [];
+  for (const loc of locations) {
+    const code = loc.address.state;
+    if (seen.has(code)) continue;
+    seen.add(code);
+    out.push({
+      code,
+      label: STATE_LABELS[code] ?? code,
+      coords: loc.coords,
+    });
+  }
+  return out;
+}
 
 export default function LocationFinder({ locations }: Props) {
   const [active, setActive] = useState<DietaryTag[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [geo, setGeo] = useState<GeoState>({ kind: "idle" });
+  const [originState, setOriginState] = useState<string | null>(null);
 
   const toggle = (tag: DietaryTag) =>
     setActive((prev) =>
@@ -73,33 +93,14 @@ export default function LocationFinder({ locations }: Props) {
     [locations, active],
   );
 
-  const origin = geo.kind === "ready" ? geo.origin : null;
+  const presets = useMemo(() => deriveStatePresets(locations), [locations]);
+  const activePreset = presets.find((p) => p.code === originState) ?? null;
+  const origin = activePreset?.coords ?? null;
+
   const sorted = useMemo(
     () => sortByProximity(filtered, origin),
     [filtered, origin],
   );
-
-  const requestLocation = () => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      setGeo({ kind: "unsupported" });
-      return;
-    }
-    setGeo({ kind: "requesting" });
-    navigator.geolocation.getCurrentPosition(
-      (pos) =>
-        setGeo({
-          kind: "ready",
-          label: "your location",
-          origin: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-        }),
-      () => setGeo({ kind: "denied" }),
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
-    );
-  };
-
-  const selectCityPreset = (preset: (typeof CITY_PRESETS)[number]) => {
-    setGeo({ kind: "ready", origin: preset.coords, label: preset.label });
-  };
 
   return (
     <section
@@ -119,37 +120,27 @@ export default function LocationFinder({ locations }: Props) {
           </h1>
           <p className="max-w-2xl text-base text-charcoal/75 md:text-lg">
             Hand-breaded jumbo shrimp shouldn&apos;t require a road trip.
-            Search the map, filter by what matters to you, get directions
+            Filter by what matters to you, jump to your state, get directions
             in one tap.
           </p>
         </div>
 
-        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="mb-4">
           <DietaryFilter active={active} onToggle={toggle} />
-          <button
-            type="button"
-            onClick={requestLocation}
-            disabled={geo.kind === "requesting"}
-            className="self-start rounded-full border border-charcoal/20 bg-cream px-5 py-2 text-sm font-medium text-charcoal transition-colors hover:border-sams-red hover:text-sams-red disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {geo.kind === "requesting"
-              ? "Locating…"
-              : geo.kind === "ready"
-                ? `Sorted by ${geo.label} ✓`
-                : "Use my location"}
-          </button>
         </div>
 
         <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-charcoal/70">
-          <span className="font-medium">Or jump to:</span>
-          {CITY_PRESETS.map((p) => {
-            const isActive =
-              geo.kind === "ready" && geo.label === p.label;
+          <span className="font-medium">Sort by state:</span>
+          {presets.map((p) => {
+            const isActive = originState === p.code;
             return (
               <button
-                key={p.id}
+                key={p.code}
                 type="button"
-                onClick={() => selectCityPreset(p)}
+                aria-pressed={isActive}
+                onClick={() =>
+                  setOriginState((prev) => (prev === p.code ? null : p.code))
+                }
                 className={
                   isActive
                     ? "rounded-full border border-sams-red bg-sams-red px-3 py-1 text-xs font-semibold text-cream"
@@ -160,20 +151,16 @@ export default function LocationFinder({ locations }: Props) {
               </button>
             );
           })}
+          {originState ? (
+            <button
+              type="button"
+              onClick={() => setOriginState(null)}
+              className="ml-1 text-xs text-charcoal/60 underline-offset-4 hover:underline"
+            >
+              clear
+            </button>
+          ) : null}
         </div>
-
-        {geo.kind === "denied" ? (
-          <p className="mb-4 rounded-md border border-sams-red/30 bg-sams-red/5 px-4 py-2 text-sm text-charcoal/80">
-            Couldn&apos;t access your location. You can still scroll the
-            list below.
-          </p>
-        ) : null}
-        {geo.kind === "unsupported" ? (
-          <p className="mb-4 rounded-md border border-charcoal/20 bg-cream/60 px-4 py-2 text-sm text-charcoal/80">
-            Your browser doesn&apos;t support geolocation. The list works
-            fine without it.
-          </p>
-        ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_1.4fr]">
           <div className="max-h-[600px] overflow-y-auto pr-2">

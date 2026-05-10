@@ -71,40 +71,45 @@ describe("LocationFinder", () => {
     }
   });
 
-  it("renders a 'Use my location' button that respects keyboard activation", async () => {
-    render(<LocationFinder locations={LOCATIONS} />);
-    const btn = screen.getByRole("button", { name: /use my location/i });
-    expect(btn).toBeInTheDocument();
-    expect(btn).toBeEnabled();
-  });
-
   it("renders the lazy-loaded map stub", () => {
     render(<LocationFinder locations={LOCATIONS} />);
     expect(screen.getByTestId("location-map-stub")).toBeInTheDocument();
   });
 
-  it("offers city preset buttons for visitors who can't or won't share location", () => {
+  it("offers a state preset button for every state Sam's operates in", () => {
     render(<LocationFinder locations={LOCATIONS} />);
-    // At least 3 well-known Southern cities visible as preset buttons.
-    expect(
-      screen.getByRole("button", { name: /shreveport/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /houston/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /atlanta/i }),
-    ).toBeInTheDocument();
+    const stateLabels = [
+      "Louisiana",
+      "Texas",
+      "Mississippi",
+      "Tennessee",
+      "Alabama",
+      "Georgia",
+      "Arkansas",
+      "Oklahoma",
+    ];
+    for (const label of stateLabels) {
+      expect(
+        screen.getByRole("button", { name: new RegExp(label, "i") }),
+      ).toBeInTheDocument();
+    }
   });
 
-  it("clicking a city preset re-sorts the list nearest-first to that city", async () => {
+  it("clicking a state preset re-sorts the list nearest-first to a branch in that state", async () => {
     const user = userEvent.setup();
     render(<LocationFinder locations={LOCATIONS} />);
 
-    await user.click(screen.getByRole("button", { name: /atlanta/i }));
+    await user.click(screen.getByRole("button", { name: /^georgia$/i }));
 
-    // First card after sort should be Atlanta itself (distance ~0 km).
+    // Georgia only has Atlanta in our dataset — should be first card.
     const headings = screen.getAllByRole("heading", { level: 2 });
     expect(headings[0].textContent).toMatch(/atlanta/i);
+  });
+
+  it("does NOT render a 'Use my location' button (removed in favour of state presets)", () => {
+    render(<LocationFinder locations={LOCATIONS} />);
+    expect(
+      screen.queryByRole("button", { name: /use my location/i }),
+    ).not.toBeInTheDocument();
   });
 });

@@ -44,11 +44,12 @@ export const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
-    // geolocation=(self) — same-origin scripts may call navigator.geolocation
-    // (used by /locations to sort branches by proximity to the visitor).
-    // Camera + microphone remain fully denied.
+    // All three powerful APIs fully denied. /locations originally tried
+    // to use navigator.geolocation but the UX (HTTPS gate, browser prompt
+    // friction, demos for users outside the US) wasn't worth it; state
+    // preset chips replace it cleanly.
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(self)",
+    value: "camera=(), microphone=(), geolocation=()",
   },
   {
     key: "Strict-Transport-Security",

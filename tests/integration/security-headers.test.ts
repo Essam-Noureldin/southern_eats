@@ -80,10 +80,10 @@ describe("next.config.ts withSentryConfig wrap", () => {
     expect(csp!.value).toMatch(/worker-src[^;]+blob:/);
   });
 
-  it("Permissions-Policy allows same-origin geolocation (self)", async () => {
+  it("Permissions-Policy fully denies geolocation (now using state presets, not navigator.geolocation)", async () => {
     const result = await nextConfig.headers!();
     const allHeaders = result.flatMap((rule) => rule.headers);
     const pp = allHeaders.find((h) => h.key === "Permissions-Policy");
-    expect(pp!.value).toContain("geolocation=(self)");
+    expect(pp!.value).toContain("geolocation=()");
   });
 });
