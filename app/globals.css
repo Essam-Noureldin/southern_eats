@@ -199,6 +199,20 @@
   }
 }
 
+/*
+ * Hide the native scrollbar but keep the element scrollable. Used on
+ * the homepage DishCarousel where horizontal scroll is driven by
+ * explicit prev/next buttons (and native swipe on touch devices), so
+ * the visible scrollbar is just visual noise.
+ */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

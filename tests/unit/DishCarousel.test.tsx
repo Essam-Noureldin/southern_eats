@@ -5,8 +5,10 @@
  *       - "See the full menu" link points at /menu
  *       - renders one DishCard per signature menu item (filtered
  *         from lib/menu — currently 5 signature items)
+ *       - prev/next buttons exist with accessible names and call
+ *         scrollBy on the scroll container in opposite directions
  */
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import DishCarousel from "@/components/sections/DishCarousel";
 import { menu } from "@/lib/menu";
 
@@ -40,5 +42,37 @@ describe("DishCarousel", () => {
         }),
       ).toBeInTheDocument();
     }
+  });
+
+  it("renders previous and next buttons with accessible names", () => {
+    render(<DishCarousel />);
+    expect(
+      screen.getByRole("button", { name: /previous/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
+  });
+
+  it("scrolls the carousel forward when next is clicked", () => {
+    const scrollBy = jest.fn();
+    Element.prototype.scrollBy = scrollBy;
+    render(<DishCarousel />);
+    act(() => {
+      fireEvent.click(screen.getByRole("button", { name: /next/i }));
+    });
+    expect(scrollBy).toHaveBeenCalled();
+    const arg = scrollBy.mock.calls[0][0];
+    expect(arg.left).toBeGreaterThan(0);
+  });
+
+  it("scrolls the carousel backward when previous is clicked", () => {
+    const scrollBy = jest.fn();
+    Element.prototype.scrollBy = scrollBy;
+    render(<DishCarousel />);
+    act(() => {
+      fireEvent.click(screen.getByRole("button", { name: /previous/i }));
+    });
+    expect(scrollBy).toHaveBeenCalled();
+    const arg = scrollBy.mock.calls[0][0];
+    expect(arg.left).toBeLessThan(0);
   });
 });
