@@ -1,13 +1,11 @@
 /**
  * WHAT: Tests the OrderExperience client component on /order.
- * WHY:  The page lists every Sam's location and lets users pick where
- *       to order from. Sam's runs per-location HungerRush subdomains
- *       (37/41 live); the remaining 4 are phone-only on the live site.
- *       Test-first locks the contract: search filters by name/city/
- *       state, locations with orderUrl render a real outbound link,
- *       locations without orderUrl render a working "Call to order"
- *       tel: link (no dead disabled buttons), and a quick-tap phone
- *       link + directions link appear on every card.
+ * WHY:  The picker is the entry to our in-house ordering flow —
+ *       each card routes to /order/[location-id] where the user
+ *       builds a cart. Test-first locks the contract: search filters
+ *       by name/city/state/street, every card has a "Start order"
+ *       Link to the location's internal page, and the phone +
+ *       directions secondary actions appear on every card.
  */
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import OrderExperience from "@/components/order/OrderExperience";
@@ -39,7 +37,6 @@ const locations: Location[] = [
     phone: "(405) 561-7400",
     coords: { lat: 35.2183695, lng: -97.4484078 },
     hours: [],
-    orderUrl: "https://order.example.com/norman",
   },
   {
     id: "havelock-w-main-nc",
@@ -99,55 +96,29 @@ describe("OrderExperience", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("renders a working outbound order link when orderUrl is set", () => {
+  it("each card has a 'Start order' link routing to /order/[id]", () => {
     render(<OrderExperience locations={locations} />);
-    const orderLink = screen.getByRole("link", {
-      name: /order from norman/i,
+    const norman = screen.getByRole("link", {
+      name: /start order from norman/i,
     });
-    expect(orderLink).toHaveAttribute(
+    expect(norman).toHaveAttribute("href", "/order/norman-w-main-ok");
+    const shreveport = screen.getByRole("link", {
+      name: /start order from shreveport/i,
+    });
+    expect(shreveport).toHaveAttribute(
       "href",
-      "https://order.example.com/norman",
-    );
-    expect(orderLink).toHaveAttribute("target", "_blank");
-    expect(orderLink).toHaveAttribute("rel", expect.stringContaining("noopener"));
-  });
-
-  it("renders a 'Call to order' tel link when orderUrl is missing", () => {
-    render(<OrderExperience locations={locations} />);
-    // Two of the three test locations are missing orderUrl — they
-    // get a tel: link styled as a CTA button. Each carries an
-    // aria-label naming the store so multiple cards on the page are
-    // distinguishable to assistive tech.
-    const callShreveport = screen.getByRole("link", {
-      name: /call shreveport — greenwood rd to order/i,
-    });
-    expect(callShreveport).toHaveAttribute("href", "tel:+13186317782");
-    const callHavelock = screen.getByRole("link", {
-      name: /call havelock — w main st to order/i,
-    });
-    expect(callHavelock).toHaveAttribute("href", "tel:+12526526108");
-    // No disabled buttons anywhere on the page.
-    expect(screen.queryAllByRole("button", { name: /coming soon/i })).toHaveLength(
-      0,
+      "/order/shreveport-greenwood-rd-la",
     );
   });
 
   it("renders a tel: phone link on every location", () => {
     render(<OrderExperience locations={locations} />);
-    // Norman has an orderUrl, so the phone appears once (just the
-    // standalone quick-tap link). Phone-only stores show the number
-    // twice (quick-tap + 'Call to order' CTA whose aria-label includes
-    // the number). Either way, getAllByRole finds the right hrefs.
     expect(
       screen.getByRole("link", { name: /\(405\) 561-7400/i }),
     ).toHaveAttribute("href", "tel:+14055617400");
-    const shreveportLinks = screen.getAllByRole("link", {
-      name: /318.*631.*7782/i,
-    });
-    expect(shreveportLinks.length).toBeGreaterThan(0);
-    for (const link of shreveportLinks) {
-      expect(link).toHaveAttribute("href", "tel:+13186317782");
-    }
+    expect(
+      screen.getByRole("link", { name: /\(318\) 631-7782/i }),
+    ).toHaveAttribute("href", "tel:+13186317782");
   });
 
   it("renders a directions link on every location", () => {

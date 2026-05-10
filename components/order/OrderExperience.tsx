@@ -2,31 +2,25 @@
 
 /**
  * WHAT: Client orchestrator for /order. Lists every Sam's location
- *       with three controls per card: a primary CTA that adapts to
- *       the store's situation (an "Order online" outbound link to
- *       the location's HungerRush subdomain when location.orderUrl
- *       is set; otherwise a "Call to order" tel: link), a quick-tap
- *       phone link, and a Google Maps directions link.
- * WHY:  Sam's runs per-location HungerRush ordering subdomains; 37
- *       of 41 stores are live, the other 4 are explicitly listed as
- *       "Not accepting online orders" on samssoutherneatery.com. No
- *       fabricated URLs — when orderUrl is set, the button opens the
- *       real location page; when it's missing, the user gets a real
- *       phone link instead of a dead disabled button. Every card
- *       has an actionable primary CTA.
- * IF REMOVED: /order has no interactive surface — search, filter,
- *       and per-card controls all disappear.
- * COMMON MISTAKE: rendering an enabled "Order online" link that
- *       routes to /menu or to a guessed URL when orderUrl is
- *       missing. That's lying to the user. tel:-fallback is the
- *       honest pattern that also gives the user a working action.
+ *       as a card with three controls: a "Start order" button that
+ *       routes to /order/[id] (the per-location menu), a tel: phone
+ *       link, and a Google Maps directions link. Includes a search
+ *       input that filters by name / city / 2-letter state / street.
+ * WHY:  /order is the entry to our in-house ordering flow. Each
+ *       store deep-links into its own menu page; from there the user
+ *       builds a cart and proceeds to checkout. The picker stays
+ *       narrow in scope — it doesn't try to be a menu page itself,
+ *       which would dwarf the location list.
+ * IF REMOVED: /order has no interactive surface and users can't
+ *       reach a location's menu.
+ * COMMON MISTAKE: linking the "Start order" CTA to the global /menu
+ *       page. The menu has to be scoped to a chosen location so the
+ *       checkout step knows where to send the order.
  */
+import Link from "next/link";
 import { useMemo, useState, type ChangeEvent } from "react";
 import { directionsUrl, type Location } from "@/lib/locations";
 
-// Hard cap on the search input. Same threat model as MenuExperience —
-// state-only, used in `.includes()` and as React text, defended in
-// depth with maxLength + slice + autoComplete=off.
 const SEARCH_MAX_LENGTH = 100;
 
 interface Props {
@@ -80,9 +74,8 @@ export default function OrderExperience({ locations }: Props) {
           className="w-full rounded-full border border-border bg-card px-5 py-3 text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sams-red/40"
         />
         <p className="mt-3 text-sm text-muted-foreground">
-          Each store runs its own online ordering. Stores marked
-          &ldquo;Call to order&rdquo; aren&apos;t set up online yet &mdash;
-          tap to call them direct.
+          Pick your store to start an order. Pickup only &mdash;
+          delivery is rolling out per region.
         </p>
       </div>
 
@@ -126,25 +119,13 @@ export default function OrderExperience({ locations }: Props) {
               </div>
 
               <div className="mt-auto pt-6">
-                {loc.orderUrl ? (
-                  <a
-                    href={loc.orderUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Order from ${loc.name}`}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-sams-red px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
-                  >
-                    Order online &rarr;
-                  </a>
-                ) : (
-                  <a
-                    href={telHref(loc.phone)}
-                    aria-label={`Call ${loc.name} to order — ${loc.phone}`}
-                    className="inline-flex w-full items-center justify-center rounded-full border border-sams-red/30 bg-cream px-5 py-3 text-sm font-semibold text-sams-red transition-colors hover:border-sams-red hover:bg-sams-red hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
-                  >
-                    Call to order &rarr;
-                  </a>
-                )}
+                <Link
+                  href={`/order/${loc.id}`}
+                  aria-label={`Start order from ${loc.name}`}
+                  className="inline-flex w-full items-center justify-center rounded-full bg-sams-red px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
+                >
+                  Start order &rarr;
+                </Link>
               </div>
             </li>
           ))}

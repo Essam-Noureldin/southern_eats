@@ -25,16 +25,6 @@
  *     4928 50th St branch; needs a manual phone-call confirmation.
  *   - haltom-city-denton-tx — newly opened ~late April 2026; Google
  *     business panel hadn't published hours at research time.
- *
- * `orderUrl` values were lifted from samssoutherneatery.com/locations
- * on 2026-05-10. Sam's runs per-location HungerRush subdomains. Four
- * locations are explicitly listed as "Not accepting online orders" on
- * the live site and ship with `orderUrl` undefined — the /order page
- * shows a tel: "Call to order" CTA for those:
- *   - st-louis-gravois-mo
- *   - shreveport-70th-la
- *   - laplace-belle-terre-la
- *   - little-rock-baseline-ar
  */
 import type { LatLng } from "./distance";
 
@@ -57,12 +47,6 @@ export interface Location {
   phone: string;
   coords: LatLng;
   hours: Hours[];
-  // Per-location online ordering URL. Optional because the franchise
-  // hasn't wired ordering up everywhere — when missing, /order shows
-  // a disabled "coming soon" button and the tel: link is the working
-  // fallback. We never fabricate a URL; populate per-location only
-  // when a real one is confirmed.
-  orderUrl?: string;
 }
 
 // 7-day uniform schedules — common Sam's patterns, defined once for
@@ -94,7 +78,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(769) 257-6578",
     coords: { lat: 32.283393, lng: -90.228307 },
     hours: MS6_S1({ open: "10:00", close: "20:30" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://www.SamsJackson.com",
   },
   {
     id: "st-louis-gravois-mo",
@@ -110,7 +93,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(417) 319-5334",
     coords: { lat: 37.2272686, lng: -93.2614594 },
     hours: D7("10:00", "22:00"),
-    orderUrl: "https://Springfield.SamsSouthernEatery.com",
   },
   {
     id: "mobile-dauphin-al",
@@ -119,7 +101,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(251) 525-9985",
     coords: { lat: 30.6894803, lng: -88.1189346 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "18:00" }),
-    orderUrl: "https://www.SamsOfMobile.com",
   },
   {
     id: "opelika-1st-ave-al",
@@ -136,7 +117,6 @@ export const LOCATIONS: readonly Location[] = [
       { day: "Sat", open: "10:00", close: "20:30" },
       { day: "Sun", open: "11:00", close: "16:00" },
     ],
-    orderUrl: "https://Opalika.SamsSouthernEatery.com",
   },
   {
     id: "eufaula-s-eufaula-ave-al",
@@ -153,7 +133,6 @@ export const LOCATIONS: readonly Location[] = [
       { day: "Sat", open: "10:00", close: "21:00" },
       { day: "Sun", open: "11:00", close: "20:00" },
     ],
-    orderUrl: "https://EUFAULA.samssoutherneatery.com",
   },
   {
     id: "shreveport-greenwood-rd-la",
@@ -162,7 +141,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 631-7782",
     coords: { lat: 32.4522114, lng: -93.8622371 },
     hours: D7("10:00", "22:00"),
-    orderUrl: "https://www.SamsGreenwood.com",
   },
   {
     id: "vivian-hwy-1-la",
@@ -171,7 +149,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 375-2094",
     coords: { lat: 32.9040266, lng: -93.9821626 },
     hours: D7("10:00", "20:40"),
-    orderUrl: "https://Vivian.SamsSouthernEatery.com",
   },
   {
     id: "springhill-n-arkansas-la",
@@ -180,7 +157,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 539-2558",
     coords: { lat: 33.0176462, lng: -93.4670037 },
     hours: D7("10:00", "20:40"),
-    orderUrl: "https://www.SamsSouthernSpringhill.com",
   },
   {
     id: "shreveport-70th-la",
@@ -199,7 +175,6 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 32.4987967, lng: -93.6920769 },
     // Closed Sun.
     hours: MS6_S1({ open: "10:00", close: "21:00" }, null),
-    orderUrl: "https://www.SamsSouthernBarksdale.com",
   },
   {
     id: "alexandria-lee-st-la",
@@ -208,7 +183,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 704-0027",
     coords: { lat: 31.263516, lng: -92.447745 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://Alexandria.samssoutherneatery.com",
   },
   {
     id: "port-allen-lobdell-la",
@@ -217,7 +191,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(225) 218-6570",
     coords: { lat: 30.4639195, lng: -91.2112302 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://PortAllen.samssoutherneatery.com",
   },
   {
     id: "baton-rouge-sherwood-la",
@@ -226,7 +199,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(225) 256-1460",
     coords: { lat: 30.4241713, lng: -91.0520439 },
     hours: MS6_S1({ open: "10:00", close: "22:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://Sherwood.samssoutherneatery.com",
   },
   {
     id: "harvey-westbank-la",
@@ -235,7 +207,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(504) 510-2900",
     coords: { lat: 29.8952734, lng: -90.0888914 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://Harvey.samssoutherneatery.com",
   },
   {
     id: "slidell-pontchartrain-la",
@@ -244,7 +215,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(985) 201-7446",
     coords: { lat: 30.2616521, lng: -89.7854777 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://SLIDELL.samssoutherneatery.com",
   },
   {
     id: "laplace-belle-terre-la",
@@ -268,7 +238,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(330) 349-4129",
     coords: { lat: 41.2079699, lng: -80.7445049 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://www.samssoutherneateryniles.com",
   },
   {
     id: "youngstown-south-ave-oh",
@@ -277,7 +246,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(330) 333-3049",
     coords: { lat: 41.0724471, lng: -80.645842 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://www.SamsSouthernEateryYoungstown.com",
   },
   {
     id: "beaumont-college-tx",
@@ -286,7 +254,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(409) 832-5050",
     coords: { lat: 30.0680399, lng: -94.1164765 },
     hours: MS6_S1({ open: "10:00", close: "20:30" }, { open: "11:00", close: "18:30" }),
-    orderUrl: "https://www.SamsBeaumont.com",
   },
   {
     id: "pampa-hobart-tx",
@@ -295,7 +262,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 419-3005",
     coords: { lat: 35.5316396, lng: -100.9716636 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://Pampa.SamsSouthernEatery.com",
   },
   {
     id: "nacogdoches-north-st-tx",
@@ -304,7 +270,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(936) 205-3113",
     coords: { lat: 31.6135681, lng: -94.6529476 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://www.SamsNacogdoches.com",
   },
   {
     id: "amarillo-teckla-tx",
@@ -313,7 +278,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 437-1349",
     coords: { lat: 35.1651255, lng: -101.8874605 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://www.SamsSouthernAmarillo.com",
   },
   {
     id: "dumas-us-87-tx",
@@ -322,7 +286,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 934-5740",
     coords: { lat: 35.8636971, lng: -102.0120126 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://dumas.samssoutherneatery.com",
   },
   {
     id: "lufkin-timberland-tx",
@@ -339,7 +302,6 @@ export const LOCATIONS: readonly Location[] = [
       { day: "Sat", open: "10:00", close: "21:00" },
       { day: "Sun", open: "10:00", close: "21:00" },
     ],
-    orderUrl: "https://Lufkin.samssoutherneatery.com",
   },
   {
     id: "lubbock-50th-w-tx",
@@ -356,7 +318,6 @@ export const LOCATIONS: readonly Location[] = [
       { day: "Sat", open: "10:00", close: "24:00" },
       { day: "Sun", open: "10:00", close: "22:00" },
     ],
-    orderUrl: "https://LUBBOCK.samssoutherneatery.com",
   },
   {
     id: "lubbock-50th-e-tx",
@@ -366,7 +327,6 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 33.5487028, lng: -101.8430336 },
     // Search engines conflated this with the 4928 location; needs phone confirmation.
     hours: [],
-    orderUrl: "https://50thst.samssoutherneatery.com",
   },
   {
     id: "haltom-city-denton-tx",
@@ -376,7 +336,6 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 32.8301031, lng: -97.2642219 },
     // Newly opened ~late April 2026; Google panel hadn't published hours.
     hours: [],
-    orderUrl: "https://Haltom.samssoutherneatery.com",
   },
   {
     id: "texarkana-new-boston-tx",
@@ -385,7 +344,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(903) 255-7735",
     coords: { lat: 33.4358615, lng: -94.080738 },
     hours: MS6_S1({ open: "10:00", close: "20:15" }, { open: "11:00", close: "18:15" }),
-    orderUrl: "https://Texarkana.OrderSamsSouthernEatery.com",
   },
   {
     id: "brownwood-clements-tx",
@@ -394,7 +352,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(325) 203-5120",
     coords: { lat: 31.7286673, lng: -98.9800814 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://www.SamsSouthernBrownwood.com",
   },
   {
     id: "conway-us-701-sc",
@@ -403,7 +360,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(843) 438-8678",
     coords: { lat: 33.8655387, lng: -79.0539054 },
     hours: MS6_S1({ open: "10:30", close: "20:30" }, { open: "11:00", close: "15:30" }),
-    orderUrl: "https://Conway.SamsSouthernEatery.com",
   },
   {
     id: "norman-w-main-ok",
@@ -412,7 +368,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(405) 561-7400",
     coords: { lat: 35.2183695, lng: -97.4484078 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://www.SamsSouthernNorman.com",
   },
   {
     id: "midwest-city-ne-10th-ok",
@@ -421,7 +376,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(405) 519-5153",
     coords: { lat: 35.478614, lng: -97.3622215 },
     hours: D7("11:00", "21:00"),
-    orderUrl: "https://MIDWESTCITY.samssoutherneatery.com",
   },
   {
     id: "ada-mississippi-ave-ok",
@@ -430,7 +384,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(580) 453-7033",
     coords: { lat: 34.7690384, lng: -96.669791 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://www.SamsSouthernAda.com",
   },
   {
     id: "siloam-springs-us-412-ar",
@@ -439,7 +392,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 373-2362",
     coords: { lat: 36.1803271, lng: -94.4975602 },
     hours: MS6_S1({ open: "10:30", close: "21:00" }, { open: "11:00", close: "20:00" }),
-    orderUrl: "https://SiloamSprings.SamsSouthernEatery.com",
   },
   {
     id: "dardanelle-ar-22-ar",
@@ -449,7 +401,6 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 35.2287632, lng: -93.1685341 },
     // Sunday status unclear; treating as closed.
     hours: MS6_S1({ open: "10:00", close: "21:00" }, null),
-    orderUrl: "https://www.SamsSouthernEateryDardanelle.com",
   },
   {
     id: "fort-smith-phoenix-ar",
@@ -458,7 +409,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 769-2786",
     coords: { lat: 35.3392891, lng: -94.4172164 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://phoenix.samssoutherneatery.com",
   },
   {
     id: "little-rock-baseline-ar",
@@ -483,7 +433,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 498-4746",
     coords: { lat: 35.2823365, lng: -93.1010019 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "19:00" }),
-    orderUrl: "https://www.SamsSouthernRussellville.com",
   },
   {
     id: "wood-river-vaughn-il",
@@ -500,7 +449,6 @@ export const LOCATIONS: readonly Location[] = [
       { day: "Sat", open: "10:00", close: "22:00" },
       { day: "Sun", open: "10:00", close: "21:00" },
     ],
-    orderUrl: "https://WoodRiver.samssoutherneatery.com",
   },
   {
     id: "havelock-w-main-nc",
@@ -509,7 +457,6 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(252) 652-6108",
     coords: { lat: 34.8893736, lng: -76.9207378 },
     hours: D7("10:00", "20:40"),
-    orderUrl: "https://Havelock.samssoutherneatery.com",
   },
 ];
 
