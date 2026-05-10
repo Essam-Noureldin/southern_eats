@@ -44,7 +44,23 @@ describe("FranchisePage smoke", () => {
 
   it("links to /contact as the next step for a prospective franchisee", () => {
     render(<FranchisePage />);
-    const contactLink = screen.getByRole("link", { name: /contact|enquire|get in touch|apply/i });
-    expect(contactLink).toHaveAttribute("href", "/contact");
+    // Both the hero and the bottom-of-page CTA link to /contact — assert
+    // at least one and that every contact-CTA points at the right place.
+    const contactLinks = screen.getAllByRole("link", {
+      name: /contact|enquire|get in touch|apply/i,
+    });
+    expect(contactLinks.length).toBeGreaterThan(0);
+    for (const link of contactLinks) {
+      expect(link).toHaveAttribute("href", "/contact");
+    }
+  });
+
+  it("includes a marquee strip with franchise-positioning phrases", () => {
+    render(<FranchisePage />);
+    const marquee = screen.getByTestId("franchise-marquee");
+    expect(marquee).toHaveAttribute("aria-hidden", "true");
+    const track = screen.getByTestId("franchise-marquee-track");
+    expect(track.className).toMatch(/animate-marquee/);
+    expect(screen.getAllByText(/operators wanted/i).length).toBeGreaterThan(0);
   });
 });
