@@ -35,6 +35,12 @@ import DishCard from "@/components/sections/DishCard";
 import Revealable from "@/components/Revealable";
 import type { Category, MenuItem } from "@/lib/menu";
 
+// Hard cap on the search input. Long enough to type any plausible
+// dish-search phrase ("hand-breaded jumbo shrimp" is 25 chars), short
+// enough to bound any work the filter does and prevent a pasted-blob
+// DoS from blowing up the UI thread on a low-end device.
+const SEARCH_MAX_LENGTH = 100;
+
 interface Props {
   items: ReadonlyArray<MenuItem>;
   categories: ReadonlyArray<{ id: Category; label: string }>;
@@ -86,8 +92,29 @@ export default function MenuExperience({ items, categories }: Props) {
     return () => observer.disconnect();
   }, [visibleCategories]);
 
+  /*
+   * SECURITY — the search input.
+   *
+   * Threat model: `query` is local React state, never submitted to a
+   * server, never persisted in the URL, and never logged. It's used
+   * in two places only:
+   *   1. `.toLowerCase().includes(...)` to filter menu items —
+   *      string substring match, no regex (so no ReDoS), no SQL,
+   *      no shell.
+   *   2. Interpolated into JSX as text in the empty state — React
+   *      auto-escapes text children, so XSS via the query is not
+   *      possible without dangerouslySetInnerHTML, which we don't
+   *      use.
+   * Defenses below are defence-in-depth on top of those guarantees:
+   *   - maxLength={SEARCH_MAX_LENGTH} on the input element to bound
+   *     the size of pasted strings (browser-enforced).
+   *   - We slice() the value here too, in case the input was tampered
+   *     with via JS (e.g. devtools setting .value past the maxLength).
+   *   - Empty-state display truncates long queries to keep the UI
+   *     readable if someone bypasses both bounds.
+   */
   function handleSearchChange(e: ChangeEvent<HTMLInputElement>) {
-    setQuery(e.target.value);
+    setQuery(e.target.value.slice(0, SEARCH_MAX_LENGTH));
   }
 
   function jumpToCategory(catId: Category) {
@@ -106,6 +133,8 @@ export default function MenuExperience({ items, categories }: Props) {
             onChange={handleSearchChange}
             placeholder="Search the menu — try “shrimp” or “gumbo”…"
             aria-label="Search menu items"
+            maxLength={SEARCH_MAX_LENGTH}
+            autoComplete="off"
             className="mb-3 w-full rounded-full border border-border bg-card px-4 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sams-red/40"
           />
           <nav aria-label="Menu categories">
@@ -137,7 +166,9 @@ export default function MenuExperience({ items, categories }: Props) {
 
       {visibleCategories.length === 0 ? (
         <p className="py-16 text-center font-display text-2xl italic text-muted-foreground">
-          No matches for &ldquo;{query}&rdquo;. Try a different word.
+          No matches for &ldquo;
+          {query.length > 30 ? `${query.slice(0, 30)}…` : query}
+          &rdquo;. Try a different word.
         </p>
       ) : (
         visibleCategories.map((cat) => {

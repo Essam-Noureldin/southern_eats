@@ -139,4 +139,26 @@ describe("MenuExperience", () => {
     });
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
+
+  it("caps search input length to bound the filter work", () => {
+    render(<MenuExperience items={items} categories={cats} />);
+    const search = screen.getByRole("searchbox", {
+      name: /search menu/i,
+    }) as HTMLInputElement;
+    expect(search.maxLength).toBe(100);
+  });
+
+  it("truncates the query in the empty-state message if it's very long", () => {
+    render(<MenuExperience items={items} categories={cats} />);
+    const search = screen.getByRole("searchbox", { name: /search menu/i });
+    const longQuery = "x".repeat(80);
+    act(() => {
+      fireEvent.change(search, { target: { value: longQuery } });
+    });
+    // Empty state appears (no matches), and the rendered query is
+    // truncated to 30 chars + ellipsis so the UI doesn't break.
+    const empty = screen.getByText(/no matches for/i);
+    expect(empty.textContent).toContain("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…");
+    expect(empty.textContent).not.toContain("x".repeat(60));
+  });
 });
