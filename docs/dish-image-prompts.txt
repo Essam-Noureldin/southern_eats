@@ -1,0 +1,292 @@
+SAM'S SOUTHERN EATERY — DISH IMAGE PROMPTS
+============================================
+
+Each prompt is written for a square-format image generator (1024x1024
+or larger). The dish should fill ~70-80% of the frame so it crops well
+to the existing DishCard aspect-square layout.
+
+Filename target for each prompt is shown after the dish name. Save the
+generated image to /public/images/<filename> and update IMG.<key> in
+lib/menu.ts to point at it.
+
+GLOBAL BRAND DIRECTION (apply to every prompt unless overridden):
+- Warm Southern afternoon light, golden-amber tones, soft window light
+  from upper left
+- Rustic surfaces: weathered dark wood, cream parchment, cast iron,
+  enamel diner plates, red-and-white checkered paper
+- Editorial food photography, shallow depth of field, ~45° angle
+  unless otherwise noted
+- Tight crop, dish dominant, props secondary
+- No people, no text overlays, no logos, no watermarks
+- Color palette to avoid: cool blues, neon, purple
+- Color palette to embrace: cream, deep red, butter yellow, moss green,
+  warm browns and ambers
+
+
+====================
+APPETIZERS
+====================
+
+[1] FRIED GREEN TOMATOES                file: dish-greentomatoes.jpg
+A tight 45-degree shot of three thick-cut fried green tomato slices on
+a small enamel diner plate, golden cornmeal crust still crackling, a
+small ramekin of pale-pink comeback sauce beside them with a single
+swipe taken. Garnished with a sprig of flat-leaf parsley. Background
+softly out of focus showing a weathered wooden table and a stoneware
+mug. Warm window light, editorial food photography, shallow depth of
+field.
+
+[2] HUSH PUPPIES (8)                    file: dish-hushpuppies.jpg
+Eight golden-brown cornmeal hush puppies piled in a small wire basket
+lined with red-and-white checkered paper, a small dish of softened
+honey butter melting beside them. One hush puppy is split open to
+reveal the steaming yellow interior. Top-down 30-degree angle, dark
+wood surface, warm late-afternoon light, food magazine styling.
+
+[3] FRIED DILL PICKLES                  file: dish-friedpickles.jpg
+A casual heap of golden battered dill pickle chips on parchment paper
+inside a small enamel pie tin, a generous swirl of cool ranch dressing
+on the side garnished with cracked black pepper. Steam rising from the
+pickles, light bouncing off the crisp ridges of batter. Slight
+overhead 30-degree angle, warm tones, shallow depth of field.
+
+[4] CUP OF GUMBO                        file: dish-gumbo.jpg
+A small white ceramic cup of dark Louisiana shrimp-and-andouille gumbo,
+deep mahogany roux, slices of okra and andouille sausage visible, a
+mound of fluffy white rice in the center, a single jumbo shrimp curled
+on top. Garnish: a few green scallion slices. Warm steam rising,
+overhead 30-degree angle on a dark wooden plank with a vintage spoon
+beside it.
+
+
+====================
+SEAFOOD
+====================
+
+[5] JUMBO SHRIMP (15)                   file: dish-jumboshrimp.jpg
+A red plastic basket lined with red-and-white checkered paper, piled
+high with fifteen golden-fried jumbo shrimp, each one curled into a
+crisp comma. A handful of golden hush puppies tucked at the side, a
+ramekin of cocktail sauce, a lemon wedge. Slight 30-degree angle,
+warm cinematic light, beads of oil glistening on the breading,
+shallow depth of field, editorial food photography. (HERO IMAGE — make
+this the most appetising shot in the set.)
+
+[6] CATFISH PLATTER (4 FILLETS)         file: dish-catfish.jpg
+Four cornmeal-crusted Mississippi catfish fillets, golden crisp on the
+outside, served on a cream enamel diner plate with a generous scoop of
+red beans and rice and a couple of lemon wedges. A bottle of Louisiana
+hot sauce slightly out of focus in the background. Warm overhead light,
+45-degree angle, dark wood table, beads of moisture on the lemon.
+
+[7] SAM'S SPECIAL 25                    file: dish-samspecial.jpg
+A heaping plate of 25 small fried baby shrimp tossed in a glossy
+amber-red house sauce — sweet, spicy, sticky-looking. Sesame seeds
+and finely chopped scallions sprinkled on top. Plate is a dark
+ceramic bowl with a cream rim. Steam rising, warm light from the
+upper left, 35-degree angle, deep depth of field showing every shrimp.
+
+[8] FRIED OYSTERS (8)                   file: dish-friedoysters.jpg
+Eight plump golden-fried Gulf oysters arranged on an enamel diner
+plate over a leaf of butter-leaf lettuce, a small ramekin of pale
+pink remoulade sauce, half a lemon wedge, a few capers scattered.
+Tight 45-degree angle, warm afternoon light, dark wood surface,
+shallow depth of field.
+
+[9] STUFFED CRAB (2)                    file: dish-stuffedcrab.jpg
+Two stuffed-crab shells filled with golden-brown lump crab and
+breadcrumb stuffing, baked until the tops are crisp and amber, served
+on a small white plate with lemon wedges and a sprig of parsley.
+Slight overhead 30-degree angle, warm cinematic light, soft steam
+rising, dark wood table.
+
+
+====================
+CHICKEN
+====================
+
+[10] CHICKEN TENDERS (4)                file: dish-chickentenders.jpg
+Four hand-breaded chicken tenders, golden and crisp with a craggy
+breading texture, fanned out on a red plastic basket lined with
+checkered paper. A small dish of bright yellow honey-mustard sauce
+beside them. One tender is broken open to reveal the steaming white
+meat. Tight 45-degree angle, warm afternoon light, shallow depth of
+field.
+
+[11] FRIED CHICKEN (2 PIECES)           file: dish-friedchicken.jpg
+Two pieces of bone-in fried chicken — one drumstick, one thigh —
+mahogany-brown crust, the brine giving the meat a faint pink ring
+visible where the thigh has been split. Served on a vintage enamel
+diner plate with a lemon wedge and a small pile of seasoned fries.
+Warm light, 45-degree angle, dark wood, food-magazine framing.
+
+[12] SPICY CHICKEN SANDWICH             file: dish-spicychicken.jpg
+A glossy brioche bun towering with a buttermilk-fried chicken thigh
+that's deep red-brown from the spice dredge, topped with crisp slaw,
+two pickle chips, and a swipe of pale comeback sauce dripping down
+the side. Sandwich cut in half, cross-section toward camera. Plate is
+parchment paper on a dark wood board. Warm afternoon light, tight
+45-degree angle, hero-style food photography.
+
+
+====================
+PO'BOYS
+====================
+
+[13] SHRIMP PO'BOY                      file: dish-shrimppoboy.jpg
+A toasted French roll bursting with golden-fried shrimp, crisp
+shredded iceberg lettuce, sliced tomato, a dill pickle round on top,
+and a generous swipe of pale remoulade. Sandwich cut in half, the
+cut side facing camera so you can see the layers. Wrapped at one end
+in butcher paper, served on a dark wooden board. Warm light, tight
+45-degree angle, shallow depth of field.
+
+[14] CATFISH PO'BOY                     file: dish-catfishpoboy.jpg
+A hearty French roll filled with two cornmeal-fried catfish fillets
+peeking out the sides, dressed all the way: shredded lettuce, sliced
+tomato, pickle, mayo. The fillets show their craggy golden crust.
+Sandwich on parchment paper over a vintage diner plate. Warm
+overhead light, 45-degree angle, dark wood table.
+
+[15] OYSTER PO'BOY                      file: dish-oysterpoboy.jpg
+A French roll piled with six plump golden-fried Gulf oysters,
+shredded lettuce, sliced tomato, pickle, and a swipe of remoulade.
+The oysters' breading is craggy and amber. Sandwich on butcher paper
+on a dark wood board. Warm afternoon light, 45-degree angle.
+
+
+====================
+BURGERS
+====================
+
+[16] SAM'S CHEESEBURGER                 file: dish-cheeseburger.jpg
+A perfectly proportioned cheeseburger on a soft sesame brioche bun:
+quarter-pound smashed beef patty with crispy lacy edges, a slice of
+melted American cheese cascading over the side, lettuce, tomato,
+pickle. Burger cut in half, cross-section facing camera. Served on
+parchment over a dark wood board with seasoned fries. Warm cinematic
+light, tight 45-degree angle.
+
+[17] DOUBLE BACON BURGER                file: dish-doublebacon.jpg
+A towering double-patty cheeseburger on a brioche bun: two smashed
+beef patties with lacy crispy edges, melted cheddar between them,
+two strips of crisp bacon, comeback sauce dripping down the side.
+A small pile of seasoned fries beside it. Sandwich photographed
+slightly tilted toward camera. Dark wood board, warm afternoon
+light, food-magazine framing.
+
+
+====================
+FAMILY PORTIONS
+====================
+
+[18] FAMILY FISH FRY (12 FILLETS)       file: dish-familyfish.jpg
+A massive shareable spread on a large oval enamel platter: twelve
+cornmeal-fried catfish fillets piled in the centre, two stoneware
+crocks of red beans and rice and coleslaw, a basket of golden hush
+puppies, lemon wedges, a bottle of Louisiana hot sauce. Overhead
+flat-lay angle, dark wood table, warm afternoon light. Aspirational
+family-style hero shot.
+
+[19] FAMILY SHRIMP BOIL (50)            file: dish-familyshrimp.jpg
+A large shareable platter piled with fifty golden-fried jumbo
+shrimp, two stoneware crocks of sides — coleslaw and red beans —
+golden hush puppies, lemon wedges, a small bowl of cocktail sauce
+and another of remoulade. Overhead flat-lay angle on a dark wood
+table, warm Southern light, abundance feeling.
+
+[20] FAMILY CHICKEN BUCKET (12 PC)      file: dish-familychicken.jpg
+A red-and-white checkered paper-lined basket overflowing with twelve
+pieces of bone-in fried chicken in mahogany golden crust — drumsticks,
+thighs, breasts, wings. Beside it: two stoneware crocks of sides and
+a small basket of buttery biscuits. Overhead flat-lay angle on a
+dark wood table, warm afternoon light.
+
+
+====================
+SIDES
+====================
+
+[21] RED BEANS & RICE                   file: dish-redbeans.jpg
+A small white stoneware bowl of red beans and rice — deep mahogany
+beans glossed with smoked andouille sausage rounds, fluffy white rice
+mounded in the centre, garnished with chopped scallions. Slight
+overhead 30-degree angle, warm light, vintage spoon beside the bowl,
+dark wood surface.
+
+[22] COLESLAW                           file: dish-coleslaw.jpg
+A small white stoneware bowl of creamy Southern-style coleslaw —
+finely shredded green and purple cabbage, carrot threads, a glossy
+mayo-vinegar dressing, a few caraway seeds. Tight 30-degree angle,
+warm afternoon light, dark wood surface.
+
+[23] SEASONED FRIES                     file: dish-fries.jpg
+A red plastic basket lined with red-and-white checkered paper, piled
+with thick-cut hand-cut fries dusted in deep red Cajun seasoning.
+Steam rising, a small ramekin of comeback sauce on the side. Tight
+30-degree angle, warm light, dark wood, shallow depth of field.
+
+[24] FRIED OKRA                         file: dish-okra.jpg
+A small white stoneware bowl of cornmeal-dusted fried okra rounds,
+golden and crisp, a few visible green seeds inside the cross-sections.
+A small ramekin of comeback sauce. Steam rising, slight overhead
+30-degree angle, warm afternoon light, dark wood surface.
+
+
+====================
+KIDS
+====================
+
+[25] KIDS TENDERS & FRIES               file: dish-kidstenders.jpg
+A child-sized red plastic tray with two golden chicken tenders,
+seasoned fries, and a juice cup with a striped paper straw. Small
+ramekin of honey mustard. Bright cheerful styling, warm light, slight
+overhead 30-degree angle, light wood table or bright cream surface
+to differentiate from the adult dishes.
+
+[26] KIDS SHRIMP & FRIES                file: dish-kidsshrimp.jpg
+A child-sized red plastic tray with five small golden-fried baby
+shrimp, seasoned fries, and a juice cup with a striped paper straw.
+Small ramekin of cocktail sauce. Bright cheerful styling, warm light,
+slight overhead 30-degree angle, light wood table.
+
+
+====================
+DRINKS
+====================
+
+[27] SWEET TEA                          file: dish-sweettea.jpg
+A tall mason jar full of amber Southern sweet tea over a tower of
+ice, a long spoon resting in it, a thin lemon wheel on the rim.
+Beads of condensation dripping down the glass. Warm afternoon light
+streaming through the tea making it glow amber. Tight 45-degree
+angle, dark wood table, shallow depth of field, food-magazine framing.
+
+[28] HAND-SQUEEZED LEMONADE             file: dish-lemonade.jpg
+A tall mason jar full of pale-cloudy hand-squeezed lemonade with
+visible pulp, ice cubes, two lemon wheels — one on the rim and one
+floating inside, a few mint leaves. Half a squeezed lemon and a
+hand-juicer beside the jar on the table. Beads of condensation. Warm
+afternoon light, tight 45-degree angle, dark wood, shallow depth of
+field.
+
+
+====================
+NOTES FOR ESSAM
+====================
+
+- The most important hero image is JUMBO SHRIMP (#5) — it's both the
+  homepage hero behind the H1 and the carousel signature dish. Spend
+  the most time iterating this one.
+- For the FAMILY portions (#18-20) the flat-lay angle is deliberate
+  — those should look like a feast, not a single plate.
+- KIDS dishes (#25-26) should be visually lighter than the adult
+  dishes — bright cream/wood backdrop instead of dark wood — so the
+  category reads as different at a glance.
+- DRINKS (#27-28) should photograph from slightly lower than the
+  food shots so the height of the mason jar reads.
+- After generating, optimise each image to ~600KB via squoosh.app
+  before placing in /public/images.
+- Update lib/menu.ts: today most dishes share images via the IMG
+  helper. Once individual images exist, replace each MenuItem's
+  imageUrl with the dedicated path (e.g. "/images/dish-coleslaw.jpg").
