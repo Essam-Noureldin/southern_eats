@@ -47,6 +47,25 @@
   /* Fonts wired to next/font CSS variables (self-hosted at build time) */
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-body: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /*
+   * Marquee animation — Tailwind v4 declares custom animations as
+   * --animate-<name> tokens; the utility .animate-marquee then
+   * resolves to this value. Translating by -33.333% (1/REPEATS)
+   * lands the second copy exactly where the first began, so the
+   * loop has no visible seam. 40s is slow enough to read without
+   * looking sluggish.
+   */
+  --animate-marquee: marquee 40s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.3333%);
+  }
 }
 
 :root {

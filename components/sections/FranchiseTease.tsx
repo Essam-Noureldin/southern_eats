@@ -11,6 +11,7 @@
  *       the homepage; lead-gen drops to the navbar Franchise link.
  */
 import Link from "next/link";
+import WeightShiftHeading from "@/components/typography/WeightShiftHeading";
 
 export default function FranchiseTease() {
   return (
@@ -22,12 +23,12 @@ export default function FranchiseTease() {
         <p className="text-xs uppercase tracking-[0.3em] opacity-80">
           Franchise opportunities
         </p>
-        <h2
+        <WeightShiftHeading
           id="franchise-tease-heading"
           className="mt-4 font-display text-5xl italic leading-[0.95] md:text-7xl"
         >
           Bring Sam&apos;s to your town.
-        </h2>
+        </WeightShiftHeading>
         <p className="mx-auto mt-6 max-w-2xl text-lg opacity-90 md:text-xl">
           41 locations and growing. $25k franchise fee, territory
           protection, and an operations playbook built over 18 years.

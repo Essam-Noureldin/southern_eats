@@ -16,6 +16,7 @@ import Hero from "@/components/sections/Hero";
 import DishCarousel from "@/components/sections/DishCarousel";
 import NumbersBand from "@/components/sections/NumbersBand";
 import StoryTease from "@/components/sections/StoryTease";
+import Marquee from "@/components/sections/Marquee";
 import Reviews from "@/components/sections/Reviews";
 import FranchiseTease from "@/components/sections/FranchiseTease";
 
@@ -26,6 +27,7 @@ export default function HomePage() {
       <DishCarousel />
       <NumbersBand />
       <StoryTease />
+      <Marquee />
       <Reviews />
       <FranchiseTease />
     </main>

@@ -14,6 +14,7 @@
  */
 import Image from "next/image";
 import Link from "next/link";
+import WeightShiftHeading from "@/components/typography/WeightShiftHeading";
 
 export default function StoryTease() {
   return (
@@ -26,13 +27,13 @@ export default function StoryTease() {
           <p className="mb-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">
             Our story
           </p>
-          <h2
+          <WeightShiftHeading
             id="story-tease-heading"
             className="font-display text-4xl leading-[1.05] md:text-6xl"
           >
             It started with a fryer, a recipe, and a couple who{" "}
             <em>eloped</em>.
-          </h2>
+          </WeightShiftHeading>
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
             Tracy and Mo Elbahgha opened the first Sam&apos;s in Shreveport in
             2008. Eighteen years later, the same recipes, the same comeback

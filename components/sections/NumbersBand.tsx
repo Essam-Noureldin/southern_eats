@@ -12,6 +12,8 @@
  *       scroll. Looks gimmicky on a small four-tile band, hurts
  *       perceived legitimacy, and adds JS for no real lift.
  */
+import WeightShiftHeading from "@/components/typography/WeightShiftHeading";
+
 const STATS = [
   { value: "41", label: "Locations" },
   { value: "$25k", label: "Franchise fee" },
@@ -26,12 +28,13 @@ export default function NumbersBand() {
       className="bg-charcoal py-16 text-cream md:py-20"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-8">
-        <p
+        <WeightShiftHeading
+          as="p"
           id="numbers-band-heading"
           className="mb-10 font-display text-3xl italic text-butter md:text-5xl"
         >
           41 locations. 11 states. One promise.
-        </p>
+        </WeightShiftHeading>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {STATS.map((s) => (
             <div key={s.label} className="border-t border-cream/20 pt-4">
