@@ -47,6 +47,12 @@ export interface Location {
   phone: string;
   coords: LatLng;
   hours: Hours[];
+  // Per-location online ordering URL. Optional because the franchise
+  // hasn't wired ordering up everywhere — when missing, /order shows
+  // a disabled "coming soon" button and the tel: link is the working
+  // fallback. We never fabricate a URL; populate per-location only
+  // when a real one is confirmed.
+  orderUrl?: string;
 }
 
 // 7-day uniform schedules — common Sam's patterns, defined once for
