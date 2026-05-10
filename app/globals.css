@@ -98,4 +98,17 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+
+  /*
+   * The universal selector above doesn't reach view-transition pseudo
+   * elements — they live outside the document tree and need their own
+   * rule. Without this, dish-thumbnail morphs would still animate for
+   * users who've asked the OS for reduced motion.
+   */
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+  }
 }

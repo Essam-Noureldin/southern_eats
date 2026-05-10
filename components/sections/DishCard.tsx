@@ -20,12 +20,18 @@ export default function DishCard({ item }: { item: MenuItem }) {
   return (
     <article className="group relative overflow-hidden rounded-2xl border border-border bg-card transition-all hover:-translate-y-1 hover:shadow-xl">
       <div className="relative aspect-square overflow-hidden bg-muted">
+        {/*
+         * `view-transition-name` is the identity tag the browser uses to
+         * morph this image into the same-named image on /menu/[slug]
+         * during navigation. The detail-page hero must set the same name.
+         */}
         <Image
           src={item.imageUrl}
           alt={item.name}
           fill
           sizes="(max-width: 640px) 78vw, (max-width: 768px) 45vw, (max-width: 1024px) 31vw, 24vw"
           className="object-cover transition-transform duration-700 group-hover:scale-105"
+          style={{ viewTransitionName: `dish-${item.id}` }}
         />
         {item.signature ? (
           <span className="absolute left-3 top-3 rounded-full bg-butter px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-charcoal">

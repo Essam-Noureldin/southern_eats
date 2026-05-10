@@ -110,3 +110,20 @@ export const menu: MenuItem[] = [
   { id: "sweet-tea", category: "drinks", name: "Sweet Tea", description: "Brewed fresh, served cold over ice.", price: 2.49, imageUrl: IMG.catfish, tags: ["gf"] },
   { id: "lemonade", category: "drinks", name: "Hand-Squeezed Lemonade", description: "Tart, sweet, and shaken to order.", price: 2.99, imageUrl: IMG.catfish, tags: ["gf"] },
 ];
+
+/**
+ * WHAT: Look up a single dish by its slug (id).
+ * WHY:  /menu/[slug] page resolves the route param to a dish via this
+ *       helper. Centralising it here means the lookup is one well-tested
+ *       function, not four duplicated `menu.find(...)` calls scattered
+ *       across pages and components.
+ * IF REMOVED: every consumer would inline `menu.find(m => m.id === slug)`,
+ *       and the slug semantics (case-sensitive, exact match) would drift.
+ * COMMON MISTAKE: making this case-insensitive — view-transition-name
+ *       must match exactly between thumbnail and detail page, so any
+ *       canonicalisation here would break the morph.
+ */
+export function getMenuItem(slug: string): MenuItem | undefined {
+  if (!slug) return undefined;
+  return menu.find((m) => m.id === slug);
+}
