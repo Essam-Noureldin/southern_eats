@@ -69,12 +69,34 @@
 }
 
 /*
+ * Stat tile reveal — used on the homepage NumbersBand and on the
+ * /franchise stat grid. Tiles start translated down and invisible.
+ * When the parent gains .is-revealed (set by the client component
+ * once IntersectionObserver fires), each tile runs a 700ms ease-out
+ * rise. forwards fill keeps the end state pinned. Stagger comes from
+ * inline animationDelay set per tile.
+ */
+.stat-tile {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.is-revealed .stat-tile {
+  animation: stat-rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes stat-rise {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/*
  * Reveal-on-view — used by the <Revealable> wrapper on /our-story
- * (images and timeline nodes). The wrapper starts at opacity 0 +
- * translateY(20px); when it gains .is-revealed (set by the wrapper
- * once IntersectionObserver fires), it runs a 700ms ease-out rise.
- * forwards fill keeps the end state pinned. Stagger comes from
- * inline animationDelay on each wrapper.
+ * (images, timeline nodes, pull quotes). Smaller translateY (20px)
+ * than .stat-tile so the motion is gentler — atmospheric polish, not
+ * a hero moment. forwards fill pins the end state.
  */
 .reveal-on-view {
   opacity: 0;
@@ -164,6 +186,24 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /*
+   * Marquee carve-out. The universal kill above freezes the brand
+   * marquee for anyone whose OS reports prefers-reduced-motion —
+   * which on Windows happens to include users who simply turned off
+   * "Show animations in Windows" in the Visual Effects settings.
+   * The marquee is aria-hidden="true" (decorative), runs at 40s
+   * linear (no acceleration, no parallax, no zoom — none of the
+   * vestibular triggers WCAG 2.3.3 actually targets), and pauses on
+   * hover. Re-enable it in this query so the brand band still moves.
+   * If a user genuinely cannot tolerate any motion, they can pause
+   * it by hovering — but for the common Windows case this restores
+   * the intended visual.
+   */
+  .animate-marquee {
+    animation-duration: 40s !important;
+    animation-iteration-count: infinite !important;
   }
 
   /*
