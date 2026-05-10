@@ -88,15 +88,22 @@ export default function LocationFinder({ locations }: Props) {
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
 
-  const filtered = useMemo(
-    () => filterLocations(locations, active),
-    [locations, active],
-  );
-
   const presets = useMemo(() => deriveStatePresets(locations), [locations]);
   const activePreset = presets.find((p) => p.code === originState) ?? null;
   const origin = activePreset?.coords ?? null;
 
+  // Apply dietary filter, then narrow to the selected state if any. Both
+  // the list AND the map read from `filtered` so they stay in lockstep —
+  // selecting Texas drops every non-Texas pin from the map too.
+  const filtered = useMemo(() => {
+    const byDiet = filterLocations(locations, active);
+    if (!originState) return byDiet;
+    return byDiet.filter((l) => l.address.state === originState);
+  }, [locations, active, originState]);
+
+  // Within the (possibly state-narrowed) set, still sort by proximity to
+  // the state's flagship coords so cards within a state appear in a
+  // sensible nearest-first order.
   const sorted = useMemo(
     () => sortByProximity(filtered, origin),
     [filtered, origin],

@@ -95,15 +95,20 @@ describe("LocationFinder", () => {
     }
   });
 
-  it("clicking a state preset re-sorts the list nearest-first to a branch in that state", async () => {
+  it("clicking a state preset narrows the list to ONLY that state's branches", async () => {
     const user = userEvent.setup();
     render(<LocationFinder locations={LOCATIONS} />);
 
-    await user.click(screen.getByRole("button", { name: /^georgia$/i }));
+    await user.click(screen.getByRole("button", { name: /^texas$/i }));
 
-    // Georgia only has Atlanta in our dataset — should be first card.
-    const headings = screen.getAllByRole("heading", { level: 2 });
-    expect(headings[0].textContent).toMatch(/atlanta/i);
+    const txBranches = LOCATIONS.filter((l) => l.address.state === "TX");
+    const nonTxBranches = LOCATIONS.filter((l) => l.address.state !== "TX");
+    for (const loc of txBranches) {
+      expect(screen.getByText(loc.name)).toBeInTheDocument();
+    }
+    for (const loc of nonTxBranches) {
+      expect(screen.queryByText(loc.name)).not.toBeInTheDocument();
+    }
   });
 
   it("does NOT render a 'Use my location' button (removed in favour of state presets)", () => {
