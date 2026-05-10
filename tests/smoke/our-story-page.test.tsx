@@ -50,11 +50,25 @@ describe("OurStoryPage smoke", () => {
     expect(franchiseLink).toHaveAttribute("href", "/franchise");
   });
 
-  it("renders the storefront image with descriptive alt", () => {
+  it("renders multiple images including the storefront with descriptive alt", () => {
     render(<OurStoryPage />);
-    const img = screen.getByRole("img");
-    const alt = img.getAttribute("alt") ?? "";
-    expect(alt.toLowerCase()).toContain("sam");
-    expect(alt.toLowerCase()).toContain("southern eatery");
+    const imgs = screen.getAllByRole("img");
+    // Storefront + fried chicken + jumbo shrimp + 3-up dish grid = at least 5
+    expect(imgs.length).toBeGreaterThanOrEqual(5);
+    // The storefront photo is identifiable by its alt text mentioning the brand
+    const storefront = imgs.find((img) => {
+      const alt = (img.getAttribute("alt") ?? "").toLowerCase();
+      return alt.includes("sam") && alt.includes("southern eatery");
+    });
+    expect(storefront).toBeDefined();
+  });
+
+  it("every image has non-empty alt text", () => {
+    render(<OurStoryPage />);
+    const imgs = screen.getAllByRole("img");
+    for (const img of imgs) {
+      const alt = img.getAttribute("alt") ?? "";
+      expect(alt.length).toBeGreaterThan(0);
+    }
   });
 });

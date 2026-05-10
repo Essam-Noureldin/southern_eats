@@ -77,6 +77,19 @@ export default function OurStoryPage() {
         comeback sauce. He kept what worked. He let the rest go.
       </p>
 
+      <figure className="mt-10">
+        <Image
+          src="/images/dish-friedchicken.jpeg"
+          alt="A plate of golden hand-breaded fried chicken — the dish Sam started with in 2008"
+          width={1200}
+          height={1200}
+          className="aspect-square w-full rounded-2xl object-cover"
+        />
+        <figcaption className="mt-3 text-sm italic text-muted-foreground">
+          What Sam started with: hand-breaded fried chicken.
+        </figcaption>
+      </figure>
+
       <blockquote className="mt-12 border-l-4 border-sams-red pl-6 font-display text-2xl italic leading-snug md:text-3xl">
         &ldquo;I started this business not knowing much about restaurants,
         but people ended up loving the food I made and the feel I gave to
@@ -93,7 +106,20 @@ export default function OurStoryPage() {
         Chicken first. Seafood by accident.
       </WeightShiftHeading>
 
-      <p className="mt-6 text-lg leading-relaxed">
+      <figure className="mt-8">
+        <Image
+          src="/images/dish-jumboshrimp-wide.jpeg"
+          alt="A platter of golden hand-breaded jumbo fried shrimp — the dish Sam taught himself to cook and the brand became known for"
+          width={1920}
+          height={1080}
+          className="aspect-[16/9] w-full rounded-2xl object-cover"
+        />
+        <figcaption className="mt-3 text-sm italic text-muted-foreground">
+          The pivot dish: jumbo shrimp.
+        </figcaption>
+      </figure>
+
+      <p className="mt-8 text-lg leading-relaxed">
         The pivot worked. Sam&apos;s settled into Cajun-leaning Southern
         cooking &mdash; jumbo shrimp, cornmeal-crusted catfish, hush
         puppies, fried green tomatoes, gumbo, and the comeback sauce that
@@ -129,6 +155,30 @@ export default function OurStoryPage() {
         That&apos;s the recipe: hand-breaded, fried hot, plates piled high,
         and the founder still showing up to make sure it&apos;s right.
       </p>
+
+      <div className="mt-10 grid grid-cols-3 gap-3 md:gap-4">
+        <Image
+          src="/images/dish-catfish.jpeg"
+          alt="Cornmeal-crusted fried catfish"
+          width={600}
+          height={600}
+          className="aspect-square w-full rounded-xl object-cover"
+        />
+        <Image
+          src="/images/dish-hushpuppies.jpeg"
+          alt="A basket of golden hush puppies"
+          width={600}
+          height={600}
+          className="aspect-square w-full rounded-xl object-cover"
+        />
+        <Image
+          src="/images/dish-gumbo.jpg"
+          alt="A bowl of dark roux Southern gumbo"
+          width={600}
+          height={600}
+          className="aspect-square w-full rounded-xl object-cover"
+        />
+      </div>
 
       <dl className="mt-12 grid grid-cols-3 gap-6 border-t border-border pt-8">
         <div>
