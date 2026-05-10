@@ -68,6 +68,47 @@
   }
 }
 
+/*
+ * Reveal-on-view — used by the <Revealable> wrapper on /our-story
+ * (images and timeline nodes). The wrapper starts at opacity 0 +
+ * translateY(20px); when it gains .is-revealed (set by the wrapper
+ * once IntersectionObserver fires), it runs a 700ms ease-out rise.
+ * forwards fill keeps the end state pinned. Stagger comes from
+ * inline animationDelay on each wrapper.
+ */
+.reveal-on-view {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.is-revealed.reveal-on-view {
+  animation: reveal-rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes reveal-rise {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/*
+ * Drop-cap — editorial flourish used on the lead paragraph of
+ * /our-story. The first letter of any element with .drop-cap floats
+ * left in the display serif at large size, giving the page the feel
+ * of a magazine feature opening. Pure typographic; no JS.
+ */
+.drop-cap::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 4.5em;
+  line-height: 0.85;
+  margin-right: 0.1em;
+  margin-top: 0.06em;
+  color: var(--color-sams-red);
+  font-weight: 700;
+}
+
 :root {
   --radius: 0.5rem;
   --background: #f5ebdc;       /* cream */

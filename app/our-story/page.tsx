@@ -1,13 +1,17 @@
 /**
  * WHAT: /our-story — long-form brand origin page. Pays off the
  *       StoryTease CTA on the homepage with the verified Sam Gazawaneh
- *       narrative.
+ *       narrative. Editorial layout with a drop-cap lead, a four-
+ *       milestone narrative timeline, and reveal-on-view animations on
+ *       images and pull quotes.
  * WHY:  The CTA was previously pointing at a 404; visitors who clicked
  *       it bounced. The page now exists and tells the actual founding
  *       story (gas-station worker buys a closed Taco Bell, teaches
- *       himself to cook, pivots from chicken to seafood, builds a 51-
+ *       himself to cook, pivots from chicken to seafood, builds a 41-
  *       location chain). Editorial weight — Fraunces display headlines,
- *       generous whitespace — to match the brand's premium positioning.
+ *       generous whitespace, drop-cap, animated milestones — to match
+ *       the brand's premium positioning and give the reader a
+ *       narrative spine they can scan before reading the prose.
  * IF REMOVED: 'Read our story' link 404s again.
  *
  * !!! BEFORE LAUNCH !!!
@@ -27,6 +31,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import Revealable from "@/components/Revealable";
+import StoryTimeline from "@/components/sections/StoryTimeline";
 import WeightShiftHeading from "@/components/typography/WeightShiftHeading";
 
 export const metadata: Metadata = {
@@ -45,19 +51,23 @@ export default function OurStoryPage() {
         It started in an old <em>Taco Bell</em>.
       </h1>
 
-      <p className="mt-8 text-xl leading-relaxed text-muted-foreground md:text-2xl">
+      <p className="drop-cap mt-8 text-xl leading-relaxed text-muted-foreground md:text-2xl">
         Sam Gazawaneh wasn&apos;t a chef. He was a gas-station worker in
         Shreveport, Louisiana, who decided in 2008 to do something different
         with his life.
       </p>
 
-      <Image
-        src="/images/sams-storefront.jpg"
-        alt="A Sam's Southern Eatery location with the brand sign reading 'Sam's Southern Eatery & Seafood, Opening Soon'"
-        width={1200}
-        height={900}
-        className="mt-12 aspect-[4/3] w-full rounded-2xl object-cover"
-      />
+      <Revealable className="mt-12">
+        <Image
+          src="/images/sams-storefront.jpg"
+          alt="A Sam's Southern Eatery location with the brand sign reading 'Sam's Southern Eatery & Seafood, Opening Soon'"
+          width={1200}
+          height={900}
+          className="aspect-[4/3] w-full rounded-2xl object-cover"
+        />
+      </Revealable>
+
+      <StoryTimeline />
 
       <WeightShiftHeading
         as="h2"
@@ -79,27 +89,31 @@ export default function OurStoryPage() {
         comeback sauce. He kept what worked. He let the rest go.
       </p>
 
-      <figure className="mt-10">
-        <Image
-          src="/images/dish-friedchicken.jpeg"
-          alt="A plate of golden hand-breaded fried chicken — the dish Sam started with in 2008"
-          width={1200}
-          height={1200}
-          className="aspect-square w-full rounded-2xl object-cover"
-        />
-        <figcaption className="mt-3 text-sm italic text-muted-foreground">
-          What Sam started with: hand-breaded fried chicken.
-        </figcaption>
-      </figure>
+      <Revealable className="mt-10">
+        <figure>
+          <Image
+            src="/images/dish-friedchicken.jpeg"
+            alt="A plate of golden hand-breaded fried chicken — the dish Sam started with in 2008"
+            width={1200}
+            height={1200}
+            className="aspect-square w-full rounded-2xl object-cover"
+          />
+          <figcaption className="mt-3 text-sm italic text-muted-foreground">
+            What Sam started with: hand-breaded fried chicken.
+          </figcaption>
+        </figure>
+      </Revealable>
 
-      <blockquote className="mt-12 border-l-4 border-sams-red pl-6 font-display text-2xl italic leading-snug md:text-3xl">
-        &ldquo;I started this business not knowing much about restaurants,
-        but people ended up loving the food I made and the feel I gave to
-        the restaurant.&rdquo;
-        <footer className="mt-4 text-sm not-italic text-muted-foreground">
-          &mdash; Sam Gazawaneh, founder
-        </footer>
-      </blockquote>
+      <Revealable>
+        <blockquote className="mt-12 border-l-4 border-sams-red pl-6 font-display text-2xl italic leading-snug md:text-3xl">
+          &ldquo;I started this business not knowing much about restaurants,
+          but people ended up loving the food I made and the feel I gave to
+          the restaurant.&rdquo;
+          <footer className="mt-4 text-sm not-italic text-muted-foreground">
+            &mdash; Sam Gazawaneh, founder
+          </footer>
+        </blockquote>
+      </Revealable>
 
       <WeightShiftHeading
         as="h2"
@@ -108,18 +122,20 @@ export default function OurStoryPage() {
         Chicken first. Seafood by accident.
       </WeightShiftHeading>
 
-      <figure className="mt-8">
-        <Image
-          src="/images/dish-jumboshrimp-wide.jpeg"
-          alt="A platter of golden hand-breaded jumbo fried shrimp — the dish Sam taught himself to cook and the brand became known for"
-          width={1920}
-          height={1080}
-          className="aspect-[16/9] w-full rounded-2xl object-cover"
-        />
-        <figcaption className="mt-3 text-sm italic text-muted-foreground">
-          The pivot dish: jumbo shrimp.
-        </figcaption>
-      </figure>
+      <Revealable className="mt-8">
+        <figure>
+          <Image
+            src="/images/dish-jumboshrimp-wide.jpeg"
+            alt="A platter of golden hand-breaded jumbo fried shrimp — the dish Sam taught himself to cook and the brand became known for"
+            width={1920}
+            height={1080}
+            className="aspect-[16/9] w-full rounded-2xl object-cover"
+          />
+          <figcaption className="mt-3 text-sm italic text-muted-foreground">
+            The pivot dish: jumbo shrimp.
+          </figcaption>
+        </figure>
+      </Revealable>
 
       <p className="mt-8 text-lg leading-relaxed">
         The pivot worked. Sam&apos;s settled into Cajun-leaning Southern
@@ -129,15 +145,17 @@ export default function OurStoryPage() {
         prices stayed sane.
       </p>
 
-      <blockquote className="mt-8 border-l-4 border-butter pl-6 font-display text-2xl italic leading-snug md:text-3xl">
-        &ldquo;I learned to cook on my own and opened Sam&apos;s, mainly
-        serving chicken at first, but I eventually learned to prepare fish
-        and shrimp and other items, and over time, ended up turning
-        Sam&apos;s into a seafood restaurant.&rdquo;
-        <footer className="mt-4 text-sm not-italic text-muted-foreground">
-          &mdash; Sam Gazawaneh
-        </footer>
-      </blockquote>
+      <Revealable>
+        <blockquote className="mt-8 border-l-4 border-butter pl-6 font-display text-2xl italic leading-snug md:text-3xl">
+          &ldquo;I learned to cook on my own and opened Sam&apos;s, mainly
+          serving chicken at first, but I eventually learned to prepare fish
+          and shrimp and other items, and over time, ended up turning
+          Sam&apos;s into a seafood restaurant.&rdquo;
+          <footer className="mt-4 text-sm not-italic text-muted-foreground">
+            &mdash; Sam Gazawaneh
+          </footer>
+        </blockquote>
+      </Revealable>
 
       <WeightShiftHeading
         as="h2"
@@ -159,27 +177,33 @@ export default function OurStoryPage() {
       </p>
 
       <div className="mt-10 grid grid-cols-3 gap-3 md:gap-4">
-        <Image
-          src="/images/dish-catfish.jpeg"
-          alt="Cornmeal-crusted fried catfish"
-          width={600}
-          height={600}
-          className="aspect-square w-full rounded-xl object-cover"
-        />
-        <Image
-          src="/images/dish-hushpuppies.jpeg"
-          alt="A basket of golden hush puppies"
-          width={600}
-          height={600}
-          className="aspect-square w-full rounded-xl object-cover"
-        />
-        <Image
-          src="/images/dish-gumbo.jpg"
-          alt="A bowl of dark roux Southern gumbo"
-          width={600}
-          height={600}
-          className="aspect-square w-full rounded-xl object-cover"
-        />
+        <Revealable delayMs={0}>
+          <Image
+            src="/images/dish-catfish.jpeg"
+            alt="Cornmeal-crusted fried catfish"
+            width={600}
+            height={600}
+            className="aspect-square w-full rounded-xl object-cover"
+          />
+        </Revealable>
+        <Revealable delayMs={120}>
+          <Image
+            src="/images/dish-hushpuppies.jpeg"
+            alt="A basket of golden hush puppies"
+            width={600}
+            height={600}
+            className="aspect-square w-full rounded-xl object-cover"
+          />
+        </Revealable>
+        <Revealable delayMs={240}>
+          <Image
+            src="/images/dish-gumbo.jpg"
+            alt="A bowl of dark roux Southern gumbo"
+            width={600}
+            height={600}
+            className="aspect-square w-full rounded-xl object-cover"
+          />
+        </Revealable>
       </div>
 
       <dl className="mt-12 grid grid-cols-3 gap-6 border-t border-border pt-8">
