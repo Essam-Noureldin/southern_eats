@@ -11,7 +11,7 @@
  *       mouse events. We also handle onFocus/onBlur so a keyboard tab
  *       through the cards triggers the same map-pin highlight.
  */
-import { directionsUrl, type DietaryTag, type Location } from "@/lib/locations";
+import { directionsUrl, type Location } from "@/lib/locations";
 import type { WithDistance } from "@/lib/distance";
 
 interface Props {
@@ -30,22 +30,11 @@ const todayHours = (loc: Location): string => {
   return slot ? `${slot.open} – ${slot.close}` : "Closed today";
 };
 
-const TAG_LABELS: Record<DietaryTag, string> = {
-  "drive-thru": "Drive-thru",
-  "dine-in": "Dine-in",
-};
-
-const formatTags = (tags: readonly DietaryTag[]): string =>
-  tags.map((t) => TAG_LABELS[t]).join(", ");
-
 export default function LocationList({ locations, hoveredId, onHover }: Props) {
   if (locations.length === 0) {
     return (
       <div className="rounded-lg border border-charcoal/10 bg-cream/60 p-6 text-sm text-charcoal/70">
-        <p>No locations match every filter you&apos;ve picked.</p>
-        <p className="mt-2 text-xs text-charcoal/55">
-          Try clearing a chip, or pick a different state.
-        </p>
+        <p>No locations to show. Try clearing the state filter.</p>
       </div>
     );
   }
@@ -54,7 +43,6 @@ export default function LocationList({ locations, hoveredId, onHover }: Props) {
     <ul role="list" className="flex flex-col gap-3">
       {locations.map((loc) => {
         const isHovered = hoveredId === loc.id;
-        const tags = formatTags(loc.dietary);
         return (
           <li
             key={loc.id}
@@ -79,9 +67,6 @@ export default function LocationList({ locations, hoveredId, onHover }: Props) {
 
             <p className="mt-1 text-xs text-charcoal/60">
               <span className="font-semibold">Today:</span> {todayHours(loc)}
-              {tags ? (
-                <span className="text-charcoal/50"> ({tags})</span>
-              ) : null}
             </p>
 
             <div className="mt-3 flex flex-wrap gap-3 text-sm">

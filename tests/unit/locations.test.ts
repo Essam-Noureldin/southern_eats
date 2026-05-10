@@ -1,14 +1,13 @@
 /**
- * WHAT: Sanity-check the locations dataset shape + the dietary-filter
- *       logic that drives the chip UI on /locations.
- * WHY:  Catches data drift (a locale missing required fields) and
- *       guarantees the filter helper returns predictable subsets.
+ * WHAT: Sanity-check the locations dataset shape.
+ * WHY:  Catches data drift (a location missing required fields) and locks
+ *       the contract for the /locations page.
  * IF REMOVED: regressions slip through (e.g. someone adds a Texas
  *       location with no phone, breaking the list card).
  * COMMON MISTAKE: asserting on a single hardcoded location's id —
  *       fragile to data edits. Assert on shape and on aggregates.
  */
-import { LOCATIONS, filterLocations } from "@/lib/locations";
+import { LOCATIONS } from "@/lib/locations";
 
 describe("LOCATIONS dataset", () => {
   it("has at least 8 entries (real franchise list as of 2026-05-10 = 41)", () => {
@@ -37,32 +36,5 @@ describe("LOCATIONS dataset", () => {
   it("location ids are unique", () => {
     const ids = LOCATIONS.map((l) => l.id);
     expect(new Set(ids).size).toBe(ids.length);
-  });
-});
-
-describe("filterLocations", () => {
-  it("returns the full set when no filters are active", () => {
-    expect(filterLocations(LOCATIONS, []).length).toBe(LOCATIONS.length);
-  });
-
-  it("returns the expected matching subset for tags that have public confirmation", () => {
-    // Drive-thru explicitly confirmed at 2 locations (Mobile, Conway).
-    const drivethru = filterLocations(LOCATIONS, ["drive-thru"]);
-    expect(drivethru.length).toBeGreaterThanOrEqual(2);
-    for (const loc of drivethru) {
-      expect(loc.dietary).toContain("drive-thru");
-    }
-    // Dine-in tagged on a handful of locations where snippets explicitly
-    // listed it. Conservative coverage; not every sit-down branch.
-    const dinein = filterLocations(LOCATIONS, ["dine-in"]);
-    expect(dinein.length).toBeGreaterThanOrEqual(3);
-    for (const loc of dinein) {
-      expect(loc.dietary).toContain("dine-in");
-    }
-  });
-
-  it("returns empty array when no location matches", () => {
-    // @ts-expect-error - intentionally bad tag to test miss path
-    expect(filterLocations(LOCATIONS, ["does-not-exist"])).toEqual([]);
   });
 });

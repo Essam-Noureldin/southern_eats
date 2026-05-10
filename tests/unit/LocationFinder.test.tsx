@@ -52,45 +52,13 @@ describe("LocationFinder", () => {
     expect(dirLinks.length).toBe(LOCATIONS.length);
   });
 
-  it("renders the two service-amenity chips (drive-thru, dine-in)", () => {
+  it("does NOT render any dietary / amenity filter chips", () => {
+    // We removed halal/gf/vegan/drive-thru/dine-in chips entirely — too few
+    // were publicly verifiable to be useful, and per the no-synthetic-data
+    // rule we don't fake the rest. State chips are the only filter now.
     render(<LocationFinder locations={LOCATIONS} />);
-    expect(
-      screen.getByRole("button", { name: /^drive-thru$/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /^dine-in$/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("does NOT render the deprecated halal/gluten-free/vegan chips", () => {
-    render(<LocationFinder locations={LOCATIONS} />);
-    expect(
-      screen.queryByRole("button", { name: /halal/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /gluten-free/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /vegan/i }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("activating a service chip narrows the list to confirmed locations", async () => {
-    const user = userEvent.setup();
-    render(<LocationFinder locations={LOCATIONS} />);
-
-    await user.click(screen.getByRole("button", { name: /^drive-thru$/i }));
-
-    // Mobile-AL and Conway-SC are the two confirmed drive-thru branches.
-    // Use heading-level lookup to dodge address text containing the city.
-    const headings = screen.getAllByRole("heading", { level: 2 });
-    const headingText = headings.map((h) => h.textContent).join("|");
-    expect(headingText).toMatch(/Mobile/i);
-    expect(headingText).toMatch(/Conway/i);
-    // No Texas branches should remain (none have drive-thru confirmed).
-    const texasBranches = LOCATIONS.filter((l) => l.address.state === "TX");
-    for (const tx of texasBranches) {
-      expect(headingText).not.toContain(tx.name);
+    for (const re of [/halal/i, /gluten/i, /vegan/i, /drive-?thru/i, /dine-?in/i]) {
+      expect(screen.queryByRole("button", { name: re })).not.toBeInTheDocument();
     }
   });
 
