@@ -200,7 +200,7 @@ export default function MenuExperience({ items, categories }: Props) {
                         {catItems.map((item) => (
                           <li
                             key={`${copyIndex}-${item.id}`}
-                            className="w-[40%] shrink-0 list-none sm:w-[24%] md:w-[16%] lg:w-[12%] xl:w-[10%]"
+                            className="w-72 shrink-0 list-none"
                             aria-hidden={copyIndex > 0 ? "true" : undefined}
                           >
                             <DishLink
