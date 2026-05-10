@@ -21,6 +21,7 @@ interface Props {
 }
 
 const todayHours = (loc: Location): string => {
+  if (loc.hours.length === 0) return "Hours not listed — call to confirm";
   const days: Location["hours"][number]["day"][] = [
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
   ];

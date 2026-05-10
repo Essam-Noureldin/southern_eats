@@ -28,7 +28,9 @@ describe("LOCATIONS dataset", () => {
       expect(loc.coords.lat).toBeLessThan(50);
       expect(loc.coords.lng).toBeGreaterThan(-110);
       expect(loc.coords.lng).toBeLessThan(-70);
-      expect(loc.hours.length).toBeGreaterThan(0);
+      // Hours array can be empty for newly-opened or unverified-hours
+      // locations (we don't synthesize). Just enforce shape.
+      expect(Array.isArray(loc.hours)).toBe(true);
     }
   });
 
@@ -43,21 +45,33 @@ describe("filterLocations", () => {
     expect(filterLocations(LOCATIONS, []).length).toBe(LOCATIONS.length);
   });
 
-  it("returns empty array for any dietary tag while real data is pending", () => {
-    // No-synthetic-data policy: every location in LOCATIONS ships with
-    // dietary=[] until the franchise confirms which branches have halal /
-    // gluten-free fryer separation, vegan options, etc. Filter helper
-    // still works correctly — it just returns nothing because nothing
-    // carries any tag yet.
-    const tags: DietaryTag[] = [
+  it("returns empty array for tags with no public source confirmation", () => {
+    // No-synthetic-data policy: halal-fryer / gf-fryer / vegan-options are
+    // not advertised per-location anywhere we can verify, so they filter
+    // to empty until the franchise confirms per branch.
+    const unverifiedTags: DietaryTag[] = [
       "halal-fryer",
       "gf-fryer",
       "vegan-options",
-      "drive-thru",
-      "dine-in",
     ];
-    for (const tag of tags) {
+    for (const tag of unverifiedTags) {
       expect(filterLocations(LOCATIONS, [tag])).toEqual([]);
+    }
+  });
+
+  it("returns the expected matching subset for tags that DO have public confirmation", () => {
+    // Drive-thru explicitly confirmed at 2 locations (Mobile, Conway).
+    const drivethru = filterLocations(LOCATIONS, ["drive-thru"]);
+    expect(drivethru.length).toBeGreaterThanOrEqual(2);
+    for (const loc of drivethru) {
+      expect(loc.dietary).toContain("drive-thru");
+    }
+    // Dine-in tagged on a handful of locations where snippets explicitly
+    // listed it. Conservative coverage; not every sit-down branch.
+    const dinein = filterLocations(LOCATIONS, ["dine-in"]);
+    expect(dinein.length).toBeGreaterThanOrEqual(3);
+    for (const loc of dinein) {
+      expect(loc.dietary).toContain("dine-in");
     }
   });
 
