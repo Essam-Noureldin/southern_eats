@@ -1,13 +1,13 @@
 /**
  * WHAT: Tests the OrderExperience client component on /order.
  * WHY:  The page lists every Sam's location and lets users pick where
- *       to order from. Until the franchise wires per-location order
- *       URLs, each card shows a disabled "coming soon" affordance with
- *       a tel: phone link as the working fallback. Test-first locks
- *       the contract: search filters by name/city/state, missing
- *       orderUrl yields a disabled button, present orderUrl yields a
- *       real outbound link, and the phone + directions links are
- *       present on every card.
+ *       to order from. Sam's runs per-location HungerRush subdomains
+ *       (37/41 live); the remaining 4 are phone-only on the live site.
+ *       Test-first locks the contract: search filters by name/city/
+ *       state, locations with orderUrl render a real outbound link,
+ *       locations without orderUrl render a working "Call to order"
+ *       tel: link (no dead disabled buttons), and a quick-tap phone
+ *       link + directions link appear on every card.
  */
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import OrderExperience from "@/components/order/OrderExperience";
@@ -112,24 +112,42 @@ describe("OrderExperience", () => {
     expect(orderLink).toHaveAttribute("rel", expect.stringContaining("noopener"));
   });
 
-  it("renders a disabled coming-soon button when orderUrl is missing", () => {
+  it("renders a 'Call to order' tel link when orderUrl is missing", () => {
     render(<OrderExperience locations={locations} />);
-    const comingSoon = screen.getAllByRole("button", { name: /coming soon/i });
-    // Two of the three test locations are missing orderUrl.
-    expect(comingSoon).toHaveLength(2);
-    for (const btn of comingSoon) {
-      expect(btn).toBeDisabled();
-    }
+    // Two of the three test locations are missing orderUrl — they
+    // get a tel: link styled as a CTA button. Each carries an
+    // aria-label naming the store so multiple cards on the page are
+    // distinguishable to assistive tech.
+    const callShreveport = screen.getByRole("link", {
+      name: /call shreveport — greenwood rd to order/i,
+    });
+    expect(callShreveport).toHaveAttribute("href", "tel:+13186317782");
+    const callHavelock = screen.getByRole("link", {
+      name: /call havelock — w main st to order/i,
+    });
+    expect(callHavelock).toHaveAttribute("href", "tel:+12526526108");
+    // No disabled buttons anywhere on the page.
+    expect(screen.queryAllByRole("button", { name: /coming soon/i })).toHaveLength(
+      0,
+    );
   });
 
   it("renders a tel: phone link on every location", () => {
     render(<OrderExperience locations={locations} />);
-    expect(
-      screen.getByRole("link", { name: /\(318\) 631-7782/i }),
-    ).toHaveAttribute("href", "tel:+13186317782");
+    // Norman has an orderUrl, so the phone appears once (just the
+    // standalone quick-tap link). Phone-only stores show the number
+    // twice (quick-tap + 'Call to order' CTA whose aria-label includes
+    // the number). Either way, getAllByRole finds the right hrefs.
     expect(
       screen.getByRole("link", { name: /\(405\) 561-7400/i }),
     ).toHaveAttribute("href", "tel:+14055617400");
+    const shreveportLinks = screen.getAllByRole("link", {
+      name: /318.*631.*7782/i,
+    });
+    expect(shreveportLinks.length).toBeGreaterThan(0);
+    for (const link of shreveportLinks) {
+      expect(link).toHaveAttribute("href", "tel:+13186317782");
+    }
   });
 
   it("renders a directions link on every location", () => {

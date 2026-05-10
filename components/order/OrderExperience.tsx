@@ -2,22 +2,24 @@
 
 /**
  * WHAT: Client orchestrator for /order. Lists every Sam's location
- *       with three controls per card: an "Order online" affordance
- *       (real outbound link when location.orderUrl is set, a disabled
- *       "Coming soon" button otherwise), a tel: phone link that
- *       always works, and a Google Maps directions link.
- * WHY:  Sam's hasn't published per-location online-ordering URLs yet.
- *       Until they do, the franchise still takes phone orders at
- *       every store — so the page ships today with the phone link
- *       as the working fallback and the order button activates
- *       per-location as real URLs land in lib/locations.ts. No
- *       fabricated URLs (no synthetic data per project rule).
+ *       with three controls per card: a primary CTA that adapts to
+ *       the store's situation (an "Order online" outbound link to
+ *       the location's HungerRush subdomain when location.orderUrl
+ *       is set; otherwise a "Call to order" tel: link), a quick-tap
+ *       phone link, and a Google Maps directions link.
+ * WHY:  Sam's runs per-location HungerRush ordering subdomains; 37
+ *       of 41 stores are live, the other 4 are explicitly listed as
+ *       "Not accepting online orders" on samssoutherneatery.com. No
+ *       fabricated URLs — when orderUrl is set, the button opens the
+ *       real location page; when it's missing, the user gets a real
+ *       phone link instead of a dead disabled button. Every card
+ *       has an actionable primary CTA.
  * IF REMOVED: /order has no interactive surface — search, filter,
  *       and per-card controls all disappear.
  * COMMON MISTAKE: rendering an enabled "Order online" link that
  *       routes to /menu or to a guessed URL when orderUrl is
- *       missing. That's lying to the user. Disabled-with-fallback
- *       is the honest pattern.
+ *       missing. That's lying to the user. tel:-fallback is the
+ *       honest pattern that also gives the user a working action.
  */
 import { useMemo, useState, type ChangeEvent } from "react";
 import { directionsUrl, type Location } from "@/lib/locations";
@@ -78,9 +80,9 @@ export default function OrderExperience({ locations }: Props) {
           className="w-full rounded-full border border-border bg-card px-5 py-3 text-base placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-sams-red/40"
         />
         <p className="mt-3 text-sm text-muted-foreground">
-          Online ordering is rolling out per-location. Until your store is
-          live, give them a call &mdash; every Sam&apos;s takes phone
-          orders.
+          Each store runs its own online ordering. Stores marked
+          &ldquo;Call to order&rdquo; aren&apos;t set up online yet &mdash;
+          tap to call them direct.
         </p>
       </div>
 
@@ -135,15 +137,13 @@ export default function OrderExperience({ locations }: Props) {
                     Order online &rarr;
                   </a>
                 ) : (
-                  <button
-                    type="button"
-                    disabled
-                    aria-disabled="true"
-                    aria-label={`Online ordering coming soon for ${loc.name}`}
-                    className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-full border border-charcoal/15 bg-charcoal/5 px-5 py-3 text-sm font-semibold text-charcoal/40"
+                  <a
+                    href={telHref(loc.phone)}
+                    aria-label={`Call ${loc.name} to order — ${loc.phone}`}
+                    className="inline-flex w-full items-center justify-center rounded-full border border-sams-red/30 bg-cream px-5 py-3 text-sm font-semibold text-sams-red transition-colors hover:border-sams-red hover:bg-sams-red hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
                   >
-                    Coming soon &middot; call to order
-                  </button>
+                    Call to order &rarr;
+                  </a>
                 )}
               </div>
             </li>

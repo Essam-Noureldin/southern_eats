@@ -20,7 +20,7 @@ import OrderExperience from "@/components/order/OrderExperience";
 export const metadata: Metadata = {
   title: "Order Online",
   description:
-    "Order from your nearest Sam's Southern Eatery. Find your store, see the address, and call ahead — online ordering rolls out per-location.",
+    "Order from your nearest Sam's Southern Eatery. Most stores have online ordering; a few are phone-only — find yours below.",
 };
 
 export default function OrderPage() {
@@ -36,9 +36,8 @@ export default function OrderPage() {
               Pick your <em>nearest</em> Sam&apos;s.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-charcoal/80">
-              {LOCATIONS.length} stores across the South. Find yours below
-              &mdash; tap to call, get directions, or order online where
-              it&apos;s rolled out.
+              {LOCATIONS.length} stores across the South. Most take online
+              orders; a handful are phone-only. Find yours below.
             </p>
           </div>
           <div className="mt-12">
