@@ -2,9 +2,14 @@
  * WHAT: Unit tests for components/sections/StoryTease.
  * WHY:  Test-first per master prompt. Locks the contract:
  *       - eyebrow "Our story" + h2 with display headline
- *       - body copy naming Tracy and Mo Elbahgha and Shreveport 2008
+ *       - body copy naming Sam Gazawaneh and Shreveport 2008 origin
  *       - "Read our story" CTA pointing at /our-story
- *       - founders photo with descriptive alt mentioning Tracy and Mo
+ *       - storefront photo with descriptive alt naming the brand
+ *
+ *       Original tests asserted on Tracy & Mo Elbahgha — that was a
+ *       mis-attribution carried over from the lovable demo. Tracy & Mo
+ *       are franchisees of the Lansing, MI location; Sam Gazawaneh is
+ *       the actual founder. See MASTER_PROMPT_DEVIATIONS.md.
  */
 import { render, screen } from "@testing-library/react";
 import StoryTease from "@/components/sections/StoryTease";
@@ -16,17 +21,17 @@ describe("StoryTease", () => {
     expect(screen.getAllByText(/our story/i).length).toBeGreaterThan(0);
   });
 
-  it("renders an h2 headline mentioning eloping", () => {
+  it("renders an h2 headline mentioning the Taco Bell origin detail", () => {
     render(<StoryTease />);
     const h2 = screen.getByRole("heading", { level: 2 });
-    expect(h2.textContent?.toLowerCase()).toContain("eloped");
+    expect(h2.textContent?.toLowerCase()).toContain("taco bell");
   });
 
-  it("names Tracy and Mo Elbahgha and Shreveport / 2008", () => {
+  it("names Sam Gazawaneh and Shreveport / 2008", () => {
     render(<StoryTease />);
-    expect(screen.getByText(/tracy and mo/i)).toBeInTheDocument();
-    expect(screen.getByText(/elbahgha/i)).toBeInTheDocument();
-    expect(screen.getByText(/shreveport.*2008|2008.*shreveport/i)).toBeInTheDocument();
+    expect(screen.getByText(/sam gazawaneh/i)).toBeInTheDocument();
+    expect(screen.getByText(/shreveport/i)).toBeInTheDocument();
+    expect(screen.getByText(/2008/)).toBeInTheDocument();
   });
 
   it("links 'Read our story' to /our-story", () => {
@@ -35,11 +40,11 @@ describe("StoryTease", () => {
     expect(cta).toHaveAttribute("href", "/our-story");
   });
 
-  it("renders a founders image with alt text naming Tracy and Mo", () => {
+  it("renders a storefront image with alt text naming Sam's Southern Eatery", () => {
     render(<StoryTease />);
     const img = screen.getByRole("img");
     const alt = img.getAttribute("alt") ?? "";
-    expect(alt.toLowerCase()).toContain("tracy");
-    expect(alt.toLowerCase()).toContain("mo");
+    expect(alt.toLowerCase()).toContain("sam");
+    expect(alt.toLowerCase()).toContain("southern eatery");
   });
 });
