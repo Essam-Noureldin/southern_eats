@@ -52,13 +52,30 @@ describe("LocationFinder", () => {
     expect(dirLinks.length).toBe(LOCATIONS.length);
   });
 
-  it("does NOT render dietary filter chips while real per-location dietary data is pending", () => {
-    // No-synthetic-data policy: dietary chips reappear when LOCATIONS gains
-    // verified halal/gf/vegan flags. Until then they'd never narrow anything.
+  it("renders dietary filter chips so the feature is visible in the pitch demo", () => {
+    // Per-location dietary data is empty (no-synthetic-data policy) but the
+    // chips remain visible — the franchise gets to see the filter UX exists
+    // and only needs to provide per-branch tags for it to start narrowing.
     render(<LocationFinder locations={LOCATIONS} />);
     expect(
-      screen.queryByRole("button", { name: /halal-friendly/i }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("button", { name: /halal-friendly/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /gluten-free/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("activating a dietary chip while no location has tags shows an explanatory empty-state", async () => {
+    const user = userEvent.setup();
+    render(<LocationFinder locations={LOCATIONS} />);
+
+    await user.click(screen.getByRole("button", { name: /halal-friendly/i }));
+
+    // List narrows to zero (no location currently carries any dietary tag),
+    // and the empty-state copy explains why instead of dead-ending.
+    expect(
+      screen.getByText(/halal-friendly.*gluten-free.*vegan.*off by default/i),
+    ).toBeInTheDocument();
   });
 
   it("renders the lazy-loaded map stub", () => {

@@ -43,9 +43,14 @@ const formatTags = (tags: readonly DietaryTag[]): string =>
 export default function LocationList({ locations, hoveredId, onHover }: Props) {
   if (locations.length === 0) {
     return (
-      <p className="rounded-lg border border-charcoal/10 bg-cream/60 p-6 text-charcoal/70">
-        No locations match every filter you&apos;ve picked. Try removing one.
-      </p>
+      <div className="rounded-lg border border-charcoal/10 bg-cream/60 p-6 text-sm text-charcoal/70">
+        <p>No locations match every filter you&apos;ve picked.</p>
+        <p className="mt-2 text-xs text-charcoal/55">
+          Halal-friendly / gluten-free / vegan flags are off by default until
+          each branch confirms its options. Try clearing the dietary chips,
+          or filter by state alone.
+        </p>
+      </div>
     );
   }
 

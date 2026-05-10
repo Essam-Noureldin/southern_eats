@@ -18,7 +18,12 @@
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { sortByProximity, type LatLng } from "@/lib/distance";
-import { type Location } from "@/lib/locations";
+import {
+  filterLocations,
+  type DietaryTag,
+  type Location,
+} from "@/lib/locations";
+import DietaryFilter from "./DietaryFilter";
 import LocationList from "./LocationList";
 
 const LocationMap = dynamic(() => import("./LocationMap"), {
@@ -77,20 +82,29 @@ function deriveStatePresets(
 }
 
 export default function LocationFinder({ locations }: Props) {
+  const [active, setActive] = useState<DietaryTag[]>([]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [originState, setOriginState] = useState<string | null>(null);
+
+  const toggle = (tag: DietaryTag) =>
+    setActive((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
 
   const presets = useMemo(() => deriveStatePresets(locations), [locations]);
   const activePreset = presets.find((p) => p.code === originState) ?? null;
   const origin = activePreset?.coords ?? null;
 
-  // Narrow to the selected state if any. Both the list AND the map read
-  // from `filtered` so they stay in lockstep — selecting Texas drops every
-  // non-Texas pin from the map too.
+  // Apply dietary filter, then narrow to the selected state if any. Both
+  // the list AND the map read from `filtered` so they stay in lockstep.
+  // Note: until the franchise confirms per-branch dietary attributes, every
+  // location ships with dietary=[]. So picking a dietary chip currently
+  // narrows the list to empty — the LocationList empty-state explains it.
   const filtered = useMemo(() => {
-    if (!originState) return [...locations];
-    return locations.filter((l) => l.address.state === originState);
-  }, [locations, originState]);
+    const byDiet = filterLocations(locations, active);
+    if (!originState) return byDiet;
+    return byDiet.filter((l) => l.address.state === originState);
+  }, [locations, active, originState]);
 
   // Within the (possibly state-narrowed) set, still sort by proximity to
   // the state's flagship coords so cards within a state appear in a
@@ -118,8 +132,13 @@ export default function LocationFinder({ locations }: Props) {
           </h1>
           <p className="max-w-2xl text-base text-charcoal/75 md:text-lg">
             Hand-breaded jumbo shrimp shouldn&apos;t require a road trip.
-            Pick your state, scan the map, get directions in one tap.
+            Filter by what matters to you, jump to your state, get directions
+            in one tap.
           </p>
+        </div>
+
+        <div className="mb-4">
+          <DietaryFilter active={active} onToggle={toggle} />
         </div>
 
         <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-charcoal/70">
