@@ -36,20 +36,37 @@ export default function DishDetail({ slug }: { slug: string }) {
 
       <div className="grid gap-8 md:grid-cols-2 md:gap-12">
         <div className="relative aspect-square w-full overflow-hidden rounded-3xl bg-muted shadow-xl">
-          {/*
-           * Same view-transition-name as the matching DishCard image on
-           * /menu — the browser morphs from the grid thumbnail to this
-           * hero on navigation when document.startViewTransition fires.
-           */}
-          <Image
-            src={item.imageUrl}
-            alt={item.name}
-            fill
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-            priority
-            style={{ viewTransitionName: `dish-${item.id}` }}
-          />
+          {item.imageUrl ? (
+            /*
+             * Same view-transition-name as the matching DishCard image
+             * on /menu — the browser morphs from the grid thumbnail to
+             * this hero on navigation when document.startViewTransition
+             * fires.
+             */
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              priority
+              style={{ viewTransitionName: `dish-${item.id}` }}
+            />
+          ) : (
+            <div
+              aria-hidden="true"
+              className="flex h-full w-full flex-col items-center justify-center bg-cream p-10 text-center"
+              style={{ viewTransitionName: `dish-${item.id}` }}
+            >
+              <span className="font-display text-sm uppercase tracking-[0.3em] text-sams-red">
+                Sam&apos;s
+              </span>
+              <span className="mt-6 font-display text-4xl italic leading-tight text-charcoal md:text-5xl">
+                {item.name}
+              </span>
+              <span className="mt-6 h-px w-16 bg-sams-red/40" />
+            </div>
+          )}
           {item.signature ? (
             <span className="absolute left-4 top-4 rounded-full bg-butter px-3 py-1 text-xs font-bold uppercase tracking-wider text-charcoal">
               Signature
@@ -64,9 +81,11 @@ export default function DishDetail({ slug }: { slug: string }) {
           <h1 className="font-display text-5xl leading-tight md:text-6xl">
             {item.name}
           </h1>
-          <p className="mt-4 font-display text-3xl text-sams-red">
-            ${item.price.toFixed(2)}
-          </p>
+          {typeof item.price === "number" ? (
+            <p className="mt-4 font-display text-3xl text-sams-red">
+              ${item.price.toFixed(2)}
+            </p>
+          ) : null}
           <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
             {item.description}
           </p>

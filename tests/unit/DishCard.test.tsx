@@ -69,4 +69,21 @@ describe("DishCard", () => {
     render(<DishCard item={{ ...baseItem, tags: ["family-size"] }} />);
     expect(screen.getByText(/family size/i)).toBeInTheDocument();
   });
+
+  it("renders a typographic placeholder when imageUrl is missing", () => {
+    const itemNoImage: MenuItem = { ...baseItem };
+    delete itemNoImage.imageUrl;
+    render(<DishCard item={itemNoImage} />);
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    // Fallback area carries the dish name (and the article heading also
+    // does), so the name appears at least twice.
+    expect(screen.getAllByText(/test dish/i).length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("omits the price line when price is missing", () => {
+    const itemNoPrice: MenuItem = { ...baseItem };
+    delete itemNoPrice.price;
+    render(<DishCard item={itemNoPrice} />);
+    expect(screen.queryByText(/^\$\d/)).not.toBeInTheDocument();
+  });
 });

@@ -115,6 +115,25 @@
 }
 
 /*
+ * Signature badge pulse — applied to the butter-coloured "Signature"
+ * pill on DishCard / DishDetail. A soft 3s pulse on the box-shadow
+ * draws the eye to Sam's hero dishes without being noisy. Disabled
+ * for prefers-reduced-motion (the universal kill below catches it).
+ */
+@keyframes signature-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(232, 176, 72, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(232, 176, 72, 0);
+  }
+}
+
+.signature-pulse {
+  animation: signature-pulse 3s ease-in-out infinite;
+}
+
+/*
  * Drop-cap — editorial flourish used on the lead paragraph of
  * /our-story. The first letter of any element with .drop-cap floats
  * left in the display serif at large size, giving the page the feel
