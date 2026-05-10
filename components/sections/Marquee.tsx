@@ -17,7 +17,7 @@ import { Fragment } from "react";
 const PHRASES = [
   "Hand-breaded",
   "Fried gold",
-  "51 locations",
+  "41 locations",
   "11 states",
   "Since 2008",
 ] as const;

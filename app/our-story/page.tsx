@@ -18,9 +18,11 @@
  *   - The storefront photo (`/images/sams-storefront.jpg`) is a press
  *     photo from Stillwater News — same licensing flag as in
  *     StoryTease.tsx.
- *   - Stats line uses 51 / 9 / 2008 (the verified counts from
- *     samssoutherneatery.com /about). The rest of the site still uses
- *     41 / 11; reconcile in a follow-up branch.
+ *   - Stats line uses 41 / 11 / 2008 — the actual published list at
+ *     samssoutherneatery.com/locations. The brand's About-page tagline
+ *     claims "51 / 9" but their own location list shows 41 across 11
+ *     states; we trust the data, not the marketing copy. See the SOURCE
+ *     block at the top of `lib/locations.ts` for the same call.
  */
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -141,11 +143,11 @@ export default function OurStoryPage() {
         as="h2"
         className="mt-16 font-display text-3xl md:text-5xl"
       >
-        51 dining rooms. One kitchen at a time.
+        41 dining rooms. One kitchen at a time.
       </WeightShiftHeading>
 
       <p className="mt-6 text-lg leading-relaxed">
-        Sam&apos;s now runs 51 locations across nine Southern states, all
+        Sam&apos;s now runs 41 locations across eleven Southern states, all
         franchised after Shreveport. Sam still works a week in the kitchen
         of every new opening &mdash; sleeves up, comeback sauce on the
         apron, training the line by feel rather than by manual.
@@ -191,13 +193,13 @@ export default function OurStoryPage() {
           <dt className="text-xs uppercase tracking-widest text-muted-foreground">
             Locations
           </dt>
-          <dd className="mt-1 font-display text-3xl md:text-4xl">51</dd>
+          <dd className="mt-1 font-display text-3xl md:text-4xl">41</dd>
         </div>
         <div>
           <dt className="text-xs uppercase tracking-widest text-muted-foreground">
             States
           </dt>
-          <dd className="mt-1 font-display text-3xl md:text-4xl">9</dd>
+          <dd className="mt-1 font-display text-3xl md:text-4xl">11</dd>
         </div>
       </dl>
 

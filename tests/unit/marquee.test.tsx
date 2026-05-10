@@ -19,7 +19,7 @@ describe("Marquee", () => {
     // assert at least one occurrence of each.
     expect(screen.getAllByText(/hand-breaded/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/fried gold/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/51 locations/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/41 locations/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/11 states/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/since 2008/i).length).toBeGreaterThan(0);
   });
