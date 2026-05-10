@@ -76,7 +76,14 @@
   * {
     border-color: var(--color-border);
   }
-  html {
+  /*
+   * Smooth scrolling is keyed off the data-scroll-behavior attribute
+   * (set on <html> in app/layout.tsx) instead of being applied directly
+   * to `html`. Next.js toggles the attribute off during route
+   * transitions so the browser doesn't scroll mid-morph — without this,
+   * view transitions stutter when the URL change moves the page.
+   */
+  [data-scroll-behavior="smooth"] {
     scroll-behavior: smooth;
   }
   body {

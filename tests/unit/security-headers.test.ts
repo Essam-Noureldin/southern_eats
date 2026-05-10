@@ -62,4 +62,47 @@ describe("security headers", () => {
     expect(value).toContain("includeSubDomains");
     expect(value).toContain("preload");
   });
+
+  it("does NOT include 'unsafe-eval' in production CSP", () => {
+    // jest.isolateModules forces a fresh import so the module re-reads
+    // process.env.NODE_ENV at load time. Critical: a stale top-level
+    // import would have been frozen with NODE_ENV=test.
+    jest.isolateModules(() => {
+      const env = process.env as Record<string, string | undefined>;
+      const original = env["NODE_ENV"];
+      try {
+        // Bracket-notation assignment sidesteps the @types/node readonly
+        // declaration on NODE_ENV without an `as any` escape hatch.
+        env["NODE_ENV"] = "production";
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { securityHeaders: prodHeaders } = require("@/lib/security-headers");
+        const csp = prodHeaders.find(
+          (h: { key: string; value: string }) =>
+            h.key === "Content-Security-Policy",
+        )?.value;
+        expect(csp).not.toContain("'unsafe-eval'");
+      } finally {
+        env["NODE_ENV"] = original;
+      }
+    });
+  });
+
+  it("DOES include 'unsafe-eval' in development (so React's dev runtime works without CSP errors)", () => {
+    jest.isolateModules(() => {
+      const env = process.env as Record<string, string | undefined>;
+      const original = env["NODE_ENV"];
+      try {
+        env["NODE_ENV"] = "development";
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const { securityHeaders: devHeaders } = require("@/lib/security-headers");
+        const csp = devHeaders.find(
+          (h: { key: string; value: string }) =>
+            h.key === "Content-Security-Policy",
+        )?.value;
+        expect(csp).toContain("'unsafe-eval'");
+      } finally {
+        env["NODE_ENV"] = original;
+      }
+    });
+  });
 });

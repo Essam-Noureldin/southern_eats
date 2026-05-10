@@ -72,7 +72,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable}`}>
+    <html
+      lang="en"
+      className={`${fraunces.variable} ${dmSans.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>
         <div className="flex min-h-screen flex-col">
           <Navbar />

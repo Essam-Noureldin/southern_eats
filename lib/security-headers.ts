@@ -6,9 +6,15 @@
  * IF REMOVED: site is exposed to clickjacking (no X-Frame-Options),
  *       MIME-sniffing attacks (no X-Content-Type-Options), unrestricted
  *       script execution (no CSP), and downgrade attacks (no HSTS).
- * COMMON MISTAKE: adding 'unsafe-eval' to script-src to silence a CSP
- *       violation in dev — that defeats the entire CSP for production users.
+ * COMMON MISTAKE: adding 'unsafe-eval' to script-src unconditionally to
+ *       silence a CSP violation in dev — that would defeat the entire
+ *       CSP for production users. The dev-only gate below adds it ONLY
+ *       when NODE_ENV !== 'production', which is the right trade-off:
+ *       React's dev runtime calls eval() to reconstruct nicer error
+ *       stacks, production React never does.
  */
+
+const isProd = process.env.NODE_ENV === "production";
 
 /**
  * Content Security Policy directives.
@@ -21,7 +27,8 @@ const cspDirectives = [
   "default-src 'self'",
   // 'unsafe-inline' on script-src is required for Next.js inline bootstrap
   // scripts; nonces would be cleaner but require dynamic rendering.
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+  // 'unsafe-eval' is dev-only — see module docblock.
+  `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"} https://www.googletagmanager.com https://www.google-analytics.com`,
   "style-src 'self' 'unsafe-inline'",
   "font-src 'self'",
   // basemaps.cartocdn.com — MapLibre raster tile provider (free, no key).
