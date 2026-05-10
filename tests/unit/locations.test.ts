@@ -8,7 +8,7 @@
  * COMMON MISTAKE: asserting on a single hardcoded location's id —
  *       fragile to data edits. Assert on shape and on aggregates.
  */
-import { LOCATIONS, filterLocations, type DietaryTag } from "@/lib/locations";
+import { LOCATIONS, filterLocations } from "@/lib/locations";
 
 describe("LOCATIONS dataset", () => {
   it("has at least 8 entries (real franchise list as of 2026-05-10 = 41)", () => {
@@ -45,21 +45,7 @@ describe("filterLocations", () => {
     expect(filterLocations(LOCATIONS, []).length).toBe(LOCATIONS.length);
   });
 
-  it("returns empty array for tags with no public source confirmation", () => {
-    // No-synthetic-data policy: halal-fryer / gf-fryer / vegan-options are
-    // not advertised per-location anywhere we can verify, so they filter
-    // to empty until the franchise confirms per branch.
-    const unverifiedTags: DietaryTag[] = [
-      "halal-fryer",
-      "gf-fryer",
-      "vegan-options",
-    ];
-    for (const tag of unverifiedTags) {
-      expect(filterLocations(LOCATIONS, [tag])).toEqual([]);
-    }
-  });
-
-  it("returns the expected matching subset for tags that DO have public confirmation", () => {
+  it("returns the expected matching subset for tags that have public confirmation", () => {
     // Drive-thru explicitly confirmed at 2 locations (Mobile, Conway).
     const drivethru = filterLocations(LOCATIONS, ["drive-thru"]);
     expect(drivethru.length).toBeGreaterThanOrEqual(2);

@@ -52,30 +52,46 @@ describe("LocationFinder", () => {
     expect(dirLinks.length).toBe(LOCATIONS.length);
   });
 
-  it("renders dietary filter chips so the feature is visible in the pitch demo", () => {
-    // Per-location dietary data is empty (no-synthetic-data policy) but the
-    // chips remain visible — the franchise gets to see the filter UX exists
-    // and only needs to provide per-branch tags for it to start narrowing.
+  it("renders the two service-amenity chips (drive-thru, dine-in)", () => {
     render(<LocationFinder locations={LOCATIONS} />);
     expect(
-      screen.getByRole("button", { name: /halal-friendly/i }),
+      screen.getByRole("button", { name: /^drive-thru$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /gluten-free/i }),
+      screen.getByRole("button", { name: /^dine-in$/i }),
     ).toBeInTheDocument();
   });
 
-  it("activating a dietary chip while no location has tags shows an explanatory empty-state", async () => {
+  it("does NOT render the deprecated halal/gluten-free/vegan chips", () => {
+    render(<LocationFinder locations={LOCATIONS} />);
+    expect(
+      screen.queryByRole("button", { name: /halal/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /gluten-free/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /vegan/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("activating a service chip narrows the list to confirmed locations", async () => {
     const user = userEvent.setup();
     render(<LocationFinder locations={LOCATIONS} />);
 
-    await user.click(screen.getByRole("button", { name: /halal-friendly/i }));
+    await user.click(screen.getByRole("button", { name: /^drive-thru$/i }));
 
-    // List narrows to zero (no location currently carries any dietary tag),
-    // and the empty-state copy explains why instead of dead-ending.
-    expect(
-      screen.getByText(/halal-friendly.*gluten-free.*vegan.*off by default/i),
-    ).toBeInTheDocument();
+    // Mobile-AL and Conway-SC are the two confirmed drive-thru branches.
+    // Use heading-level lookup to dodge address text containing the city.
+    const headings = screen.getAllByRole("heading", { level: 2 });
+    const headingText = headings.map((h) => h.textContent).join("|");
+    expect(headingText).toMatch(/Mobile/i);
+    expect(headingText).toMatch(/Conway/i);
+    // No Texas branches should remain (none have drive-thru confirmed).
+    const texasBranches = LOCATIONS.filter((l) => l.address.state === "TX");
+    for (const tx of texasBranches) {
+      expect(headingText).not.toContain(tx.name);
+    }
   });
 
   it("renders the lazy-loaded map stub", () => {

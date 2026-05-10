@@ -10,12 +10,12 @@
  *
  * SOURCE: Addresses, names, and phone numbers below were lifted verbatim
  * from samssoutherneatery.com/locations on 2026-05-10. Coordinates were
- * geocoded via OpenStreetMap Nominatim. Hours and service tags were
- * researched per location on 2026-05-10 from publicly-available sources
- * (Google Maps business panels surfaced via search, official franchise
- * subdomains, Yelp listings, FindMeGlutenFree, local press). Where a
- * source did NOT confirm a value (drive-thru, halal-fryer, gf-fryer,
- * vegan-options), the field is left empty — we never synthesize.
+ * geocoded via OpenStreetMap Nominatim. Hours and service tags
+ * (drive-thru, dine-in) were researched per location on 2026-05-10 from
+ * publicly-available sources (Google Maps business panels surfaced via
+ * search, official franchise subdomains, Yelp listings, local press).
+ * Where a source did NOT explicitly confirm a value, the field is left
+ * empty — we never synthesize.
  *
  * The franchise's marketing line claims "51 locations across 9 states"
  * but the live locations page lists 41 across 11 states — we use the
@@ -29,12 +29,7 @@
  */
 import type { LatLng } from "./distance";
 
-export type DietaryTag =
-  | "halal-fryer"
-  | "gf-fryer"
-  | "vegan-options"
-  | "drive-thru"
-  | "dine-in";
+export type DietaryTag = "drive-thru" | "dine-in";
 
 export interface Hours {
   day: "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";

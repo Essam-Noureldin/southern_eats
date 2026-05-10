@@ -14,9 +14,6 @@
 import type { DietaryTag } from "@/lib/locations";
 
 const CHIPS: { value: DietaryTag; label: string }[] = [
-  { value: "halal-fryer", label: "Halal-friendly fryer" },
-  { value: "gf-fryer", label: "Gluten-free fryer" },
-  { value: "vegan-options", label: "Vegan options" },
   { value: "drive-thru", label: "Drive-thru" },
   { value: "dine-in", label: "Dine-in" },
 ];
