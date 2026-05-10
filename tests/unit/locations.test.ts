@@ -43,23 +43,21 @@ describe("filterLocations", () => {
     expect(filterLocations(LOCATIONS, []).length).toBe(LOCATIONS.length);
   });
 
-  it("narrows to locations carrying every requested dietary tag", () => {
-    const filters: DietaryTag[] = ["halal-fryer"];
-    const out = filterLocations(LOCATIONS, filters);
-    expect(out.length).toBeGreaterThan(0);
-    expect(out.length).toBeLessThanOrEqual(LOCATIONS.length);
-    for (const loc of out) {
-      expect(loc.dietary).toContain("halal-fryer");
-    }
-  });
-
-  it("treats multiple filters as AND not OR", () => {
-    const filters: DietaryTag[] = ["halal-fryer", "gf-fryer"];
-    const out = filterLocations(LOCATIONS, filters);
-    for (const loc of out) {
-      expect(loc.dietary).toEqual(
-        expect.arrayContaining(["halal-fryer", "gf-fryer"]),
-      );
+  it("returns empty array for any dietary tag while real data is pending", () => {
+    // No-synthetic-data policy: every location in LOCATIONS ships with
+    // dietary=[] until the franchise confirms which branches have halal /
+    // gluten-free fryer separation, vegan options, etc. Filter helper
+    // still works correctly — it just returns nothing because nothing
+    // carries any tag yet.
+    const tags: DietaryTag[] = [
+      "halal-fryer",
+      "gf-fryer",
+      "vegan-options",
+      "drive-thru",
+      "dine-in",
+    ];
+    for (const tag of tags) {
+      expect(filterLocations(LOCATIONS, [tag])).toEqual([]);
     }
   });
 

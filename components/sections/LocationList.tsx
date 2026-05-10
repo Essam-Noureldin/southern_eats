@@ -11,7 +11,7 @@
  *       mouse events. We also handle onFocus/onBlur so a keyboard tab
  *       through the cards triggers the same map-pin highlight.
  */
-import { directionsUrl, type Location } from "@/lib/locations";
+import { directionsUrl, type DietaryTag, type Location } from "@/lib/locations";
 import type { WithDistance } from "@/lib/distance";
 
 interface Props {
@@ -19,12 +19,6 @@ interface Props {
   hoveredId: string | null;
   onHover: (id: string | null) => void;
 }
-
-const formatDistanceKm = (km: number | null): string | null => {
-  if (km === null) return null;
-  if (km < 10) return `${km.toFixed(1)} km away`;
-  return `${Math.round(km)} km away`;
-};
 
 const todayHours = (loc: Location): string => {
   const days: Location["hours"][number]["day"][] = [
@@ -34,6 +28,17 @@ const todayHours = (loc: Location): string => {
   const slot = loc.hours.find((h) => h.day === today);
   return slot ? `${slot.open} – ${slot.close}` : "Closed today";
 };
+
+const TAG_LABELS: Record<DietaryTag, string> = {
+  "halal-fryer": "Halal-friendly",
+  "gf-fryer": "Gluten-free",
+  "vegan-options": "Vegan options",
+  "drive-thru": "Drive-thru",
+  "dine-in": "Dine-in",
+};
+
+const formatTags = (tags: readonly DietaryTag[]): string =>
+  tags.map((t) => TAG_LABELS[t]).join(", ");
 
 export default function LocationList({ locations, hoveredId, onHover }: Props) {
   if (locations.length === 0) {
@@ -48,7 +53,7 @@ export default function LocationList({ locations, hoveredId, onHover }: Props) {
     <ul role="list" className="flex flex-col gap-3">
       {locations.map((loc) => {
         const isHovered = hoveredId === loc.id;
-        const distance = formatDistanceKm(loc.distanceKm);
+        const tags = formatTags(loc.dietary);
         return (
           <li
             key={loc.id}
@@ -62,16 +67,9 @@ export default function LocationList({ locations, hoveredId, onHover }: Props) {
                 : "rounded-lg border border-charcoal/10 bg-cream p-4 transition-shadow hover:border-charcoal/25"
             }
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="font-display text-lg font-bold text-charcoal">
-                {loc.name}
-              </h2>
-              {distance ? (
-                <span className="text-xs font-medium uppercase tracking-wider text-sams-red">
-                  {distance}
-                </span>
-              ) : null}
-            </div>
+            <h2 className="font-display text-lg font-bold text-charcoal">
+              {loc.name}
+            </h2>
 
             <p className="mt-1 text-sm text-charcoal/75">
               {loc.address.street}, {loc.address.city}, {loc.address.state}{" "}
@@ -80,6 +78,9 @@ export default function LocationList({ locations, hoveredId, onHover }: Props) {
 
             <p className="mt-1 text-xs text-charcoal/60">
               <span className="font-semibold">Today:</span> {todayHours(loc)}
+              {tags ? (
+                <span className="text-charcoal/50"> ({tags})</span>
+              ) : null}
             </p>
 
             <div className="mt-3 flex flex-wrap gap-3 text-sm">

@@ -115,7 +115,7 @@ If we're unreachable for any reason:
 | | |
 |---|---|
 | Built by | Essam Noureldin |
-| Email | `onoureldin@gmail.com` |
+| Email | `esam.nourledin@gmail.com` |
 | Delivered | `[FILL — date]` |
 | Live since | `[FILL — date]` |
 | Retainer terms | `[FILL — see contract]` |

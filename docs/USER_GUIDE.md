@@ -131,7 +131,7 @@ A: It's responsive — phones see a stacked layout, desktops see a wider one. Sa
 A: Yes — we've layered security headers, HTTPS, content security policy, rate-limited the form, and added bot traps. Full details in `docs/SECURITY.md`.
 
 **Q: Who do I contact if something breaks?**
-A: Email Essam at `onoureldin@gmail.com`. Sentry alerts us to broken pages automatically, but a customer report is always welcome.
+A: Email Essam at `esam.nourledin@gmail.com`. Sentry alerts us to broken pages automatically, but a customer report is always welcome.
 
 ## What happens next
 

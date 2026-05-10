@@ -52,23 +52,13 @@ describe("LocationFinder", () => {
     expect(dirLinks.length).toBe(LOCATIONS.length);
   });
 
-  it("applying a halal-fryer filter narrows the list to halal-only locations", async () => {
-    const user = userEvent.setup();
+  it("does NOT render dietary filter chips while real per-location dietary data is pending", () => {
+    // No-synthetic-data policy: dietary chips reappear when LOCATIONS gains
+    // verified halal/gf/vegan flags. Until then they'd never narrow anything.
     render(<LocationFinder locations={LOCATIONS} />);
-
-    const halalToggle = screen.getByRole("button", { name: /halal/i });
-    await user.click(halalToggle);
-
-    const halalOnly = LOCATIONS.filter((l) => l.dietary.includes("halal-fryer"));
-    const nonHalal = LOCATIONS.filter(
-      (l) => !l.dietary.includes("halal-fryer"),
-    );
-    for (const loc of halalOnly) {
-      expect(screen.getByText(loc.name)).toBeInTheDocument();
-    }
-    for (const loc of nonHalal) {
-      expect(screen.queryByText(loc.name)).not.toBeInTheDocument();
-    }
+    expect(
+      screen.queryByRole("button", { name: /halal-friendly/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders the lazy-loaded map stub", () => {

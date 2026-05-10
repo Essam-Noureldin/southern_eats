@@ -115,4 +115,4 @@ Bots that fill every field give themselves away. Field name is shared between th
 
 ## Reporting a vulnerability
 
-Email `onoureldin@gmail.com` with details. Don't open a public GitHub issue.
+Email `esam.nourledin@gmail.com` with details. Don't open a public GitHub issue.

@@ -15,12 +15,12 @@
  * across 9 states" but the live locations page lists 41 across 11 states
  * — we use the actual published list, not the marketing copy.
  *
- * !!! DIETARY DATA IS ILLUSTRATIVE !!!
- * Halal-fryer / gf-fryer / vegan-options assignments below are educated
- * guesses based on metro size — none are verified with the franchise.
- * Before launch, ask each branch manager and replace this distribution
- * with confirmed data. Drive-thru / dine-in are conservative defaults
- * (almost every Sam's has both); also worth verifying.
+ * DIETARY: empty for every location until the franchise confirms which
+ * branches have halal/gluten-free fryer separation, vegan options, drive-
+ * thru, and dine-in. The data shape supports it; the chips render
+ * automatically once a branch's `dietary` array gains entries. We do NOT
+ * synthesize per-location dietary attributes — too misleading for visitors
+ * with real dietary needs (and for the franchise itself during the pitch).
  */
 import type { LatLng } from "./distance";
 
@@ -62,16 +62,6 @@ const STANDARD_HOURS: Hours[] = [
   { day: "Sun", open: "12:00", close: "20:00" },
 ];
 
-// Convenience tag bundles to keep the array below readable. Every location
-// has drive-thru + dine-in by default; the bigger-metro ones add halal /
-// gf / vegan flags (illustrative — not verified, see banner above).
-const BASE: DietaryTag[] = ["drive-thru", "dine-in"];
-const HALAL: DietaryTag[] = ["halal-fryer", ...BASE];
-const GF: DietaryTag[] = ["gf-fryer", ...BASE];
-const HALAL_GF: DietaryTag[] = ["halal-fryer", "gf-fryer", ...BASE];
-const VEGAN: DietaryTag[] = ["vegan-options", ...BASE];
-const FULL: DietaryTag[] = ["halal-fryer", "gf-fryer", "vegan-options", ...BASE];
-
 export const LOCATIONS: readonly Location[] = [
   {
     id: "jackson-raymond-rd-ms",
@@ -80,7 +70,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(769) 257-6578",
     coords: { lat: 32.283393, lng: -90.228307 },
     hours: STANDARD_HOURS,
-    dietary: GF,
+    dietary: [],
   },
   {
     id: "st-louis-gravois-mo",
@@ -89,7 +79,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(314) 659-8619",
     coords: { lat: 38.5935516, lng: -90.2426147 },
     hours: STANDARD_HOURS,
-    dietary: FULL,
+    dietary: [],
   },
   {
     id: "springfield-glenstone-mo",
@@ -98,7 +88,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(417) 319-5334",
     coords: { lat: 37.2272686, lng: -93.2614594 },
     hours: STANDARD_HOURS,
-    dietary: VEGAN,
+    dietary: [],
   },
   {
     id: "mobile-dauphin-al",
@@ -107,7 +97,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(251) 525-9985",
     coords: { lat: 30.6894803, lng: -88.1189346 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "opelika-1st-ave-al",
@@ -116,7 +106,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(334) 363-0708",
     coords: { lat: 32.6473412, lng: -85.3834723 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "eufaula-s-eufaula-ave-al",
@@ -125,7 +115,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(334) 232-4417",
     coords: { lat: 31.8892025, lng: -85.1451299 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "shreveport-greenwood-rd-la",
@@ -134,7 +124,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 631-7782",
     coords: { lat: 32.4522114, lng: -93.8622371 },
     hours: STANDARD_HOURS,
-    dietary: HALAL_GF,
+    dietary: [],
   },
   {
     id: "vivian-hwy-1-la",
@@ -143,7 +133,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 375-2094",
     coords: { lat: 32.9040266, lng: -93.9821626 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "springhill-n-arkansas-la",
@@ -152,7 +142,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 539-2558",
     coords: { lat: 33.0176462, lng: -93.4670037 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "shreveport-70th-la",
@@ -161,7 +151,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 670-7285",
     coords: { lat: 32.441906, lng: -93.771725 },
     hours: STANDARD_HOURS,
-    dietary: HALAL,
+    dietary: [],
   },
   {
     id: "bossier-city-barksdale-la",
@@ -170,7 +160,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 658-9980",
     coords: { lat: 32.4987967, lng: -93.6920769 },
     hours: STANDARD_HOURS,
-    dietary: GF,
+    dietary: [],
   },
   {
     id: "alexandria-lee-st-la",
@@ -179,7 +169,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 704-0027",
     coords: { lat: 31.263516, lng: -92.447745 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "port-allen-lobdell-la",
@@ -188,7 +178,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(225) 218-6570",
     coords: { lat: 30.4639195, lng: -91.2112302 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "baton-rouge-sherwood-la",
@@ -197,7 +187,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(225) 256-1460",
     coords: { lat: 30.4241713, lng: -91.0520439 },
     hours: STANDARD_HOURS,
-    dietary: HALAL_GF,
+    dietary: [],
   },
   {
     id: "harvey-westbank-la",
@@ -206,7 +196,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(504) 510-2900",
     coords: { lat: 29.8952734, lng: -90.0888914 },
     hours: STANDARD_HOURS,
-    dietary: VEGAN,
+    dietary: [],
   },
   {
     id: "slidell-pontchartrain-la",
@@ -215,7 +205,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(985) 201-7446",
     coords: { lat: 30.2616521, lng: -89.7854777 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "laplace-belle-terre-la",
@@ -224,7 +214,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(985) 359-1677",
     coords: { lat: 30.0750712, lng: -90.5006304 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "niles-youngstown-warren-oh",
@@ -233,7 +223,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(330) 349-4129",
     coords: { lat: 41.2079699, lng: -80.7445049 },
     hours: STANDARD_HOURS,
-    dietary: VEGAN,
+    dietary: [],
   },
   {
     id: "youngstown-south-ave-oh",
@@ -242,7 +232,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(330) 333-3049",
     coords: { lat: 41.0724471, lng: -80.645842 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "beaumont-college-tx",
@@ -251,7 +241,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(409) 832-5050",
     coords: { lat: 30.0680399, lng: -94.1164765 },
     hours: STANDARD_HOURS,
-    dietary: HALAL,
+    dietary: [],
   },
   {
     id: "pampa-hobart-tx",
@@ -260,7 +250,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 419-3005",
     coords: { lat: 35.5316396, lng: -100.9716636 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "nacogdoches-north-st-tx",
@@ -269,7 +259,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(936) 205-3113",
     coords: { lat: 31.6135681, lng: -94.6529476 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "amarillo-teckla-tx",
@@ -278,7 +268,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 437-1349",
     coords: { lat: 35.1651255, lng: -101.8874605 },
     hours: STANDARD_HOURS,
-    dietary: GF,
+    dietary: [],
   },
   {
     id: "dumas-us-87-tx",
@@ -287,7 +277,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 934-5740",
     coords: { lat: 35.8636971, lng: -102.0120126 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "lufkin-timberland-tx",
@@ -296,7 +286,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(936) 899-5066",
     coords: { lat: 31.3336313, lng: -94.7204745 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "lubbock-50th-w-tx",
@@ -305,7 +295,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 701-2432",
     coords: { lat: 33.5491922, lng: -101.917807 },
     hours: STANDARD_HOURS,
-    dietary: HALAL,
+    dietary: [],
   },
   {
     id: "lubbock-50th-e-tx",
@@ -314,7 +304,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(806) 701-1444",
     coords: { lat: 33.5487028, lng: -101.8430336 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "haltom-city-denton-tx",
@@ -323,7 +313,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(817) 393-7714",
     coords: { lat: 32.8301031, lng: -97.2642219 },
     hours: STANDARD_HOURS,
-    dietary: HALAL_GF,
+    dietary: [],
   },
   {
     id: "texarkana-new-boston-tx",
@@ -332,7 +322,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(903) 255-7735",
     coords: { lat: 33.4358615, lng: -94.080738 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "brownwood-clements-tx",
@@ -341,7 +331,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(325) 203-5120",
     coords: { lat: 31.7286673, lng: -98.9800814 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "conway-us-701-sc",
@@ -350,7 +340,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(843) 438-8678",
     coords: { lat: 33.8655387, lng: -79.0539054 },
     hours: STANDARD_HOURS,
-    dietary: GF,
+    dietary: [],
   },
   {
     id: "norman-w-main-ok",
@@ -359,7 +349,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(405) 561-7400",
     coords: { lat: 35.2183695, lng: -97.4484078 },
     hours: STANDARD_HOURS,
-    dietary: HALAL,
+    dietary: [],
   },
   {
     id: "midwest-city-ne-10th-ok",
@@ -368,7 +358,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(405) 519-5153",
     coords: { lat: 35.478614, lng: -97.3622215 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "ada-mississippi-ave-ok",
@@ -377,7 +367,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(580) 453-7033",
     coords: { lat: 34.7690384, lng: -96.669791 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "siloam-springs-us-412-ar",
@@ -386,7 +376,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 373-2362",
     coords: { lat: 36.1803271, lng: -94.4975602 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "dardanelle-ar-22-ar",
@@ -395,7 +385,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 477-3020",
     coords: { lat: 35.2287632, lng: -93.1685341 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "fort-smith-phoenix-ar",
@@ -404,7 +394,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 769-2786",
     coords: { lat: 35.3392891, lng: -94.4172164 },
     hours: STANDARD_HOURS,
-    dietary: GF,
+    dietary: [],
   },
   {
     id: "little-rock-baseline-ar",
@@ -413,7 +403,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(501) 562-2255",
     coords: { lat: 34.6691629, lng: -92.3467677 },
     hours: STANDARD_HOURS,
-    dietary: HALAL,
+    dietary: [],
   },
   {
     id: "russellville-parkway-ar",
@@ -422,7 +412,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(479) 498-4746",
     coords: { lat: 35.2823365, lng: -93.1010019 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "wood-river-vaughn-il",
@@ -431,7 +421,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(618) 251-8011",
     coords: { lat: 38.8658713, lng: -90.069513 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
   {
     id: "havelock-w-main-nc",
@@ -440,7 +430,7 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(252) 652-6108",
     coords: { lat: 34.8893736, lng: -76.9207378 },
     hours: STANDARD_HOURS,
-    dietary: BASE,
+    dietary: [],
   },
 ];
 
