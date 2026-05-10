@@ -1,22 +1,27 @@
 "use client";
 
 /**
- * WHAT: Client orchestrator for /menu. Owns three pieces of behaviour
- *       on top of the basic category-grouped grid:
+ * WHAT: Client orchestrator for /menu. Owns four pieces of behaviour
+ *       on top of the static server-rendered shell:
  *         1. A search box that filters items by name + description.
  *         2. A sticky category nav rail (pills under the navbar) with
  *            scroll-spy — the pill matching the section currently in
  *            view gets the active treatment.
- *         3. An empty-state message when no items match the search.
+ *         3. Per-category horizontal carousels — each row scrolls
+ *            sideways with native CSS snap-x; prev/next arrow buttons
+ *            on md+ scroll the row programmatically. Touch swipes on
+ *            mobile, mouse-wheel + trackpad on desktop, no JS carousel
+ *            library.
+ *         4. An empty-state message when no items match the search.
  *       Each category section is wrapped in <Revealable> so the
  *       category fades up as it enters the viewport.
- * WHY:  The static server-rendered grid was a wall of cards with no
- *       affordance for finding a specific dish or skimming the
- *       structure. Search + scroll-spy nav turn the menu from a
- *       reference document into an exploration surface, which is what
- *       the brand voice asks for. Render still happens server-side on
- *       initial load (this client component receives data via props,
- *       so the items are in the SSR HTML for SEO).
+ * WHY:  Static grid felt like a spec sheet. Per-category horizontal
+ *       carousels turn the menu into a discovery surface — the same
+ *       Netflix-style row-and-card pattern users already understand,
+ *       reusing the CSS-only scroll-snap idiom from the homepage
+ *       DishCarousel. Render still happens server-side on initial
+ *       load (this client component receives data via props, so the
+ *       items are in the SSR HTML for SEO).
  * IF REMOVED: /menu degrades to the previous static grid.
  * COMMON MISTAKE: setting the active-category state inside an effect
  *       on mount (the React 19 lint rule react-hooks/set-state-in-effect
@@ -96,6 +101,24 @@ export default function MenuExperience({ items, categories }: Props) {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // Stored separately from sectionRefs because the carousel scrolls
+  // sideways on a different element than the one the scroll-spy
+  // observes (the section header is what triggers the spy; the
+  // overflow-x container is what the arrow buttons scroll).
+  const railRefs = useRef(new Map<Category, HTMLDivElement>());
+
+  function nudgeRail(catId: Category, direction: 1 | -1) {
+    const rail = railRefs.current.get(catId);
+    if (!rail) return;
+    // Scroll by ~80% of the rail's visible width so the next group of
+    // cards animates into view but the user keeps a foothold on what
+    // they were just looking at.
+    rail.scrollBy({
+      left: rail.clientWidth * 0.8 * direction,
+      behavior: "smooth",
+    });
+  }
+
   return (
     <div>
       <div className="sticky top-16 z-20 -mx-4 mb-12 border-y border-border bg-cream/95 backdrop-blur md:-mx-8">
@@ -156,24 +179,55 @@ export default function MenuExperience({ items, categories }: Props) {
               className="mb-16 scroll-mt-40 last:mb-0"
             >
               <Revealable>
-                <h2
-                  id={`menu-cat-${cat.id}`}
-                  className="mb-6 font-display text-3xl md:text-4xl"
+                <div className="mb-6 flex items-end justify-between gap-4">
+                  <h2
+                    id={`menu-cat-${cat.id}`}
+                    className="font-display text-3xl md:text-4xl"
+                  >
+                    {cat.label}
+                  </h2>
+                  <div className="hidden gap-2 md:flex">
+                    <button
+                      type="button"
+                      onClick={() => nudgeRail(cat.id, -1)}
+                      aria-label={`Scroll ${cat.label} left`}
+                      className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-charcoal transition-colors hover:border-sams-red/60 hover:bg-cream"
+                    >
+                      <span aria-hidden="true">&larr;</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => nudgeRail(cat.id, 1)}
+                      aria-label={`Scroll ${cat.label} right`}
+                      className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-charcoal transition-colors hover:border-sams-red/60 hover:bg-cream"
+                    >
+                      <span aria-hidden="true">&rarr;</span>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  ref={(el: HTMLDivElement | null) => {
+                    if (el) railRefs.current.set(cat.id, el);
+                    else railRefs.current.delete(cat.id);
+                  }}
+                  className="-mx-4 overflow-x-auto md:-mx-8"
                 >
-                  {cat.label}
-                </h2>
-                <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {catItems.map((item) => (
-                    <li key={item.id} className="list-none">
-                      <DishLink
-                        href={`/menu/${item.id}`}
-                        className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
+                  <ul className="flex snap-x snap-mandatory gap-4 px-4 pb-4 md:gap-6 md:px-8">
+                    {catItems.map((item) => (
+                      <li
+                        key={item.id}
+                        className="w-[78%] shrink-0 list-none snap-start sm:w-[45%] md:w-[31%] lg:w-[24%]"
                       >
-                        <DishCard item={item} />
-                      </DishLink>
-                    </li>
-                  ))}
-                </ul>
+                        <DishLink
+                          href={`/menu/${item.id}`}
+                          className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
+                        >
+                          <DishCard item={item} />
+                        </DishLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </Revealable>
             </section>
           );

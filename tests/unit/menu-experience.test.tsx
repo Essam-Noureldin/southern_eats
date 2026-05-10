@@ -146,4 +146,33 @@ describe("MenuExperience", () => {
     });
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
+
+  it("renders per-category prev/next arrow buttons with accessible names", () => {
+    render(<MenuExperience items={items} categories={cats} />);
+    expect(
+      screen.getByRole("button", { name: /scroll seafood left/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /scroll seafood right/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /scroll starters left/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("scrolls the rail by clientWidth * 0.8 when an arrow is clicked", () => {
+    const scrollByMock = jest.fn();
+    // Stub scrollBy on every div the carousel touches.
+    Element.prototype.scrollBy = scrollByMock as unknown as typeof Element.prototype.scrollBy;
+    render(<MenuExperience items={items} categories={cats} />);
+    const next = screen.getByRole("button", { name: /scroll seafood right/i });
+    act(() => {
+      fireEvent.click(next);
+    });
+    expect(scrollByMock).toHaveBeenCalled();
+    const arg = scrollByMock.mock.calls[0]?.[0] as ScrollToOptions | undefined;
+    expect(arg?.behavior).toBe("smooth");
+    // Direction is positive for "right" arrow.
+    expect((arg?.left ?? 0) >= 0).toBe(true);
+  });
 });

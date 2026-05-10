@@ -1,0 +1,253 @@
+================================================================
+Sam's Southern Eatery — image prompts for menu items
+================================================================
+
+Use these prompts in Midjourney, DALL-E, Adobe Firefly, Imagen, etc.
+to generate the missing dish photography. Once each image is ready:
+
+  1. Save as public/images/dish-<slug>.jpeg matching the slug below
+  2. Compress to ~600KB at quality 80 via squoosh.app
+  3. Open lib/menu.ts, find the matching entry, add
+     imageUrl: "/images/dish-<slug>.jpeg"
+  4. Hard-refresh /menu — typographic placeholder swaps to the photo,
+     view-transition morph starts working too
+
+
+----------------------------------------------------------------
+HOUSE STYLE PREAMBLE — prepend to every prompt below
+----------------------------------------------------------------
+
+Editorial food photography for Sam's Southern Eatery. Warm natural
+window light, weathered honey-colored wood or cream linen surface,
+slight overhead angle (~30°), hand-breaded golden fry color, generous
+Southern portions, no people, no text overlay, 1:1 square crop, true-
+to-life food styling. Side ramekin of comeback sauce, ranch, or
+remoulade where it makes sense.
+
+
+----------------------------------------------------------------
+APPETIZERS
+----------------------------------------------------------------
+
+dish-friedmushrooms.jpeg
+  A heaping red-checkered paper basket of crispy hand-battered button
+  mushrooms fried golden brown, with a small ramekin of ranch on the
+  side.
+
+dish-onionrings.jpeg
+  A loose stack of thick-cut hand-battered onion rings, golden and
+  crispy, on a cream stoneware plate with a light salt dusting visible.
+
+dish-cheddarpoppers.jpeg
+  Eight golden-fried cheddar cheese poppers on a cream stoneware
+  plate, one cracked open showing molten orange cheese pulling, small
+  ramekin of marinara.
+
+dish-cheesesticks.jpeg
+  Six golden-fried mozzarella cheese sticks on a cream plate, one
+  bitten in half mid-cheese-pull, marinara ramekin beside.
+
+dish-appetizersampler.jpeg
+  A sampler platter on a long cream stoneware tray: fried green
+  tomatoes, hush puppies, and fried pickles arranged in three
+  groupings, with two ramekins of comeback sauce and ranch.
+
+
+----------------------------------------------------------------
+SALADS
+----------------------------------------------------------------
+
+dish-shrimpsalad.jpeg
+  A generous cream stoneware bowl of mixed greens topped with eight
+  golden hand-breaded fried shrimp, cherry tomatoes, cucumber, red
+  onion; dressing in a small side cup.
+
+dish-fishsalad.jpeg
+  Same bowl as above but topped with golden cornmeal-fried fish
+  fillets, sliced.
+
+dish-chickensalad.jpeg
+  Same bowl but topped with sliced golden hand-breaded fried chicken
+  strips.
+
+dish-greensalad.jpeg
+  A bright cream stoneware bowl of mixed crisp greens, cherry
+  tomatoes, cucumber, julienned carrot, red onion; ranch ramekin on
+  the side.
+
+
+----------------------------------------------------------------
+SEAFOOD
+----------------------------------------------------------------
+
+dish-fourpiecefish.jpeg
+  Four golden cornmeal-crusted fish fillets fresh from the fryer on a
+  cream stoneware plate, with red beans & rice and coleslaw bowls,
+  lemon wedge, tartar sauce.
+
+dish-tilapia.jpeg
+  Two golden cornmeal-crusted whole tilapia fillets on a cream
+  stoneware platter, with hush puppies, coleslaw, lemon wedge.
+
+dish-wholecatfish.jpeg
+  Two whole catfish fried bone-in, crisp golden cornmeal coating, on
+  a cream stoneware platter with hush puppies, coleslaw, lemon wedge.
+
+dish-crabcakes.jpeg
+  Three pan-seared lump crab cakes with a golden crust on a cream
+  stoneware plate, dollop of remoulade, lemon wedge.
+
+
+----------------------------------------------------------------
+SEAFOOD COMBOS
+----------------------------------------------------------------
+
+dish-fishshrimp-combo.jpeg
+  Combo plate: one golden fish fillet + five hand-breaded jumbo
+  shrimp on a cream stoneware platter, with hush puppies, red beans &
+  rice, lemon wedge, comeback sauce ramekin.
+
+dish-fishoyster-combo.jpeg
+  One golden fish fillet + four fried Gulf oysters, with hush
+  puppies, coleslaw, lemon wedge, remoulade ramekin.
+
+dish-shrimpoyster-combo.jpeg
+  Five jumbo shrimp + four fried oysters, with hush puppies, red
+  beans & rice, lemon wedge, remoulade ramekin.
+
+dish-trinity-combo.jpeg  (SIGNATURE)
+  The full Sam's plate, heaping cream stoneware platter: one golden
+  fish fillet, four hand-breaded jumbo shrimp, four fried oysters,
+  hush puppies, red beans & rice, lemon wedge, comeback sauce
+  ramekin. Make it look generous and abundant.
+
+
+----------------------------------------------------------------
+CHICKEN & WINGS
+----------------------------------------------------------------
+
+dish-wings-plain.jpeg
+  Five golden bone-in fried chicken wings, plain, on a cream
+  stoneware plate with celery sticks and a ranch ramekin.
+
+dish-wings-buffalo.jpeg
+  Five bone-in wings glossed in vibrant orange-red Buffalo sauce, on
+  a cream stoneware plate with celery sticks and a blue cheese
+  dressing ramekin.
+
+dish-wings-lemonpepper.jpeg
+  Five bone-in wings dusted with cracked black pepper and lemon zest,
+  golden-brown, on a cream stoneware plate with lemon wedges and
+  ranch.
+
+dish-friedlivers.jpeg
+  A heap of crispy golden-brown fried chicken livers on a cream
+  stoneware plate, side of mashed potatoes with peppered gravy.
+  Southern diner aesthetic.
+
+dish-friedgizzards.jpeg
+  A heap of crispy golden-brown fried chicken gizzards on a cream
+  stoneware plate, small ramekin of hot sauce. Southern diner
+  aesthetic.
+
+dish-livergizzard-combo.jpeg
+  Half-and-half plate of crispy fried chicken livers and gizzards on
+  a cream stoneware plate with mashed potatoes and a hot sauce
+  ramekin.
+
+
+----------------------------------------------------------------
+PO'BOYS
+----------------------------------------------------------------
+
+dish-friedchickenpoboy.jpeg
+  A toasted French roll po'boy stuffed with golden hand-breaded fried
+  chicken, lettuce, tomato, pickles, remoulade — cut at an angle to
+  show the cross-section. Cream stoneware plate.
+
+dish-gyropoboy.jpeg
+  A toasted French roll po'boy stuffed with sliced gyro meat,
+  lettuce, tomato, red onion, tzatziki — cut to show the cross-
+  section. Cream stoneware plate.
+
+
+----------------------------------------------------------------
+BURGERS & SANDWICHES
+----------------------------------------------------------------
+
+dish-phillysteak.jpeg
+  A toasted hoagie roll filled with sliced ribeye, sautéed peppers
+  and onions, and melted provolone with a dramatic cheese pull. Cut
+  at an angle, cream stoneware plate.
+
+dish-phillychicken.jpeg
+  Same composition, sliced chicken instead of ribeye. Cream stoneware
+  plate.
+
+
+----------------------------------------------------------------
+FAMILY PORTIONS
+----------------------------------------------------------------
+
+dish-familyfish-24.jpeg
+  A massive shareable platter piled with twenty-four golden cornmeal-
+  crusted catfish fillets, surrounded by hush puppies. Two large
+  cream stoneware bowls beside it: red beans & rice + coleslaw.
+  Top-down shot on weathered wood.
+
+dish-familyshrimp-40.jpeg
+  A massive shareable platter piled with forty hand-breaded jumbo
+  shrimp fried golden, hush puppies around the edge, two large bowls
+  of fries + coleslaw beside. Top-down.
+
+dish-familywings.jpeg
+  A shareable platter piled with twenty golden bone-in fried chicken
+  wings, two large cream stoneware bowls of mashed potatoes + green
+  beans. Top-down.
+
+dish-familystrips.jpeg
+  A shareable platter piled with twenty golden hand-breaded chicken
+  strips, two large bowls of fries + coleslaw, ramekins of honey
+  mustard and ranch. Top-down.
+
+
+----------------------------------------------------------------
+SIDES
+----------------------------------------------------------------
+
+dish-mashedpotatoes.jpeg
+  A small cream stoneware bowl of fluffy buttery whipped potatoes
+  with a generous pour of peppered cream gravy, single pat of butter
+  melting on top.
+
+dish-greenbeans.jpeg
+  A small cream stoneware bowl of slow-cooked Southern-style green
+  beans with visible bits of smoked turkey, glistening.
+
+dish-maccheese.jpeg
+  A small cream stoneware bowl of three-cheese baked macaroni with a
+  golden bubbly crust on top, fork lifting a portion mid-cheese-pull.
+
+
+----------------------------------------------------------------
+KIDS
+----------------------------------------------------------------
+
+dish-kidsfish.jpeg
+  A kid-sized cream stoneware plate: two small golden fish fillets,
+  a pile of crinkle fries, kids' cup with striped paper straw.
+  Friendly, cheerful styling.
+
+dish-kidsnuggets.jpeg
+  Same plate format: six golden chicken nuggets, crinkle fries,
+  ketchup ramekin, kids' cup with paper straw.
+
+dish-kidsgrilled.jpeg
+  Same plate format: a classic grilled cheese cut into triangles
+  (cheese visible at the cut), crinkle fries, kids' cup with paper
+  straw.
+
+
+================================================================
+END
+================================================================
