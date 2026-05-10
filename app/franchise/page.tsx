@@ -24,6 +24,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
+import FranchiseStatGrid from "@/components/sections/FranchiseStatGrid";
 import WeightShiftHeading from "@/components/typography/WeightShiftHeading";
 
 export const metadata: Metadata = {
@@ -31,13 +32,6 @@ export const metadata: Metadata = {
   description:
     "Bring Sam's Southern Eatery to your town. 41 locations across 11 states, founded 2008. $25k franchise fee, 6% royalty, 50k population territory protection.",
 };
-
-const TERMS = [
-  { value: "$25k", label: "Franchise fee" },
-  { value: "6%", label: "Royalty" },
-  { value: "50k", label: "Population territory" },
-  { value: "2008", label: "Founded" },
-] as const;
 
 const MARQUEE_PHRASES = [
   "Operators wanted",
@@ -126,18 +120,7 @@ export default function FranchisePage() {
             The numbers, plainly.
           </WeightShiftHeading>
 
-          <dl className="mt-10 grid grid-cols-2 gap-8 border-t border-cream/20 pt-10 md:grid-cols-4 md:gap-6">
-            {TERMS.map((t) => (
-              <div key={t.label}>
-                <dt className="text-xs uppercase tracking-widest opacity-70">
-                  {t.label}
-                </dt>
-                <dd className="mt-1 font-display text-5xl md:text-7xl">
-                  {t.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+          <FranchiseStatGrid />
 
           <p className="mt-10 max-w-3xl text-lg leading-relaxed opacity-90 md:text-xl">
             No surprise line items. No percentage that creeps after year
