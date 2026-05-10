@@ -53,62 +53,52 @@ export const categories: { id: Category; label: string }[] = [
   { id: "drinks", label: "Drinks" },
 ];
 
-const IMG = {
-  catfish: "/images/dish-catfish.jpg",
-  shrimp: "/images/hero-shrimp.jpg",
-  samspecial: "/images/dish-samspecial.jpg",
-  poboy: "/images/dish-poboy.jpg",
-  greentom: "/images/dish-greentomatoes.jpg",
-  family: "/images/dish-familyfry.jpg",
-  chicken: "/images/dish-chicken.jpg",
-} as const;
-
 export const menu: MenuItem[] = [
   // Appetizers
-  { id: "fried-green-tomatoes", category: "appetizers", name: "Fried Green Tomatoes", description: "Sliced thick, cornmeal-battered, served with comeback sauce.", price: 5.99, imageUrl: IMG.greentom, tags: ["gf"], signature: true },
-  { id: "hush-puppies", category: "appetizers", name: "Hush Puppies (8)", description: "Cornmeal fritters fried golden, with honey butter on the side.", price: 3.49, imageUrl: IMG.greentom, tags: [] },
-  { id: "fried-pickles", category: "appetizers", name: "Fried Dill Pickles", description: "Hand-battered dill chips fried crisp, with ranch.", price: 4.99, imageUrl: IMG.greentom, tags: [] },
-  { id: "gumbo-cup", category: "appetizers", name: "Cup of Gumbo", description: "Dark roux, shrimp, andouille, okra, served over rice.", price: 5.49, imageUrl: IMG.greentom, tags: ["shellfish", "spicy"] },
+  { id: "fried-green-tomatoes", category: "appetizers", name: "Fried Green Tomatoes", description: "Sliced thick, cornmeal-battered, served with comeback sauce.", price: 5.99, imageUrl: "/images/dish-greentomatoes.jpeg", tags: ["gf"], signature: true },
+  { id: "hush-puppies", category: "appetizers", name: "Hush Puppies (8)", description: "Cornmeal fritters fried golden, with honey butter on the side.", price: 3.49, imageUrl: "/images/dish-hushpuppies.jpeg", tags: [] },
+  { id: "fried-pickles", category: "appetizers", name: "Fried Dill Pickles", description: "Hand-battered dill chips fried crisp, with ranch.", price: 4.99, imageUrl: "/images/dish-friedpickles.jpeg", tags: [] },
+  { id: "gumbo-cup", category: "appetizers", name: "Cup of Gumbo", description: "Dark roux, shrimp, andouille, okra, served over rice.", price: 5.49, imageUrl: "/images/dish-gumbo.jpg", tags: ["shellfish", "spicy"] },
 
   // Seafood
-  { id: "jumbo-shrimp-15", category: "seafood", name: "Jumbo Shrimp (15)", description: "Hand-breaded jumbo shrimp, fried gold, served with hush puppies and your choice of two sides.", price: 13.99, imageUrl: IMG.shrimp, tags: ["shellfish"], signature: true },
-  { id: "catfish-4pc", category: "seafood", name: "Catfish Platter (4 fillets)", description: "Cornmeal-crusted Mississippi catfish, fried hot to order, with red beans and rice.", price: 11.49, imageUrl: IMG.catfish, tags: [], signature: true },
-  { id: "sams-special-25", category: "seafood", name: "Sam's Special 25", description: "25 baby shrimp tossed in our proprietary house sauce. Sweet, spicy, addictive.", price: 12.99, imageUrl: IMG.samspecial, tags: ["shellfish", "spicy"], signature: true },
-  { id: "fried-oysters", category: "seafood", name: "Fried Oysters (8)", description: "Plump Gulf oysters, cornmeal-dredged, fried light. With remoulade.", price: 14.49, imageUrl: IMG.shrimp, tags: ["shellfish"] },
-  { id: "stuffed-crab", category: "seafood", name: "Stuffed Crab (2)", description: "Lump crab, breadcrumbs, the trinity. Baked until golden.", price: 9.99, imageUrl: IMG.catfish, tags: ["shellfish"] },
+  { id: "jumbo-shrimp-15", category: "seafood", name: "Jumbo Shrimp (15)", description: "Hand-breaded jumbo shrimp, fried gold, served with hush puppies and your choice of two sides.", price: 13.99, imageUrl: "/images/dish-jumboshrimp-square.jpeg", tags: ["shellfish"], signature: true },
+  { id: "catfish-4pc", category: "seafood", name: "Catfish Platter (4 fillets)", description: "Cornmeal-crusted Mississippi catfish, fried hot to order, with red beans and rice.", price: 11.49, imageUrl: "/images/dish-catfish.jpeg", tags: [], signature: true },
+  { id: "sams-special-25", category: "seafood", name: "Sam's Special 25", description: "25 baby shrimp tossed in our proprietary house sauce. Sweet, spicy, addictive.", price: 12.99, imageUrl: "/images/dish-samspecial.jpeg", tags: ["shellfish", "spicy"], signature: true },
+  { id: "fried-oysters", category: "seafood", name: "Fried Oysters (8)", description: "Plump Gulf oysters, cornmeal-dredged, fried light. With remoulade.", price: 14.49, imageUrl: "/images/dish-friedoysters.jpeg", tags: ["shellfish"] },
+  { id: "stuffed-crab", category: "seafood", name: "Stuffed Crab (2)", description: "Lump crab, breadcrumbs, the trinity. Baked until golden.", price: 9.99, imageUrl: "/images/dish-stuffedcrab.jpeg", tags: ["shellfish"] },
 
   // Chicken
-  { id: "chicken-tenders-4", category: "chicken", name: "Chicken Tenders (4)", description: "Hand-breaded all-white-meat tenders, fried crisp. With honey mustard.", price: 8.49, imageUrl: IMG.chicken, tags: [] },
-  { id: "fried-chicken-2pc", category: "chicken", name: "Fried Chicken (2 pieces)", description: "Bone-in dark or white meat, 24-hour buttermilk brine, fried to order.", price: 7.99, imageUrl: IMG.chicken, tags: [] },
-  { id: "spicy-chicken-sandwich", category: "chicken", name: "Spicy Chicken Sandwich", description: "Buttermilk-fried thigh, slaw, pickles, comeback sauce, brioche bun.", price: 8.99, imageUrl: IMG.chicken, tags: ["spicy"] },
+  { id: "chicken-tenders-4", category: "chicken", name: "Chicken Tenders (4)", description: "Hand-breaded all-white-meat tenders, fried crisp. With honey mustard.", price: 8.49, imageUrl: "/images/dish-chickentenders.jpeg", tags: [] },
+  { id: "fried-chicken-2pc", category: "chicken", name: "Fried Chicken (2 pieces)", description: "Bone-in dark or white meat, 24-hour buttermilk brine, fried to order.", price: 7.99, imageUrl: "/images/dish-friedchicken.jpeg", tags: [] },
+  { id: "spicy-chicken-sandwich", category: "chicken", name: "Spicy Chicken Sandwich", description: "Buttermilk-fried thigh, slaw, pickles, comeback sauce, brioche bun.", price: 8.99, imageUrl: "/images/dish-spicychicken.jpeg", tags: ["spicy"] },
 
   // Po'Boys
-  { id: "shrimp-poboy", category: "poboys", name: "Shrimp Po'Boy", description: "Toasted French roll, fried shrimp, lettuce, tomato, pickle, remoulade.", price: 7.75, imageUrl: IMG.poboy, tags: ["shellfish"], signature: true },
-  { id: "catfish-poboy", category: "poboys", name: "Catfish Po'Boy", description: "Two cornmeal-fried fillets, dressed all the way on a French roll.", price: 8.25, imageUrl: IMG.poboy, tags: [] },
-  { id: "oyster-poboy", category: "poboys", name: "Oyster Po'Boy", description: "Half a dozen fried Gulf oysters, dressed on toasted French.", price: 9.99, imageUrl: IMG.poboy, tags: ["shellfish"] },
+  { id: "shrimp-poboy", category: "poboys", name: "Shrimp Po'Boy", description: "Toasted French roll, fried shrimp, lettuce, tomato, pickle, remoulade.", price: 7.75, imageUrl: "/images/dish-shrimppoboy.jpeg", tags: ["shellfish"], signature: true },
+  { id: "catfish-poboy", category: "poboys", name: "Catfish Po'Boy", description: "Two cornmeal-fried fillets, dressed all the way on a French roll.", price: 8.25, imageUrl: "/images/dish-catfishpoboy.jpeg", tags: [] },
+  { id: "oyster-poboy", category: "poboys", name: "Oyster Po'Boy", description: "Half a dozen fried Gulf oysters, dressed on toasted French.", price: 9.99, imageUrl: "/images/dish-oysterpoboy.jpeg", tags: ["shellfish"] },
 
   // Burgers
-  { id: "sams-cheeseburger", category: "burgers", name: "Sam's Cheeseburger", description: "Quarter-pound smashed, American cheese, lettuce, tomato, pickle.", price: 6.99, imageUrl: IMG.poboy, tags: [] },
-  { id: "double-bacon", category: "burgers", name: "Double Bacon Burger", description: "Two patties, bacon, cheddar, comeback sauce.", price: 9.49, imageUrl: IMG.poboy, tags: [] },
+  { id: "sams-cheeseburger", category: "burgers", name: "Sam's Cheeseburger", description: "Quarter-pound smashed, American cheese, lettuce, tomato, pickle.", price: 6.99, imageUrl: "/images/dish-cheeseburger.jpeg", tags: [] },
+  { id: "double-bacon", category: "burgers", name: "Double Bacon Burger", description: "Two patties, bacon, cheddar, comeback sauce.", price: 9.49, imageUrl: "/images/dish-doublebacon.jpeg", tags: [] },
 
   // Family
-  { id: "family-fish-fry", category: "family", name: "Family Fish Fry (12 fillets)", description: "Twelve catfish fillets, two pints of sides, hush puppies. Feeds 4–6.", price: 32.99, imageUrl: IMG.family, tags: ["family-size"] },
-  { id: "family-shrimp", category: "family", name: "Family Shrimp Boil (50)", description: "Fifty jumbo shrimp, two pints of sides, hush puppies. Feeds 4–6.", price: 39.99, imageUrl: IMG.family, tags: ["shellfish", "family-size"] },
-  { id: "family-chicken", category: "family", name: "Family Chicken Bucket (12 pc)", description: "Twelve pieces bone-in fried chicken, two pints of sides, biscuits. Feeds 4–6.", price: 28.99, imageUrl: IMG.family, tags: ["family-size"] },
+  { id: "family-fish-fry", category: "family", name: "Family Fish Fry (12 fillets)", description: "Twelve catfish fillets, two pints of sides, hush puppies. Feeds 4–6.", price: 32.99, imageUrl: "/images/dish-familyfish.jpeg", tags: ["family-size"] },
+  { id: "family-shrimp", category: "family", name: "Family Shrimp Boil (50)", description: "Fifty jumbo shrimp, two pints of sides, hush puppies. Feeds 4–6.", price: 39.99, imageUrl: "/images/dish-familyshrimp.jpeg", tags: ["shellfish", "family-size"] },
+  { id: "family-chicken", category: "family", name: "Family Chicken Bucket (12 pc)", description: "Twelve pieces bone-in fried chicken, two pints of sides, biscuits. Feeds 4–6.", price: 28.99, imageUrl: "/images/dish-familychicken.jpeg", tags: ["family-size"] },
 
   // Sides
-  { id: "red-beans-rice", category: "sides", name: "Red Beans & Rice", description: "Slow-simmered with andouille and the trinity.", price: 2.99, imageUrl: IMG.catfish, tags: [] },
-  { id: "coleslaw", category: "sides", name: "Coleslaw", description: "Cool, creamy, just enough vinegar.", price: 2.49, imageUrl: IMG.catfish, tags: ["gf"] },
-  { id: "fries", category: "sides", name: "Seasoned Fries", description: "Cut thick, dusted with our Cajun seasoning.", price: 2.99, imageUrl: IMG.catfish, tags: ["gf"] },
-  { id: "okra", category: "sides", name: "Fried Okra", description: "Cornmeal-dusted, fried light and crisp.", price: 2.99, imageUrl: IMG.catfish, tags: [] },
+  { id: "red-beans-rice", category: "sides", name: "Red Beans & Rice", description: "Slow-simmered with andouille and the trinity.", price: 2.99, imageUrl: "/images/dish-redbeans.jpeg", tags: [] },
+  { id: "coleslaw", category: "sides", name: "Coleslaw", description: "Cool, creamy, just enough vinegar.", price: 2.49, imageUrl: "/images/dish-coleslaw.jpeg", tags: ["gf"] },
+  { id: "fries", category: "sides", name: "Seasoned Fries", description: "Cut thick, dusted with our Cajun seasoning.", price: 2.99, imageUrl: "/images/dish-fries.jpeg", tags: ["gf"] },
+  { id: "okra", category: "sides", name: "Fried Okra", description: "Cornmeal-dusted, fried light and crisp.", price: 2.99, imageUrl: "/images/dish-okra.jpeg", tags: [] },
 
   // Kids
-  { id: "kids-tenders", category: "kids", name: "Kids Tenders & Fries", description: "Two tenders, fries, and a drink.", price: 5.49, imageUrl: IMG.chicken, tags: [] },
-  { id: "kids-shrimp", category: "kids", name: "Kids Shrimp & Fries", description: "Five baby shrimp, fries, and a drink.", price: 5.99, imageUrl: IMG.chicken, tags: ["shellfish"] },
+  { id: "kids-tenders", category: "kids", name: "Kids Tenders & Fries", description: "Two tenders, fries, and a drink.", price: 5.49, imageUrl: "/images/dish-kidstenders.jpeg", tags: [] },
+  { id: "kids-shrimp", category: "kids", name: "Kids Shrimp & Fries", description: "Five baby shrimp, fries, and a drink.", price: 5.99, imageUrl: "/images/dish-kidsshrimp.jpeg", tags: ["shellfish"] },
 
   // Drinks
-  { id: "sweet-tea", category: "drinks", name: "Sweet Tea", description: "Brewed fresh, served cold over ice.", price: 2.49, imageUrl: IMG.catfish, tags: ["gf"] },
-  { id: "lemonade", category: "drinks", name: "Hand-Squeezed Lemonade", description: "Tart, sweet, and shaken to order.", price: 2.99, imageUrl: IMG.catfish, tags: ["gf"] },
+  { id: "sweet-tea", category: "drinks", name: "Sweet Tea", description: "Brewed fresh, served cold over ice.", price: 2.49, imageUrl: "/images/dish-sweettea.jpeg", tags: ["gf"] },
+  { id: "lemonade", category: "drinks", name: "Hand-Squeezed Lemonade", description: "Tart, sweet, and shaken to order.", price: 2.99, imageUrl: "/images/dish-lemonade.jpeg", tags: ["gf"] },
 ];
 
 /**

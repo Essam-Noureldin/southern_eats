@@ -24,7 +24,7 @@ export default function Hero() {
       className="relative isolate overflow-hidden"
     >
       <Image
-        src="/images/hero-shrimp.jpg"
+        src="/images/dish-jumboshrimp-wide.jpeg"
         alt="Platter of golden hand-breaded jumbo fried shrimp with hush puppies"
         width={1920}
         height={1080}
