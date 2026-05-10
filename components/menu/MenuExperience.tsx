@@ -7,26 +7,30 @@
  *         2. A sticky category nav rail (pills under the navbar) with
  *            scroll-spy — the pill matching the section currently in
  *            view gets the active treatment.
- *         3. Per-category horizontal carousels — each row scrolls
- *            sideways with native CSS snap-x; prev/next arrow buttons
- *            on md+ scroll the row programmatically. Touch swipes on
- *            mobile, mouse-wheel + trackpad on desktop, no JS carousel
- *            library.
+ *         3. Per-category auto-scrolling carousels — each row's track
+ *            is animated horizontally at a reading-comfortable pace
+ *            (~5s per dish) using CSS keyframe transform; the items
+ *            are rendered 3× and the track translates by -33.333% so
+ *            the loop is seamless. Pauses on hover and focus-within.
  *         4. An empty-state message when no items match the search.
  *       Each category section is wrapped in <Revealable> so the
  *       category fades up as it enters the viewport.
- * WHY:  Static grid felt like a spec sheet. Per-category horizontal
- *       carousels turn the menu into a discovery surface — the same
- *       Netflix-style row-and-card pattern users already understand,
- *       reusing the CSS-only scroll-snap idiom from the homepage
- *       DishCarousel. Render still happens server-side on initial
- *       load (this client component receives data via props, so the
- *       items are in the SSR HTML for SEO).
- * IF REMOVED: /menu degrades to the previous static grid.
- * COMMON MISTAKE: setting the active-category state inside an effect
- *       on mount (the React 19 lint rule react-hooks/set-state-in-effect
+ * WHY:  Static grid felt like a spec sheet. Auto-scrolling carousels
+ *       turn the menu into a moving showcase — the dishes drift past
+ *       the viewer at a pace they can read, exactly like the brand
+ *       marquee strip on the homepage but with full DishCards instead
+ *       of phrase text. The user can hover to pause and click to dive
+ *       into a dish detail. Render still happens server-side on
+ *       initial load (this client component receives data via props),
+ *       so the items appear in the SSR HTML for SEO; the animation
+ *       layer kicks in after hydrate.
+ * IF REMOVED: /menu degrades to the previous grid (or scroll-snap)
+ *       experience — items are still listed and linkable.
+ * COMMON MISTAKE: setting active-category state inside an effect on
+ *       mount (the React 19 lint rule react-hooks/set-state-in-effect
  *       flags it). The default value is taken from the first category
- *       at lazy-init time.
+ *       at lazy-init time. Also: animating with JS rAF instead of CSS
+ *       keyframes — CSS runs on the compositor thread, JS doesn't.
  */
 import {
   useEffect,
@@ -35,10 +39,23 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { Fragment } from "react";
 import DishLink from "@/components/menu/DishLink";
 import DishCard from "@/components/sections/DishCard";
 import Revealable from "@/components/Revealable";
 import type { Category, MenuItem } from "@/lib/menu";
+
+// Three copies of every category's items so the track can translate
+// by -33.333% and land the second copy exactly where the first
+// started — the seamless loop trick. Same number of repeats as the
+// brand marquee strip on the homepage.
+const REPEATS = 3;
+// Seconds per dish. Tuned to "read each card as it goes by" pace —
+// not so fast the user can't scan, not so slow it feels stalled.
+const SECS_PER_DISH = 5;
+// Floor so single-item categories don't loop in 5 seconds (which
+// would feel jittery).
+const MIN_DURATION = 24;
 
 interface Props {
   items: ReadonlyArray<MenuItem>;
@@ -101,24 +118,6 @@ export default function MenuExperience({ items, categories }: Props) {
     el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // Stored separately from sectionRefs because the carousel scrolls
-  // sideways on a different element than the one the scroll-spy
-  // observes (the section header is what triggers the spy; the
-  // overflow-x container is what the arrow buttons scroll).
-  const railRefs = useRef(new Map<Category, HTMLDivElement>());
-
-  function nudgeRail(catId: Category, direction: 1 | -1) {
-    const rail = railRefs.current.get(catId);
-    if (!rail) return;
-    // Scroll by ~80% of the rail's visible width so the next group of
-    // cards animates into view but the user keeps a foothold on what
-    // they were just looking at.
-    rail.scrollBy({
-      left: rail.clientWidth * 0.8 * direction,
-      behavior: "smooth",
-    });
-  }
-
   return (
     <div>
       <div className="sticky top-16 z-20 -mx-4 mb-12 border-y border-border bg-cream/95 backdrop-blur md:-mx-8">
@@ -179,52 +178,40 @@ export default function MenuExperience({ items, categories }: Props) {
               className="mb-16 scroll-mt-40 last:mb-0"
             >
               <Revealable>
-                <div className="mb-6 flex items-end justify-between gap-4">
-                  <h2
-                    id={`menu-cat-${cat.id}`}
-                    className="font-display text-3xl md:text-4xl"
-                  >
-                    {cat.label}
-                  </h2>
-                  <div className="hidden gap-2 md:flex">
-                    <button
-                      type="button"
-                      onClick={() => nudgeRail(cat.id, -1)}
-                      aria-label={`Scroll ${cat.label} left`}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-charcoal transition-colors hover:border-sams-red/60 hover:bg-cream"
-                    >
-                      <span aria-hidden="true">&larr;</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => nudgeRail(cat.id, 1)}
-                      aria-label={`Scroll ${cat.label} right`}
-                      className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-charcoal transition-colors hover:border-sams-red/60 hover:bg-cream"
-                    >
-                      <span aria-hidden="true">&rarr;</span>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={(el: HTMLDivElement | null) => {
-                    if (el) railRefs.current.set(cat.id, el);
-                    else railRefs.current.delete(cat.id);
-                  }}
-                  className="-mx-4 overflow-x-auto md:-mx-8"
+                <h2
+                  id={`menu-cat-${cat.id}`}
+                  className="mb-6 font-display text-3xl md:text-4xl"
                 >
-                  <ul className="flex snap-x snap-mandatory gap-4 px-4 pb-4 md:gap-6 md:px-8">
-                    {catItems.map((item) => (
-                      <li
-                        key={item.id}
-                        className="w-[78%] shrink-0 list-none snap-start sm:w-[45%] md:w-[31%] lg:w-[24%]"
-                      >
-                        <DishLink
-                          href={`/menu/${item.id}`}
-                          className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
-                        >
-                          <DishCard item={item} />
-                        </DishLink>
-                      </li>
+                  {cat.label}
+                </h2>
+                <div className="menu-carousel-wrapper -mx-4 md:-mx-8">
+                  <ul
+                    data-testid={`menu-carousel-${cat.id}`}
+                    className="menu-carousel-track flex w-max gap-4 px-4 pb-4 md:gap-6 md:px-8"
+                    style={{
+                      animationDuration: `${Math.max(
+                        MIN_DURATION,
+                        catItems.length * SECS_PER_DISH * REPEATS,
+                      )}s`,
+                    }}
+                  >
+                    {Array.from({ length: REPEATS }).map((_, copyIndex) => (
+                      <Fragment key={copyIndex}>
+                        {catItems.map((item) => (
+                          <li
+                            key={`${copyIndex}-${item.id}`}
+                            className="w-[78%] shrink-0 list-none sm:w-[45%] md:w-[31%] lg:w-[24%]"
+                            aria-hidden={copyIndex > 0 ? "true" : undefined}
+                          >
+                            <DishLink
+                              href={`/menu/${item.id}`}
+                              className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
+                            >
+                              <DishCard item={item} />
+                            </DishLink>
+                          </li>
+                        ))}
+                      </Fragment>
                     ))}
                   </ul>
                 </div>

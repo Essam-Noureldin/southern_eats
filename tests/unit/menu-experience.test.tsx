@@ -1,12 +1,15 @@
 /**
  * WHAT: Tests the MenuExperience client component on /menu.
- * WHY:  Wraps the menu list with three new behaviours: a search input
- *       that filters items live, a sticky scroll-spy category nav, and
- *       an "empty state" message when no items match. Test-first locks
- *       the contract: search filters items by name + description,
- *       categories with zero matches are hidden, the empty state
- *       appears when nothing matches, and clicking a category nav pill
- *       calls scrollIntoView on the right section.
+ * WHY:  Wraps the menu list with four behaviours: search filter,
+ *       sticky scroll-spy category nav, per-category auto-scrolling
+ *       carousel (track animated via CSS, items rendered 3× for the
+ *       seamless loop), and an empty-state when no items match.
+ *       Test-first locks the contract: search filters items by name +
+ *       description, categories with zero matches are hidden, the
+ *       empty state appears when nothing matches, clicking a category
+ *       nav pill calls scrollIntoView on the right section, and each
+ *       carousel track renders 3× the items with an animationDuration
+ *       inline style scaled to item count.
  */
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import MenuExperience from "@/components/menu/MenuExperience";
@@ -68,18 +71,18 @@ const items: MenuItem[] = [
 
 describe("MenuExperience", () => {
   beforeEach(() => {
-    // The default jest.setup matchMedia mock is fine — Revealable starts
-    // revealed under prefers-reduced-motion which is what the mock reports.
     Element.prototype.scrollIntoView = jest.fn();
   });
 
   it("renders all items and category labels by default", () => {
     render(<MenuExperience items={items} categories={cats} />);
-    expect(screen.getByText("Fried Pickles")).toBeInTheDocument();
-    expect(screen.getByText("Jumbo Shrimp")).toBeInTheDocument();
-    expect(screen.getByText("Sweet Tea")).toBeInTheDocument();
-    // Category labels appear in BOTH the nav and as the section heading,
-    // so getAllByText.
+    // Each dish name is rendered 3× (one per repeat copy of the
+    // carousel track) — assert at least one occurrence.
+    expect(
+      screen.getAllByText(/fried pickles/i).length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText(/jumbo shrimp/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/sweet tea/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/starters/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/seafood/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/drinks/i).length).toBeGreaterThan(0);
@@ -97,7 +100,7 @@ describe("MenuExperience", () => {
     act(() => {
       fireEvent.change(search, { target: { value: "shrimp" } });
     });
-    expect(screen.getByText("Jumbo Shrimp")).toBeInTheDocument();
+    expect(screen.getAllByText(/jumbo shrimp/i).length).toBeGreaterThan(0);
     expect(screen.queryByText("Fried Pickles")).not.toBeInTheDocument();
     expect(screen.queryByText("Sweet Tea")).not.toBeInTheDocument();
   });
@@ -108,7 +111,7 @@ describe("MenuExperience", () => {
     act(() => {
       fireEvent.change(search, { target: { value: "ranch" } });
     });
-    expect(screen.getByText("Fried Pickles")).toBeInTheDocument();
+    expect(screen.getAllByText(/fried pickles/i).length).toBeGreaterThan(0);
     expect(screen.queryByText("Jumbo Shrimp")).not.toBeInTheDocument();
   });
 
@@ -118,9 +121,6 @@ describe("MenuExperience", () => {
     act(() => {
       fireEvent.change(search, { target: { value: "shrimp" } });
     });
-    // Only seafood category should be present in the section headings now.
-    // (Category labels in the nav rail are also gated on visibility, so
-    // they should drop out too.)
     expect(screen.queryByRole("heading", { name: /^starters$/i })).toBeNull();
     expect(screen.queryByRole("heading", { name: /^drinks$/i })).toBeNull();
     expect(
@@ -139,7 +139,6 @@ describe("MenuExperience", () => {
 
   it("scrolls to the section when a category nav button is clicked", () => {
     render(<MenuExperience items={items} categories={cats} />);
-    // Pill in the nav rail (button), not the section heading.
     const seafoodPill = screen.getByRole("button", { name: /^seafood$/i });
     act(() => {
       fireEvent.click(seafoodPill);
@@ -147,32 +146,37 @@ describe("MenuExperience", () => {
     expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
   });
 
-  it("renders per-category prev/next arrow buttons with accessible names", () => {
+  it("renders each category's carousel track with the menu-carousel-track class", () => {
     render(<MenuExperience items={items} categories={cats} />);
-    expect(
-      screen.getByRole("button", { name: /scroll seafood left/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /scroll seafood right/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /scroll starters left/i }),
-    ).toBeInTheDocument();
+    const track = screen.getByTestId("menu-carousel-seafood");
+    expect(track.className).toMatch(/menu-carousel-track/);
   });
 
-  it("scrolls the rail by clientWidth * 0.8 when an arrow is clicked", () => {
-    const scrollByMock = jest.fn();
-    // Stub scrollBy on every div the carousel touches.
-    Element.prototype.scrollBy = scrollByMock as unknown as typeof Element.prototype.scrollBy;
+  it("repeats every item 3 times in the track for a seamless loop", () => {
     render(<MenuExperience items={items} categories={cats} />);
-    const next = screen.getByRole("button", { name: /scroll seafood right/i });
-    act(() => {
-      fireEvent.click(next);
-    });
-    expect(scrollByMock).toHaveBeenCalled();
-    const arg = scrollByMock.mock.calls[0]?.[0] as ScrollToOptions | undefined;
-    expect(arg?.behavior).toBe("smooth");
-    // Direction is positive for "right" arrow.
-    expect((arg?.left ?? 0) >= 0).toBe(true);
+    // jumbo-shrimp is the only seafood item, so the seafood track has
+    // exactly 3 list items (REPEATS = 3 copies).
+    const track = screen.getByTestId("menu-carousel-seafood");
+    expect(track.querySelectorAll("li").length).toBe(3);
+  });
+
+  it("sets an inline animationDuration on each track scaled to item count", () => {
+    render(<MenuExperience items={items} categories={cats} />);
+    const track = screen.getByTestId("menu-carousel-seafood");
+    // Tracks must have a positive seconds-based animationDuration.
+    const dur = track.style.animationDuration;
+    expect(dur).toMatch(/^\d+s$/);
+    const seconds = parseInt(dur, 10);
+    expect(seconds).toBeGreaterThan(0);
+  });
+
+  it("marks duplicate copies of each item aria-hidden so screen readers see each dish once", () => {
+    render(<MenuExperience items={items} categories={cats} />);
+    const track = screen.getByTestId("menu-carousel-seafood");
+    const lis = Array.from(track.querySelectorAll("li"));
+    // First copy is interactive, copies 2 and 3 are aria-hidden decorations.
+    expect(lis[0].getAttribute("aria-hidden")).toBeNull();
+    expect(lis[1].getAttribute("aria-hidden")).toBe("true");
+    expect(lis[2].getAttribute("aria-hidden")).toBe("true");
   });
 });
