@@ -69,41 +69,6 @@
 }
 
 /*
- * Menu carousel — same idiom as the brand marquee strip but for the
- * full DishCard rows on /menu. Items are rendered 3× in the track;
- * the animation translates by -33.333% (one set width) so the second
- * copy lands exactly where the first started — seamless loop. Per-
- * row animation-duration is set inline (longer for categories with
- * more items) to keep the perceived px/sec speed roughly constant.
- * Pauses on hover and on focus-within so the user can read a card
- * without it sliding away.
- */
-.menu-carousel-wrapper {
-  overflow: hidden;
-}
-
-.menu-carousel-track {
-  animation-name: menu-carousel-scroll;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  /* animation-duration set inline per category */
-}
-
-.menu-carousel-track:hover,
-.menu-carousel-track:focus-within {
-  animation-play-state: paused;
-}
-
-@keyframes menu-carousel-scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-33.3333%);
-  }
-}
-
-/*
  * Stat tile reveal — used on the homepage NumbersBand and on the
  * /franchise stat grid. Tiles start translated down and invisible.
  * When the parent gains .is-revealed (set by the client component
@@ -260,22 +225,6 @@
     animation-iteration-count: infinite !important;
   }
 
-  /*
-   * Menu carousel — under reduce-motion we stop the auto-scroll
-   * animation entirely (this one carries actual content the user
-   * needs to interact with, not decorative phrases like the marquee
-   * strip). Compensating: the wrapper switches from overflow-hidden
-   * to overflow-x-auto so the user can scroll horizontally through
-   * the track to see every item. The 3× duplicate copies still
-   * render but copies 2 and 3 are aria-hidden so screen readers see
-   * each dish exactly once.
-   */
-  .menu-carousel-wrapper {
-    overflow-x: auto !important;
-  }
-  .menu-carousel-track {
-    animation: none !important;
-  }
 
   /*
    * The universal selector above doesn't reach view-transition pseudo

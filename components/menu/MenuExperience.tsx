@@ -1,36 +1,27 @@
 "use client";
 
 /**
- * WHAT: Client orchestrator for /menu. Owns four pieces of behaviour
+ * WHAT: Client orchestrator for /menu. Owns three pieces of behaviour
  *       on top of the static server-rendered shell:
  *         1. A search box that filters items by name + description.
  *         2. A sticky category nav rail (pills under the navbar) with
  *            scroll-spy — the pill matching the section currently in
  *            view gets the active treatment.
- *         3. Per-category auto-scrolling carousels — each row's track
- *            is animated horizontally at a reading-comfortable pace
- *            (~5s per dish) using CSS keyframe transform; the items
- *            are rendered 3× and the track translates by -33.333% so
- *            the loop is seamless. Pauses on hover and focus-within.
- *         4. An empty-state message when no items match the search.
+ *         3. An empty-state message when no items match the search.
  *       Each category section is wrapped in <Revealable> so the
- *       category fades up as it enters the viewport.
- * WHY:  Static grid felt like a spec sheet. Auto-scrolling carousels
- *       turn the menu into a moving showcase — the dishes drift past
- *       the viewer at a pace they can read, exactly like the brand
- *       marquee strip on the homepage but with full DishCards instead
- *       of phrase text. The user can hover to pause and click to dive
- *       into a dish detail. Render still happens server-side on
- *       initial load (this client component receives data via props),
- *       so the items appear in the SSR HTML for SEO; the animation
- *       layer kicks in after hydrate.
- * IF REMOVED: /menu degrades to the previous grid (or scroll-snap)
- *       experience — items are still listed and linkable.
+ *       category fades up as it enters the viewport. Items are
+ *       rendered as a responsive grid (1/2/3/4 cols).
+ * WHY:  The static server-rendered grid was a wall of cards with no
+ *       affordance for finding a specific dish or skimming the
+ *       structure. Search + scroll-spy nav turn the menu into an
+ *       exploration surface. Render still happens server-side on
+ *       initial load (this client component receives data via props,
+ *       so items are in the SSR HTML for SEO).
+ * IF REMOVED: /menu degrades to the previous static grid.
  * COMMON MISTAKE: setting active-category state inside an effect on
  *       mount (the React 19 lint rule react-hooks/set-state-in-effect
  *       flags it). The default value is taken from the first category
- *       at lazy-init time. Also: animating with JS rAF instead of CSS
- *       keyframes — CSS runs on the compositor thread, JS doesn't.
+ *       at lazy-init time.
  */
 import {
   useEffect,
@@ -39,23 +30,10 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-import { Fragment } from "react";
 import DishLink from "@/components/menu/DishLink";
 import DishCard from "@/components/sections/DishCard";
 import Revealable from "@/components/Revealable";
 import type { Category, MenuItem } from "@/lib/menu";
-
-// Three copies of every category's items so the track can translate
-// by -33.333% and land the second copy exactly where the first
-// started — the seamless loop trick. Same number of repeats as the
-// brand marquee strip on the homepage.
-const REPEATS = 3;
-// Seconds per dish. Tuned to "read each card as it goes by" pace —
-// not so fast the user can't scan, not so slow it feels stalled.
-const SECS_PER_DISH = 5;
-// Floor so single-item categories don't loop in 5 seconds (which
-// would feel jittery).
-const MIN_DURATION = 24;
 
 interface Props {
   items: ReadonlyArray<MenuItem>;
@@ -184,37 +162,18 @@ export default function MenuExperience({ items, categories }: Props) {
                 >
                   {cat.label}
                 </h2>
-                <div className="menu-carousel-wrapper -mx-4 md:-mx-8">
-                  <ul
-                    data-testid={`menu-carousel-${cat.id}`}
-                    className="menu-carousel-track flex w-max gap-4 px-4 pb-4 md:gap-6 md:px-8"
-                    style={{
-                      animationDuration: `${Math.max(
-                        MIN_DURATION,
-                        catItems.length * SECS_PER_DISH * REPEATS,
-                      )}s`,
-                    }}
-                  >
-                    {Array.from({ length: REPEATS }).map((_, copyIndex) => (
-                      <Fragment key={copyIndex}>
-                        {catItems.map((item) => (
-                          <li
-                            key={`${copyIndex}-${item.id}`}
-                            className="w-72 shrink-0 list-none"
-                            aria-hidden={copyIndex > 0 ? "true" : undefined}
-                          >
-                            <DishLink
-                              href={`/menu/${item.id}`}
-                              className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
-                            >
-                              <DishCard item={item} />
-                            </DishLink>
-                          </li>
-                        ))}
-                      </Fragment>
-                    ))}
-                  </ul>
-                </div>
+                <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {catItems.map((item) => (
+                    <li key={item.id} className="list-none">
+                      <DishLink
+                        href={`/menu/${item.id}`}
+                        className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sams-red"
+                      >
+                        <DishCard item={item} />
+                      </DishLink>
+                    </li>
+                  ))}
+                </ul>
               </Revealable>
             </section>
           );
