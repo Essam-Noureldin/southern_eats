@@ -29,7 +29,7 @@ export default function FranchiseTease() {
           Bring Sam&apos;s to your town.
         </h2>
         <p className="mx-auto mt-6 max-w-2xl text-lg opacity-90 md:text-xl">
-          51 locations and growing. $25k franchise fee, territory
+          41 locations and growing. $25k franchise fee, territory
           protection, and an operations playbook built over 18 years.
         </p>
         <Link

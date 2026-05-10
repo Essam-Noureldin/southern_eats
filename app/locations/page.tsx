@@ -16,7 +16,7 @@ import { LOCATIONS } from "@/lib/locations";
 export const metadata: Metadata = {
   title: "Locations",
   description:
-    "All 51 Sam's Southern Eatery locations across the South — find your nearest, filter by halal/gluten-free fryer, drive-thru, and more.",
+    "All 41 Sam's Southern Eatery locations across the South — find your nearest, filter by halal/gluten-free fryer, drive-thru, and more.",
 };
 
 export default function LocationsPage() {

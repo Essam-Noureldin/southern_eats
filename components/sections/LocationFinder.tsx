@@ -43,18 +43,20 @@ interface Props {
   locations: readonly Location[];
 }
 
-// Full state names for the eight (currently) US states Sam's operates in.
-// Reads as: pick a state → list re-sorts nearest-first to that state's
-// flagship branch in our dataset.
+// Full state names for the eleven US states Sam's currently operates in.
+// Picking a chip filters list + map down to that state only.
 const STATE_LABELS: Record<string, string> = {
-  LA: "Louisiana",
-  TX: "Texas",
-  MS: "Mississippi",
-  TN: "Tennessee",
   AL: "Alabama",
-  GA: "Georgia",
   AR: "Arkansas",
+  IL: "Illinois",
+  LA: "Louisiana",
+  MO: "Missouri",
+  MS: "Mississippi",
+  NC: "North Carolina",
+  OH: "Ohio",
   OK: "Oklahoma",
+  SC: "South Carolina",
+  TX: "Texas",
 };
 
 function deriveStatePresets(
@@ -62,7 +64,8 @@ function deriveStatePresets(
 ): { code: string; label: string; coords: LatLng }[] {
   // One preset per unique state, using the first matching branch's coords
   // as the origin. Computed from data so the chip list stays in sync
-  // automatically when real franchise data swaps in (deduped by state).
+  // automatically when franchise data changes. Sorted alphabetically by
+  // label for predictable UI ordering.
   const seen = new Set<string>();
   const out: { code: string; label: string; coords: LatLng }[] = [];
   for (const loc of locations) {
@@ -75,7 +78,7 @@ function deriveStatePresets(
       coords: loc.coords,
     });
   }
-  return out;
+  return out.sort((a, b) => a.label.localeCompare(b.label));
 }
 
 export default function LocationFinder({ locations }: Props) {
@@ -117,7 +120,7 @@ export default function LocationFinder({ locations }: Props) {
       <div className="mx-auto max-w-7xl px-4 md:px-8">
         <div className="mb-8 flex flex-col gap-3 md:mb-12">
           <p className="text-xs uppercase tracking-[0.3em] text-sams-red">
-            51 locations · 9 states
+            41 locations · 11 states
           </p>
           <h1
             id="locations-heading"

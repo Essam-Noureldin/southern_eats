@@ -13,7 +13,7 @@
  *       perceived legitimacy, and adds JS for no real lift.
  */
 const STATS = [
-  { value: "51", label: "Locations" },
+  { value: "41", label: "Locations" },
   { value: "$25k", label: "Franchise fee" },
   { value: "6%", label: "Royalty" },
   { value: "50k", label: "Population territory" },
@@ -30,7 +30,7 @@ export default function NumbersBand() {
           id="numbers-band-heading"
           className="mb-10 font-display text-3xl italic text-butter md:text-5xl"
         >
-          51 locations. 9 states. One promise.
+          41 locations. 11 states. One promise.
         </p>
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {STATS.map((s) => (

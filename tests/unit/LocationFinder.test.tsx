@@ -78,19 +78,24 @@ describe("LocationFinder", () => {
 
   it("offers a state preset button for every state Sam's operates in", () => {
     render(<LocationFinder locations={LOCATIONS} />);
+    // Real franchise footprint as of the data swap on 2026-05-10:
+    // 11 states. If LOCATIONS gains a new state, that chip should appear too.
     const stateLabels = [
-      "Louisiana",
-      "Texas",
-      "Mississippi",
-      "Tennessee",
       "Alabama",
-      "Georgia",
       "Arkansas",
+      "Illinois",
+      "Louisiana",
+      "Missouri",
+      "Mississippi",
+      "North Carolina",
+      "Ohio",
       "Oklahoma",
+      "South Carolina",
+      "Texas",
     ];
     for (const label of stateLabels) {
       expect(
-        screen.getByRole("button", { name: new RegExp(label, "i") }),
+        screen.getByRole("button", { name: new RegExp(`^${label}$`, "i") }),
       ).toBeInTheDocument();
     }
   });

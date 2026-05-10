@@ -11,7 +11,7 @@
 import { LOCATIONS, filterLocations, type DietaryTag } from "@/lib/locations";
 
 describe("LOCATIONS dataset", () => {
-  it("has at least 8 entries (representative sample of the 51-location franchise)", () => {
+  it("has at least 8 entries (real franchise list as of 2026-05-10 = 41)", () => {
     expect(LOCATIONS.length).toBeGreaterThanOrEqual(8);
   });
 

@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     template: "%s | Sam's Southern Eatery",
   },
   description:
-    "Hand-breaded jumbo shrimp and cornmeal-crusted catfish at 51 locations across the South. Family-owned since 2008 in Shreveport, LA.",
+    "Hand-breaded jumbo shrimp and cornmeal-crusted catfish at 41 locations across the South. Family-owned since 2008 in Shreveport, LA.",
   robots: { index: false, follow: false },
 };
 

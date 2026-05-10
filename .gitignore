@@ -36,3 +36,6 @@ sentry.properties
 
 # Docker overrides
 docker-compose.override.yml
+
+# Research scratchpads (geocoding probes, scrape outputs, etc.)
+_research/

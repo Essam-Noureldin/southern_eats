@@ -50,7 +50,7 @@ export default function Hero() {
           jumbo shrimp.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-cream/90 md:text-xl">
-          Fried hot. Plates piled high. 51 locations across the South.
+          Fried hot. Plates piled high. 41 locations across the South.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link

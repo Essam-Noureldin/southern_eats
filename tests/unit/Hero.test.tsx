@@ -3,7 +3,7 @@
  * WHY:  Test-first per master prompt. Locks the contract:
  *       - eyebrow line naming Shreveport / 2008
  *       - h1 carrying the "jumbo shrimp" tagline
- *       - subheadline naming the "51 locations" scale claim
+ *       - subheadline naming the "41 locations" scale claim
  *       - two CTAs: Order online -> /order, Find a location -> /locations
  *       - hero image with descriptive alt text (a11y)
  */
@@ -24,9 +24,9 @@ describe("Hero — content", () => {
     expect(h1.textContent?.toLowerCase()).toContain("jumbo shrimp");
   });
 
-  it("renders a subheadline naming '51 locations'", () => {
+  it("renders a subheadline naming '41 locations'", () => {
     render(<Hero />);
-    expect(screen.getByText(/51 locations/i)).toBeInTheDocument();
+    expect(screen.getByText(/41 locations/i)).toBeInTheDocument();
   });
 });
 
