@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LOCATIONS } from "@/lib/locations";
+import { LOCATIONS, getLocationWithOverrides } from "@/lib/locations";
 import LocationMenu from "@/components/order/LocationMenu";
 import { restaurantLd, jsonLdScript } from "@/lib/json-ld";
 
@@ -43,7 +43,7 @@ export async function generateMetadata({
 
 export default async function OrderLocationPage({ params }: PageProps) {
   const { id } = await params;
-  const location = LOCATIONS.find((l) => l.id === id);
+  const location = await getLocationWithOverrides(id);
   if (!location) notFound();
 
   return (

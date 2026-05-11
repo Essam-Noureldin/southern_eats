@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LocationFinder from "@/components/sections/LocationFinder";
-import { getLocationsWithLiveHours } from "@/lib/locations";
+import { getLocationsWithOverrides } from "@/lib/locations";
 
 /**
  * WHAT: /locations page — owns its <main> landmark and renders the
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LocationsPage() {
-  const locations = await getLocationsWithLiveHours();
+  const locations = await getLocationsWithOverrides();
   return (
     <main>
       <LocationFinder locations={locations} />

@@ -52,6 +52,21 @@ const envSchema = z.object({
   // static hours arrays in lib/locations.ts. Cost: ~$0.017/Place Details
   // call × 41 locations × daily refresh = ~$0.70/mo (free tier covers it).
   GOOGLE_PLACES_API_KEY: optionalString,
+
+  // Admin panel (/admin/*). When ADMIN_PASSWORD is unset the panel is
+  // disabled entirely (middleware returns 404) — production-safe default
+  // so an accidental deploy without the var doesn't expose an open
+  // editor. ADMIN_USERNAME defaults to "admin" at the call site if blank.
+  ADMIN_USERNAME: optionalString,
+  ADMIN_PASSWORD: optionalString,
+
+  // Vercel KV (Upstash Redis REST API) — persistence layer for /admin
+  // location overrides. Vercel auto-injects these when you attach a KV
+  // store to the project. When unset, lib/location-overrides.ts falls
+  // back to an in-memory Map (good for dev/CI, edits don't survive a
+  // server restart — documented behaviour).
+  KV_REST_API_URL: optionalString,
+  KV_REST_API_TOKEN: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

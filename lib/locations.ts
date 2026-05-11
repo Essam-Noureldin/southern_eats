@@ -28,6 +28,7 @@
  */
 import type { LatLng } from "./distance";
 import type { MenuOverride } from "./menu";
+import type { LocationOverride } from "./location-overrides";
 
 
 export interface Hours {
@@ -492,6 +493,60 @@ export function directionsUrl(loc: Location): string {
   const { street, city, state, zip } = loc.address;
   const dest = encodeURIComponent(`${street}, ${city}, ${state} ${zip}`);
   return `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+}
+
+/**
+ * Pure helper. Applies a single admin-edited override (hours, phone)
+ * on top of a Location. Override fields win when present; missing
+ * fields fall through to the underlying value.
+ *
+ * Exported so tests can drive the merge without a backend.
+ */
+export function applyOverride(
+  loc: Location,
+  override: LocationOverride | null | undefined,
+): Location {
+  if (!override) return loc;
+  return {
+    ...loc,
+    ...(override.phone ? { phone: override.phone } : {}),
+    ...(override.hours && override.hours.length > 0
+      ? { hours: override.hours }
+      : {}),
+  };
+}
+
+/**
+ * Server-only helper. Returns the LOCATIONS array with each location
+ * merged in priority order:
+ *
+ *   1. admin override (lib/location-overrides.ts — KV-persisted)
+ *   2. live Google Places hours (where googlePlaceId set)
+ *   3. static fallback (this file)
+ *
+ * Override wins over live Google because a franchise manager edited
+ * the hours through /admin — that's a deliberate override of whatever
+ * Google's panel shows. Phone is admin-only (Google's API doesn't
+ * surface a corrected phone separately) so it bypasses the live step.
+ */
+export async function getLocationsWithOverrides(): Promise<Location[]> {
+  const [{ getAllOverrides }, withLive] = await Promise.all([
+    import("./location-overrides"),
+    getLocationsWithLiveHours(),
+  ]);
+  const overrides = await getAllOverrides();
+  return withLive.map((loc) => applyOverride(loc, overrides.get(loc.id)));
+}
+
+/**
+ * Convenience: find one location by id, with overrides applied.
+ * Returns undefined when no location matches that id.
+ */
+export async function getLocationWithOverrides(
+  id: string,
+): Promise<Location | undefined> {
+  const all = await getLocationsWithOverrides();
+  return all.find((l) => l.id === id);
 }
 
 /**
