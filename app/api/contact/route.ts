@@ -34,26 +34,20 @@ import {
   HONEYPOT_MIN_FILL_MS,
 } from "@/lib/honeypot";
 import { sendContactEmail } from "@/lib/email";
+import { getClientIp } from "@/lib/client-ip";
 
 const HP_FIELD = getHoneypotFieldName();
 
-const schema = z
-  .object({
-    name: z.string().min(1).max(200),
-    email: z.string().min(3).max(254),
-    message: z.string().min(5).max(5000),
-    renderedAt: z.coerce.number().optional(),
-    [HP_FIELD]: z.string().optional(),
-  })
-  .passthrough();
-
-function clientIp(req: NextRequest): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
-  const real = req.headers.get("x-real-ip");
-  if (real) return real;
-  return "unknown";
-}
+// strict() rejects extra fields outright. The honeypot key is declared
+// here so it isn't rejected; everything else from the client is rejected
+// as an additional bot signal at zero cost. Audit B8 (2026-05-11).
+const schema = z.strictObject({
+  name: z.string().min(1).max(200),
+  email: z.string().min(3).max(254),
+  message: z.string().min(5).max(5000),
+  renderedAt: z.coerce.number().optional(),
+  [HP_FIELD]: z.string().optional(),
+});
 
 function fail(status: number, error: string) {
   return NextResponse.json({ ok: false, error }, { status });
@@ -79,7 +73,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 2. Rate limit
-  const ip = clientIp(req);
+  const ip = getClientIp(req);
   const limit = checkRateLimit(`contact:${ip}`, {
     max: Number(process.env.RATE_LIMIT_MAX ?? 3),
     windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 600000),

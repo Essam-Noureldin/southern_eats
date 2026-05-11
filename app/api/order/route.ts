@@ -26,6 +26,7 @@ import {
 import { sendOrderEmail } from "@/lib/email";
 import { LOCATIONS } from "@/lib/locations";
 import { menu } from "@/lib/menu";
+import { getClientIp } from "@/lib/client-ip";
 
 const HP_FIELD = getHoneypotFieldName();
 
@@ -33,30 +34,23 @@ const TAX_RATE = 0.0825;
 const MAX_LINES = 50;
 const MAX_QTY_PER_LINE = 50;
 
-const lineSchema = z.object({
+const lineSchema = z.strictObject({
   id: z.string().min(1).max(100),
   qty: z.number().int().min(1).max(MAX_QTY_PER_LINE),
 });
 
-const schema = z
-  .object({
-    locationId: z.string().min(1).max(100),
-    lines: z.array(lineSchema).min(1).max(MAX_LINES),
-    name: z.string().min(1).max(200),
-    phone: z.string().min(7).max(30),
-    pickupTime: z.string().min(1).max(40),
-    renderedAt: z.coerce.number().optional(),
-    [HP_FIELD]: z.string().optional(),
-  })
-  .passthrough();
-
-function clientIp(req: NextRequest): string {
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) return fwd.split(",")[0].trim();
-  const real = req.headers.get("x-real-ip");
-  if (real) return real;
-  return "unknown";
-}
+// strict() rejects extra fields outright. Honeypot key is declared here
+// so it isn't rejected; everything else from the client is rejected as
+// an additional bot signal at zero cost. Audit B8 (2026-05-11).
+const schema = z.strictObject({
+  locationId: z.string().min(1).max(100),
+  lines: z.array(lineSchema).min(1).max(MAX_LINES),
+  name: z.string().min(1).max(200),
+  phone: z.string().min(7).max(30),
+  pickupTime: z.string().min(1).max(40),
+  renderedAt: z.coerce.number().optional(),
+  [HP_FIELD]: z.string().optional(),
+});
 
 function fail(status: number, error: string) {
   return NextResponse.json({ ok: false, error }, { status });
@@ -105,7 +99,7 @@ export async function POST(req: NextRequest) {
 
   // 2. Rate limit — same per-IP shape as /api/contact. Different key so
   //    the limits don't share a bucket.
-  const ip = clientIp(req);
+  const ip = getClientIp(req);
   const limit = checkRateLimit(`order:${ip}`, {
     max: Number(process.env.RATE_LIMIT_MAX ?? 3),
     windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS ?? 600000),

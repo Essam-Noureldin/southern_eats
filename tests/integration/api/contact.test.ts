@@ -141,6 +141,63 @@ describe("POST /api/contact — rate limit", () => {
   });
 });
 
+describe("POST /api/contact — IP source for rate limit (anti-spoof)", () => {
+  it("a spoofed prefix in x-forwarded-for does NOT unlock a fresh bucket", async () => {
+    // Three legit hits exhaust the bucket for the *trusted* IP 203.0.113.5
+    // (the Vercel-appended last entry).
+    for (let i = 0; i < 3; i++) {
+      const res = await POST(
+        makeReq(validPayload(), {
+          "x-forwarded-for": "1.2.3.4, 203.0.113.5",
+        }) as never,
+      );
+      expect(res.status).toBe(200);
+    }
+    // Now an attacker rotates the spoof prefix; trusted last-entry IP
+    // is the same, so the rate limiter must still 429.
+    const rotated = await POST(
+      makeReq(validPayload(), {
+        "x-forwarded-for": "9.9.9.9, 203.0.113.5",
+      }) as never,
+    );
+    expect(rotated.status).toBe(429);
+  });
+
+  it("x-real-ip takes precedence over x-forwarded-for", async () => {
+    // Different x-forwarded-for tails but same x-real-ip -> same bucket.
+    for (let i = 0; i < 3; i++) {
+      const res = await POST(
+        makeReq(validPayload(), {
+          "x-real-ip": "203.0.113.7",
+          "x-forwarded-for": `1.2.3.${i}, 10.0.0.${i}`,
+        }) as never,
+      );
+      expect(res.status).toBe(200);
+    }
+    const fourth = await POST(
+      makeReq(validPayload(), {
+        "x-real-ip": "203.0.113.7",
+        "x-forwarded-for": "8.8.8.8, 9.9.9.9",
+      }) as never,
+    );
+    expect(fourth.status).toBe(429);
+  });
+});
+
+describe("POST /api/contact — strict schema (B8, anti-bot signal)", () => {
+  it("rejects payloads with extra fields (a small bot signal at zero cost)", async () => {
+    const res = await POST(
+      makeReq({
+        ...validPayload(),
+        admin: true,
+        cookie: "stealme",
+      }) as never,
+    );
+    expect(res.status).toBe(400);
+    expect(sendContactEmail).not.toHaveBeenCalled();
+  });
+});
+
 describe("POST /api/contact — timing trap (soft signal — policy note)", () => {
   it("a too-fast submission alone is NOT silently dropped (fast paster)", async () => {
     const res = await POST(

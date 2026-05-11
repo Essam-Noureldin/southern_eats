@@ -1,22 +1,35 @@
 /**
- * WHAT: Resend wrapper with stub-mode fallback. Called by the
- *       /api/contact route handler when a contact form submission
- *       passes validation.
+ * WHAT: Resend wrapper with stub-mode fallback. Called by /api/contact
+ *       and /api/order route handlers after validation passes.
  * WHY:  Two reasons:
- *       1. Local dev shouldn't require a real Resend account. With
- *          RESEND_API_KEY or CONTACT_FORM_FROM_EMAIL empty we log
- *          and return success — the form flow works end-to-end.
- *       2. Demo deploys can ship before the franchise's DNS is
- *          verified. Same fallback covers that gap.
- *       Composing the wrapper here means the route handler never
- *       branches on env vars itself — fewer code paths, easier to
- *       reason about in security review.
- * IF REMOVED: route handler would couple to Resend directly and
- *       crash whenever env vars are absent.
- * COMMON MISTAKE: reading env vars at module load. Read at call
- *       time so tests can mutate process.env between test cases.
+ *       1. Local dev / preview shouldn't require a real Resend account.
+ *          With RESEND_API_KEY or CONTACT_FORM_FROM_EMAIL empty we log a
+ *          REDACTED breadcrumb and return success so the form works.
+ *       2. Demo deploys ship before the franchise's DNS is verified.
+ *          Same fallback.
+ *       Composing the wrapper here means the route handler never branches
+ *       on env vars itself — fewer code paths, easier to reason about in
+ *       security review.
+ * IF REMOVED: route handlers couple to Resend directly and crash when
+ *       env vars are absent.
+ * COMMON MISTAKE: reading env vars at module load. Read at call time so
+ *       tests can mutate process.env between test cases.
+ *
+ * A1 hardening (2026-05-11): in production, stub-mode is fatal — we
+ *       return ok:false and never log the payload. Reason: a real
+ *       production deploy with missing Resend creds was silently logging
+ *       customer name/email/phone/message to Vercel Runtime Logs while
+ *       returning success to the user. Stub-mode is dev/preview only.
  */
 import { Resend } from "resend";
+
+// Redacted log helper. NEVER log a payload's values in production. In
+// dev/preview, log only the structural shape (mode + key names) so a
+// developer can confirm the flow without leaking customer PII to logs.
+function logStubBreadcrumb(label: string, payload: object): void {
+  if (process.env.NODE_ENV === "production") return;
+  console.log(label, { mode: "stub", payloadKeys: Object.keys(payload) });
+}
 
 export interface ContactPayload {
   name: string;
@@ -37,7 +50,10 @@ export async function sendContactEmail(
   const to = process.env.CONTACT_FORM_TO_EMAIL;
 
   if (!apiKey || !from) {
-    console.log("[email:stub-mode]", payload);
+    if (process.env.NODE_ENV === "production") {
+      return { ok: false, error: "Email service not configured" };
+    }
+    logStubBreadcrumb("[email:stub-mode]", payload);
     return { ok: true, mode: "stub" };
   }
   if (!to) {
@@ -119,7 +135,10 @@ export async function sendOrderEmail(
   const to = process.env.CONTACT_FORM_TO_EMAIL;
 
   if (!apiKey || !from) {
-    console.log("[email:stub-mode:order]", payload);
+    if (process.env.NODE_ENV === "production") {
+      return { ok: false, error: "Email service not configured" };
+    }
+    logStubBreadcrumb("[email:stub-mode:order]", payload);
     return { ok: true, mode: "stub" };
   }
   if (!to) {
@@ -131,6 +150,11 @@ export async function sendOrderEmail(
     const result = await resend.emails.send({
       from,
       to,
+      // A5: route Reply to the staff inbox. Order schema doesn't collect
+      // a customer email today, so staff replying must reach an internal
+      // alias rather than the no-reply Resend sender. Keeps customer phone
+      // numbers out of forwarded reply chains.
+      replyTo: to,
       subject: `[Sam's Southern] New pickup order — ${payload.locationName}`,
       text: formatOrderBody(payload),
     });
