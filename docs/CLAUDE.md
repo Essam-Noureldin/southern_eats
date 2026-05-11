@@ -2,6 +2,10 @@
 
 > Auto-loaded by future Claude Code sessions. Single source of truth for what this project is, how it's built, and what's load-bearing.
 
+## 🚨 BINDING — How to talk to Essam
+
+> **Default to "explain like I'm 5" on every single turn.** Essam has zero coding experience. Do NOT wait to be asked. Plain English, no jargon without a 💡 What is X? definition the first time it appears, narrate before AND after every step, no terse "9/9 green ✓" status reports without explaining what passed and what that means in business terms. If you find yourself writing a one-line summary, stop and rewrite it as a paragraph a non-coder can follow. Full guidance in memory: `feedback_teaching_mode.md`.
+
 ## What this project is
 
 Sam's Southern Eatery — a 51-location Southern fried-seafood/chicken franchise based in Shreveport, LA. This repo is the **redesigned marketing site**, built speculatively as a sales asset before the franchise has signed.
