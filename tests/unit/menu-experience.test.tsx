@@ -38,12 +38,12 @@ const cats: { id: Category; label: string }[] = [
 
 const items: MenuItem[] = [
   {
-    id: "fried-pickles",
+    id: "fried-mushrooms",
     category: "appetizers",
-    name: "Fried Pickles",
-    description: "Crispy dill chips with ranch.",
-    imageUrl: "/images/dish-friedpickles.jpeg",
-    price: 4.99,
+    name: "Fried Mushrooms",
+    description: "Hand-battered button mushrooms with ranch.",
+    imageUrl: "/images/dish-friedmushrooms.jpeg",
+    price: 4.49,
     tags: [],
   },
   {
@@ -73,7 +73,7 @@ describe("MenuExperience", () => {
 
   it("renders all items and category labels by default", () => {
     render(<MenuExperience items={items} categories={cats} />);
-    expect(screen.getByText("Fried Pickles")).toBeInTheDocument();
+    expect(screen.getByText("Fried Mushrooms")).toBeInTheDocument();
     expect(screen.getByText("Jumbo Shrimp")).toBeInTheDocument();
     expect(screen.getByText("Sweet Tea")).toBeInTheDocument();
     // Category labels appear in the nav AND as section headings.
@@ -95,7 +95,7 @@ describe("MenuExperience", () => {
       fireEvent.change(search, { target: { value: "shrimp" } });
     });
     expect(screen.getByText("Jumbo Shrimp")).toBeInTheDocument();
-    expect(screen.queryByText("Fried Pickles")).not.toBeInTheDocument();
+    expect(screen.queryByText("Fried Mushrooms")).not.toBeInTheDocument();
     expect(screen.queryByText("Sweet Tea")).not.toBeInTheDocument();
   });
 
@@ -105,7 +105,7 @@ describe("MenuExperience", () => {
     act(() => {
       fireEvent.change(search, { target: { value: "ranch" } });
     });
-    expect(screen.getByText("Fried Pickles")).toBeInTheDocument();
+    expect(screen.getByText("Fried Mushrooms")).toBeInTheDocument();
     expect(screen.queryByText("Jumbo Shrimp")).not.toBeInTheDocument();
   });
 

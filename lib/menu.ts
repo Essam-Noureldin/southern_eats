@@ -93,14 +93,11 @@ export const categories: { id: Category; label: string }[] = [
 export const menu: MenuItem[] = [
   // Appetizers
   { id: "fried-green-tomatoes", category: "appetizers", name: "Fried Green Tomatoes", description: "Sliced thick, cornmeal-battered, served with comeback sauce.", price: 5.99, imageUrl: "/images/dish-greentomatoes.jpeg", tags: ["gf"], signature: true },
-  { id: "hush-puppies", category: "appetizers", name: "Hush Puppies (8)", description: "Cornmeal fritters fried golden, with honey butter on the side.", price: 3.49, imageUrl: "/images/dish-hushpuppies.jpeg", tags: [] },
-  { id: "fried-pickles", category: "appetizers", name: "Fried Dill Pickles", description: "Hand-battered dill chips fried crisp, with ranch.", price: 4.99, imageUrl: "/images/dish-friedpickles.jpeg", tags: [] },
   { id: "gumbo-cup", category: "appetizers", name: "Cup of Gumbo", description: "Dark roux, shrimp, andouille, okra, served over rice.", price: 5.49, imageUrl: "/images/dish-gumbo.jpg", tags: ["shellfish", "spicy"] },
   { id: "fried-mushrooms", category: "appetizers", name: "Fried Mushrooms", description: "Hand-battered button mushrooms, fried crisp.", price: 4.49, imageUrl: "/images/dish-friedmushrooms.jpeg", tags: [] },
   { id: "onion-rings", category: "appetizers", name: "Onion Rings", description: "Thick-cut onions, lightly battered and fried golden.", price: 4.49, imageUrl: "/images/dish-onionrings.jpeg", tags: [] },
   { id: "cheddar-poppers", category: "appetizers", name: "Cheddar Poppers", description: "Breaded cheddar cheese bites fried until molten inside.", price: 4.99, imageUrl: "/images/dish-cheddarpoppers.jpeg", tags: [] },
   { id: "cheese-sticks", category: "appetizers", name: "Cheese Sticks", description: "Mozzarella sticks, breaded and fried, with marinara.", price: 4.99, imageUrl: "/images/dish-cheesesticks.jpeg", tags: [] },
-  { id: "appetizer-sampler", category: "appetizers", name: "Appetizer Sampler", description: "Pick any two starters from the list.", price: 7.99, imageUrl: "/images/dish-appetizersampler.jpeg", tags: [] },
 
   // Salads
   { id: "shrimp-salad", category: "salads", name: "Shrimp Salad", description: "Crisp greens topped with fried shrimp.", price: 9.49, imageUrl: "/images/dish-shrimpsalad.jpeg", tags: ["shellfish"] },

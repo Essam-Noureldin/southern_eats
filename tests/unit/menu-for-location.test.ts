@@ -41,10 +41,10 @@ describe("getMenuForLocation", () => {
   });
 
   it("hides items listed in override.hide", () => {
-    target.menuOverride = { hide: ["hush-puppies", "fried-pickles"] };
+    target.menuOverride = { hide: ["fried-mushrooms", "onion-rings"] };
     const result = getMenuForLocation(target.id);
-    expect(result.find((m) => m.id === "hush-puppies")).toBeUndefined();
-    expect(result.find((m) => m.id === "fried-pickles")).toBeUndefined();
+    expect(result.find((m) => m.id === "fried-mushrooms")).toBeUndefined();
+    expect(result.find((m) => m.id === "onion-rings")).toBeUndefined();
     // sanity: other items still present
     expect(result.find((m) => m.id === "jumbo-shrimp-15")).toBeDefined();
   });
@@ -86,7 +86,7 @@ describe("getMenuForLocation", () => {
 
   it("composes all three dimensions together", () => {
     target.menuOverride = {
-      hide: ["hush-puppies"],
+      hide: ["fried-mushrooms"],
       priceOverrides: { "jumbo-shrimp-15": 19.99 },
       addItems: [
         {
@@ -100,7 +100,7 @@ describe("getMenuForLocation", () => {
       ],
     };
     const result = getMenuForLocation(target.id);
-    expect(result.find((m) => m.id === "hush-puppies")).toBeUndefined();
+    expect(result.find((m) => m.id === "fried-mushrooms")).toBeUndefined();
     expect(result.find((m) => m.id === "jumbo-shrimp-15")?.price).toBe(19.99);
     expect(result.find((m) => m.id === "house-okra")?.price).toBe(3.5);
     // Length = base - hide + add
@@ -110,7 +110,7 @@ describe("getMenuForLocation", () => {
   it("does not mutate the base menu array", () => {
     const before = menu.map((m) => ({ id: m.id, price: m.price }));
     target.menuOverride = {
-      hide: ["hush-puppies"],
+      hide: ["fried-mushrooms"],
       priceOverrides: { "jumbo-shrimp-15": 99.99 },
     };
     getMenuForLocation(target.id);

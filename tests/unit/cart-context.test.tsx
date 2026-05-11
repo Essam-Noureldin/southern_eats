@@ -21,7 +21,7 @@ function Harness({ locationId }: { locationId: string }) {
       <span data-testid="lines">{JSON.stringify(cart.lines)}</span>
       <button onClick={() => setLocation(locationId)}>set-loc</button>
       <button onClick={() => addToCart("fried-green-tomatoes")}>add</button>
-      <button onClick={() => addToCart("fried-pickles")}>add-2</button>
+      <button onClick={() => addToCart("onion-rings")}>add-2</button>
       <button onClick={() => changeQty("fried-green-tomatoes", 1)}>plus</button>
       <button onClick={() => changeQty("fried-green-tomatoes", -1)}>minus</button>
       <button onClick={() => removeLine("fried-green-tomatoes")}>remove</button>
@@ -126,7 +126,7 @@ describe("CartContext", () => {
       fireEvent.click(screen.getByText("remove"));
     });
     expect(JSON.parse(screen.getByTestId("lines").textContent || "")).toEqual([
-      { id: "fried-pickles", qty: 1 },
+      { id: "onion-rings", qty: 1 },
     ]);
   });
 
