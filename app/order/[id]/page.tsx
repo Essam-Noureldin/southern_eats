@@ -47,6 +47,20 @@ export default async function OrderLocationPage({ params }: PageProps) {
 
   return (
     <main>
+      {/*
+       * Demo-prices banner. Prices on /order are placeholder values
+       * anchored against typical casual-Southern price bands (see
+       * lib/menu.ts source comments). We surface this honestly so
+       * users aren't misled; the franchise replaces the prices with
+       * real ones at launch and the banner gets removed in that pass.
+       */}
+      <div
+        role="note"
+        className="bg-butter/30 px-4 py-2 text-center text-xs text-charcoal/80 md:px-8"
+      >
+        Demo prices &mdash; final pricing set per location at launch.
+      </div>
+
       <section className="border-b border-border bg-cream py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <Link
