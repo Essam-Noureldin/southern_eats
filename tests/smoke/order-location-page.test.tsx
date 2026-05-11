@@ -48,4 +48,28 @@ describe("/order/[id] page", () => {
     });
     expect(results).toHaveNoViolations();
   });
+
+  it("emits a Restaurant JSON-LD script with this location's name + address (A3)", async () => {
+    const ui = await OrderLocationPage({
+      params: Promise.resolve({ id: "shreveport-greenwood-rd-la" }),
+    });
+    const { container } = render(ui);
+    const ldScript = container.querySelector(
+      'script[type="application/ld+json"]',
+    );
+    expect(ldScript).not.toBeNull();
+    const data = JSON.parse(ldScript!.innerHTML);
+    expect(data["@type"]).toBe("Restaurant");
+    expect(data.name).toContain("Shreveport");
+    expect(data.address.addressLocality).toBe("Shreveport");
+    expect(data.address.addressRegion).toBe("LA");
+    expect(data.geo).toEqual(
+      expect.objectContaining({
+        "@type": "GeoCoordinates",
+        latitude: expect.any(Number),
+        longitude: expect.any(Number),
+      }),
+    );
+    expect(data.branchOf["@id"]).toMatch(/#organization$/);
+  });
 });

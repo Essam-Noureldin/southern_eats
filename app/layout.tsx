@@ -6,6 +6,7 @@ import CookieConsent from "@/components/consent/CookieConsent";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import MobileOrderBar from "@/components/layout/MobileOrderBar";
+import { organizationLd, jsonLdScript } from "@/lib/json-ld";
 
 /**
  * WHAT: Self-hosted brand fonts via next/font/google. Exposes CSS
@@ -77,6 +78,23 @@ export default function RootLayout({
       className={`${fraunces.variable} ${dmSans.variable}`}
       data-scroll-behavior="smooth"
     >
+      <head>
+        {/*
+         * Schema.org Organization-tier JSON-LD. Tells Google we're a
+         * single restaurant franchise (FoodEstablishment) with 41
+         * branches — basis for Knowledge Panel, Maps integration, and
+         * the "Sam's Southern Eatery near me" rich result.
+         * Per-location Restaurant nodes live on /order/[id] and link
+         * back to this @id via branchOf.
+         */}
+        <script
+          {...jsonLdScript(
+            organizationLd(
+              process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+            ),
+          )}
+        />
+      </head>
       <body>
         <div className="flex min-h-screen flex-col">
           <Navbar />
