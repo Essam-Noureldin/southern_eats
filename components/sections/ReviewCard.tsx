@@ -47,6 +47,19 @@ export default function ReviewCard({ review }: { review: Review }) {
       <p className="mt-4 text-sm text-muted-foreground">
         &mdash; {review.name}, {review.city} &middot; {review.date}
       </p>
+      {review.attributionUri ? (
+        // Google's policy requires that displayed reviews link back to
+        // the source on Google Maps. The mock fallback reviews don't
+        // have an attribution URL, so this link is conditional.
+        <a
+          href={review.attributionUri}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 text-xs uppercase tracking-widest text-muted-foreground underline-offset-4 hover:underline"
+        >
+          View on Google
+        </a>
+      ) : null}
     </article>
   );
 }

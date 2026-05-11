@@ -6,6 +6,12 @@
  *       a chorus, few enough to read in two seconds. The pull quote
  *       is the kicker; "A franchise that doesn't suck." is verbatim
  *       from a real TripAdvisor headline (cited as such).
+ *
+ *       Async server component — `getHomepageReviews()` prefers live
+ *       Google Places reviews when any location has a googlePlaceId
+ *       set AND GOOGLE_PLACES_API_KEY is configured; otherwise falls
+ *       back to the hand-curated mock array. Fetch-layer caching
+ *       keeps build-time API calls cheap (one per place per day).
  * IF REMOVED: homepage loses its social-proof beat between story
  *       and franchise.
  * COMMON MISTAKE: animating the grid in on scroll with overlapping
@@ -14,10 +20,10 @@
  *       a real reason for it.
  */
 import ReviewCard from "./ReviewCard";
-import { reviews, pullQuote } from "@/lib/reviews";
+import { getHomepageReviews, pullQuote } from "@/lib/reviews";
 
-export default function Reviews() {
-  const lead = reviews.slice(0, 3);
+export default async function Reviews() {
+  const lead = await getHomepageReviews(3);
 
   return (
     <section

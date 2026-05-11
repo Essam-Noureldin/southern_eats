@@ -47,6 +47,20 @@ export interface Location {
   phone: string;
   coords: LatLng;
   hours: Hours[];
+  /**
+   * Google Place ID for this location, when known.
+   *
+   * When set AND `GOOGLE_PLACES_API_KEY` env var is configured, the location
+   * detail page pulls live hours + reviews from the Google Places API and
+   * merges them over the static `hours` array above.
+   *
+   * Find the ID via Google's Place ID Finder:
+   *   https://developers.google.com/maps/documentation/places/web-service/place-id
+   *
+   * When unset, the location falls back to the static `hours` array and
+   * the mock reviews in lib/reviews.ts (offline-safe, CI-safe).
+   */
+  googlePlaceId?: string;
 }
 
 // 7-day uniform schedules — common Sam's patterns, defined once for
@@ -464,4 +478,35 @@ export function directionsUrl(loc: Location): string {
   const { street, city, state, zip } = loc.address;
   const dest = encodeURIComponent(`${street}, ${city}, ${state} ${zip}`);
   return `https://www.google.com/maps/dir/?api=1&destination=${dest}`;
+}
+
+/**
+ * Server-only helper. Returns the LOCATIONS array with each location's
+ * `hours` field replaced by live Google Places hours where available.
+ *
+ * Strategy:
+ *   - For every location with a `googlePlaceId`, fetch live hours in
+ *     parallel. The Next.js fetch cache (revalidate: 86400) keeps the
+ *     real network cost low — at most one Google call per place per day.
+ *   - When live hours come back non-empty, they win over the static
+ *     fallback. When they're null/empty (no key, network blip, place
+ *     has no hours published), we keep the static array.
+ *
+ * Callers that don't need live hours (e.g. cart/order validation, JSON-LD)
+ * can keep importing LOCATIONS directly. Live-hours enrichment is
+ * opt-in per page.
+ */
+export async function getLocationsWithLiveHours(): Promise<Location[]> {
+  const { fetchPlaceData } = await import("./google-places");
+  const enriched = await Promise.all(
+    LOCATIONS.map(async (loc) => {
+      if (!loc.googlePlaceId) return { ...loc };
+      const data = await fetchPlaceData(loc.googlePlaceId);
+      if (!data || !data.hours || data.hours.length === 0) {
+        return { ...loc };
+      }
+      return { ...loc, hours: data.hours };
+    }),
+  );
+  return enriched;
 }

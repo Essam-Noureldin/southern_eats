@@ -47,6 +47,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_SENTRY_DSN: optionalString,
   RESEND_API_KEY: optionalString,
   CONTACT_FORM_FROM_EMAIL: optionalString,
+  // Google Places API: enables live Reviews + live hours on location pages.
+  // When unset, components fall back to mock data in lib/reviews.ts and
+  // static hours arrays in lib/locations.ts. Cost: ~$0.017/Place Details
+  // call × 41 locations × daily refresh = ~$0.70/mo (free tier covers it).
+  GOOGLE_PLACES_API_KEY: optionalString,
 });
 
 export type Env = z.infer<typeof envSchema>;

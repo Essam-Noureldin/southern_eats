@@ -58,4 +58,24 @@ describe("ReviewCard", () => {
       unmount();
     }
   });
+
+  it("renders a 'View on Google' link only when attributionUri is set", () => {
+    const { unmount } = render(<ReviewCard review={baseReview} />);
+    expect(screen.queryByText(/view on google/i)).not.toBeInTheDocument();
+    unmount();
+
+    render(
+      <ReviewCard
+        review={{
+          ...baseReview,
+          platform: "google",
+          attributionUri: "https://maps.google.com/?cid=42",
+        }}
+      />,
+    );
+    const link = screen.getByText(/view on google/i);
+    expect(link.closest("a")).toHaveAttribute("href", "https://maps.google.com/?cid=42");
+    expect(link.closest("a")).toHaveAttribute("target", "_blank");
+    expect(link.closest("a")).toHaveAttribute("rel", "noopener noreferrer");
+  });
 });

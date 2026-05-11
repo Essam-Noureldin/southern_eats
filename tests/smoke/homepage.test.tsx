@@ -1,5 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
+
+// Reviews is an async server component that reaches the data layer
+// (lib/reviews → lib/google-places). Smoke test should NOT depend on
+// that integration — just confirm the homepage shell is wired up. We
+// swap in a sync stub here.
+jest.mock("@/components/sections/Reviews", () => ({
+  __esModule: true,
+  default: () => <section data-testid="reviews-stub">stub</section>,
+}));
+
 import HomePage from "@/app/page";
 
 expect.extend(toHaveNoViolations);
