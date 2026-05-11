@@ -6,10 +6,11 @@
  *       right with line-by-line +/- controls, subtotal/tax/total,
  *       and a "Continue to checkout" CTA that's disabled until at
  *       least one item is in the cart.
- * WHY:  This is the heart of the in-house ordering flow. Cart state
- *       lives here for now; when the checkout step lands in a
- *       follow-up branch it'll be lifted to a Context (or persisted
- *       to localStorage) so cart contents survive navigation.
+ * WHY:  This is the heart of the in-house ordering flow. As of
+ *       feature-order-checkout, cart state has been lifted to a
+ *       Context (components/order/CartContext) so the cart survives
+ *       navigation to /order/[id]/checkout. This component is now a
+ *       *consumer* of useCart — it doesn't own the state.
  * IF REMOVED: /order/[id] renders the location header but no menu
  *       and no cart — the order flow can't proceed.
  * COMMON MISTAKE: filtering the menu without a price check. Items
@@ -19,16 +20,12 @@
  *       call downstream. We filter to priced items only here so the
  *       cart math stays sound.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Location } from "@/lib/locations";
 import { menu, categories } from "@/lib/menu";
-
-interface CartLine {
-  id: string;
-  qty: number;
-}
+import { useCart } from "@/components/order/CartContext";
 
 interface Props {
   location: Location;
@@ -40,7 +37,14 @@ interface Props {
 const TAX_RATE = 0.0825;
 
 export default function LocationMenu({ location }: Props) {
-  const [cart, setCart] = useState<CartLine[]>([]);
+  const { cart, setLocation, addToCart, changeQty, removeLine } = useCart();
+
+  // Tell the cart which location this menu is for. The provider
+  // resets the cart if the new location differs from the previous one
+  // (you can't move a Shreveport cart to a Norman counter).
+  useEffect(() => {
+    setLocation(location.id);
+  }, [location.id, setLocation]);
 
   // Only items with a real price can be added to the cart — the menu
   // file leaves price undefined for items where the live brand site
@@ -57,43 +61,19 @@ export default function LocationMenu({ location }: Props) {
   }, []);
 
   function getQty(id: string): number {
-    return cart.find((l) => l.id === id)?.qty ?? 0;
-  }
-
-  function addToCart(id: string) {
-    setCart((prev) => {
-      const existing = prev.find((l) => l.id === id);
-      if (existing) {
-        return prev.map((l) =>
-          l.id === id ? { ...l, qty: l.qty + 1 } : l,
-        );
-      }
-      return [...prev, { id, qty: 1 }];
-    });
-  }
-
-  function changeQty(id: string, delta: number) {
-    setCart((prev) =>
-      prev
-        .map((l) => (l.id === id ? { ...l, qty: l.qty + delta } : l))
-        .filter((l) => l.qty > 0),
-    );
-  }
-
-  function removeLine(id: string) {
-    setCart((prev) => prev.filter((l) => l.id !== id));
+    return cart.lines.find((l) => l.id === id)?.qty ?? 0;
   }
 
   const cartItems = useMemo(
     () =>
-      cart
+      cart.lines
         .map((line) => {
           const item = menu.find((m) => m.id === line.id);
           if (!item || typeof item.price !== "number") return null;
           return { ...line, item, lineTotal: line.qty * item.price };
         })
         .filter((x): x is NonNullable<typeof x> => x !== null),
-    [cart],
+    [cart.lines],
   );
 
   const subtotal = cartItems.reduce((s, x) => s + x.lineTotal, 0);

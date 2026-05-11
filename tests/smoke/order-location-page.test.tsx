@@ -11,9 +11,20 @@
  *       — async server components return Promise<JSX>; you have to
  *       await it before passing the result to render().
  */
-import { render } from "@testing-library/react";
+import { render as rtlRender } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
 import OrderLocationPage from "@/app/order/[id]/page";
+import { CartProvider } from "@/components/order/CartContext";
+
+// The page is rendered inside app/order/layout.tsx in real use, which
+// supplies the CartProvider. Smoke tests bypass the layout — wrap here.
+function render(ui: React.ReactElement) {
+  return rtlRender(<CartProvider>{ui}</CartProvider>);
+}
+
+beforeEach(() => {
+  window.localStorage.clear();
+});
 
 expect.extend(toHaveNoViolations);
 

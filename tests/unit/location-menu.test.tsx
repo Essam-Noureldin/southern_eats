@@ -7,10 +7,23 @@
  *       Remove drops the line, totals match the math, and the
  *       checkout link only activates once a priced item is added.
  */
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render as rtlRender, screen, fireEvent, act } from "@testing-library/react";
 import LocationMenu from "@/components/order/LocationMenu";
+import { CartProvider } from "@/components/order/CartContext";
 import { menu } from "@/lib/menu";
 import type { Location } from "@/lib/locations";
+
+// Cart state is owned by CartProvider (lifted out of LocationMenu in
+// feature-order-checkout). Wrap every render in the provider so the
+// useCart() hook resolves. localStorage is cleared between tests so one
+// test's cart doesn't leak into the next.
+beforeEach(() => {
+  window.localStorage.clear();
+});
+
+function render(ui: React.ReactElement) {
+  return rtlRender(<CartProvider>{ui}</CartProvider>);
+}
 
 const location: Location = {
   id: "shreveport-greenwood-rd-la",
