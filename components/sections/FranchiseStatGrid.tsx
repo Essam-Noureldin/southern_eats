@@ -26,8 +26,14 @@ export default function FranchiseStatGrid() {
   const [ref, revealed] = useRevealOnView<HTMLDListElement>();
 
   return (
+    // suppressHydrationWarning: useRevealOnView intentionally returns
+    // true on SSR (visible to crawlers / no-JS) and false on the client's
+    // first paint (so the reveal animation plays). The flag allows that
+    // server/client className diff without React falling back to a
+    // client-only re-render.
     <dl
       ref={ref}
+      suppressHydrationWarning
       className={`mt-10 grid grid-cols-2 gap-8 border-t border-cream/20 pt-10 md:grid-cols-4 md:gap-6${
         revealed ? " is-revealed" : ""
       }`}

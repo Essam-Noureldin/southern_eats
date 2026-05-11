@@ -62,9 +62,18 @@ export default function Revealable({
   }, [revealed]);
 
   return (
+    // suppressHydrationWarning is the right escape hatch here: by design,
+    // the server renders `is-revealed` (so crawlers and no-JS users see
+    // content) while the client's first paint renders without it (so the
+    // animation can play). React 19 calls this out as a legitimate use
+    // case for the flag — same shape as a date/time display that's known
+    // to differ between server and client. Without it, React logs a
+    // hydration warning AND falls back to a client-only re-render that
+    // discards the server HTML.
     <div
       ref={ref}
       data-testid="revealable"
+      suppressHydrationWarning
       style={{ animationDelay: `${delayMs}ms` }}
       className={`reveal-on-view${revealed ? " is-revealed" : ""}${
         className ? ` ${className}` : ""

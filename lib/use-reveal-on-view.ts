@@ -12,9 +12,17 @@
  *       reduced-motion fallbacks (all three start `revealed=true` so
  *       content is visible immediately and never gets stuck hidden).
  * IF REMOVED: each consumer would need to inline the same ~25 lines.
- * COMMON MISTAKE: setting revealed via useEffect on mount rather than
+ * COMMON MISTAKE 1: setting revealed via useEffect on mount rather than
  *       through the lazy initializer. The React 19 lint rule
  *       `react-hooks/set-state-in-effect` flags that.
+ * COMMON MISTAKE 2: forgetting `suppressHydrationWarning` on the element
+ *       whose className depends on `revealed`. SSR returns `true` (so
+ *       crawlers / no-JS users see content) while the client's first
+ *       paint returns `false` (so the reveal animation plays). React 19
+ *       treats that intentional diff as a hydration warning AND falls
+ *       back to a client-only re-render unless suppressHydrationWarning
+ *       is set on the diverging element. See NumbersBand and
+ *       FranchiseStatGrid for the canonical usage.
  */
 import { useEffect, useRef, useState } from "react";
 
