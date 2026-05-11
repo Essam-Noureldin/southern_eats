@@ -45,9 +45,17 @@ export default function NumbersBand() {
         >
           41 locations. 11 states. One promise.
         </WeightShiftHeading>
+        {/*
+         * suppressHydrationWarning: useRevealOnView intentionally returns
+         * true on SSR (so crawlers / no-JS users see content) and false
+         * on the client's first paint (so the reveal animation plays).
+         * That's a deliberate server/client className diff; the flag tells
+         * React to allow it without falling back to a client-only re-render.
+         */}
         <div
           ref={ref}
           data-testid="numbers-band-grid"
+          suppressHydrationWarning
           className={`grid grid-cols-2 gap-6 md:grid-cols-4${
             revealed ? " is-revealed" : ""
           }`}
