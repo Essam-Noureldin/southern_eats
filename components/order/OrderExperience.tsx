@@ -119,13 +119,30 @@ export default function OrderExperience({ locations }: Props) {
               </div>
 
               <div className="mt-auto pt-6">
-                <Link
-                  href={`/order/${loc.id}`}
-                  aria-label={`Start order from ${loc.name}`}
-                  className="inline-flex w-full items-center justify-center rounded-full bg-sams-red px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
-                >
-                  Start order &rarr;
-                </Link>
+                {loc.orderingUrl ? (
+                  // External ordering platform (HungerRush etc.) — opens in
+                  // a new tab so we don't trap the customer's checkout flow
+                  // inside our marketing site. rel="noopener noreferrer"
+                  // is anti-tabnabbing + referrer hygiene; required for any
+                  // user-controlled external destination.
+                  <a
+                    href={loc.orderingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Order online from ${loc.name} (opens in a new tab)`}
+                    className="inline-flex w-full items-center justify-center rounded-full bg-sams-red px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
+                  >
+                    Order online &#x2197;
+                  </a>
+                ) : (
+                  <Link
+                    href={`/order/${loc.id}`}
+                    aria-label={`Start order from ${loc.name}`}
+                    className="inline-flex w-full items-center justify-center rounded-full bg-sams-red px-5 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
+                  >
+                    Start order &rarr;
+                  </Link>
+                )}
               </div>
             </li>
           ))}

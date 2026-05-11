@@ -75,6 +75,21 @@ export interface Location {
    * When unset, the location serves the base menu unchanged.
    */
   menuOverride?: MenuOverride;
+  /**
+   * External ordering URL for this location (HungerRush, Toast, ChowNow,
+   * Square Online, etc.). When set, the "Start order" CTA on /order
+   * routes the customer to the franchise's real ordering platform in a
+   * new tab (rel="noopener noreferrer") instead of the in-house demo
+   * flow. The per-location page /order/[id] additionally surfaces a
+   * banner pointing to the real ordering URL.
+   *
+   * Must be an absolute https URL — the routing code does not normalise.
+   *
+   * When unset, the location falls through to the in-house demo flow.
+   * This matches the franchise reality: not every store has a public
+   * ordering URL yet.
+   */
+  orderingUrl?: string;
 }
 
 // 7-day uniform schedules — common Sam's patterns, defined once for
@@ -169,6 +184,10 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(318) 631-7782",
     coords: { lat: 32.4522114, lng: -93.8622371 },
     hours: D7("10:00", "22:00"),
+    // PLACEHOLDER — needs the franchise's real per-store HungerRush URL
+    // before public launch. Format mirrors HungerRush's typical
+    // <storename>.hrpos.com subdomain pattern but the host is invented.
+    orderingUrl: "https://shreveport-greenwood.hrpos.com",
   },
   {
     id: "vivian-hwy-1-la",
@@ -396,6 +415,8 @@ export const LOCATIONS: readonly Location[] = [
     phone: "(405) 561-7400",
     coords: { lat: 35.2183695, lng: -97.4484078 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
+    // PLACEHOLDER — see note on shreveport-greenwood-rd-la above.
+    orderingUrl: "https://norman-mainst.hrpos.com",
   },
   {
     id: "midwest-city-ne-10th-ok",

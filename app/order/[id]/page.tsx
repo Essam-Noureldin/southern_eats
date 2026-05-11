@@ -77,6 +77,31 @@ export default async function OrderLocationPage({ params }: PageProps) {
         Demo prices &mdash; final pricing set per location at launch.
       </div>
 
+      {/*
+       * HungerRush demo banner. When the location has an `orderingUrl`
+       * the franchise wants real orders to go through their actual
+       * ordering platform — this page exists only as a capability demo.
+       * Surface that honestly so a confused customer can hand-off to
+       * the real flow in one click. The link is external, new tab,
+       * rel="noopener noreferrer" (anti-tabnabbing).
+       */}
+      {location.orderingUrl && (
+        <div
+          role="note"
+          className="bg-sams-red/10 px-4 py-3 text-center text-sm text-charcoal md:px-8"
+        >
+          This page is a demo.{" "}
+          <a
+            href={location.orderingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-sams-red underline underline-offset-2 hover:text-sams-red/80"
+          >
+            Place a real order at HungerRush &#x2197;
+          </a>
+        </div>
+      )}
+
       <section className="border-b border-border bg-cream py-8">
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <Link

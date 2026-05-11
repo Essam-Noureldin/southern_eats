@@ -49,6 +49,36 @@ describe("/order/[id] page", () => {
     expect(results).toHaveNoViolations();
   });
 
+  it("renders a HungerRush demo banner when the location has an orderingUrl set", async () => {
+    // shreveport-greenwood-rd-la is seeded with a placeholder orderingUrl
+    // in lib/locations.ts (HungerRush routing demo). The banner appears
+    // above the menu and the link points at the external URL.
+    const ui = await OrderLocationPage({
+      params: Promise.resolve({ id: "shreveport-greenwood-rd-la" }),
+    });
+    const { getByRole } = render(ui);
+    const link = getByRole("link", { name: /order at|hungerrush|real order/i });
+    expect(link.getAttribute("href")).toMatch(/^https?:\/\//);
+    expect(link).toHaveAttribute("target", "_blank");
+    const rel = link.getAttribute("rel") ?? "";
+    expect(rel).toMatch(/noopener/);
+    expect(rel).toMatch(/noreferrer/);
+  });
+
+  it("renders NO demo banner when the location has no orderingUrl", async () => {
+    // havelock-w-main-nc is a phone-only location in lib/locations.ts
+    // (no orderingUrl) — the in-house demo flow is the only path.
+    const ui = await OrderLocationPage({
+      params: Promise.resolve({ id: "havelock-w-main-nc" }),
+    });
+    const { queryByRole } = render(ui);
+    // No external HungerRush link should be present.
+    const link = queryByRole("link", {
+      name: /order at|hungerrush|real order/i,
+    });
+    expect(link).toBeNull();
+  });
+
   it("emits a Restaurant JSON-LD script with this location's name + address (A3)", async () => {
     const ui = await OrderLocationPage({
       params: Promise.resolve({ id: "shreveport-greenwood-rd-la" }),

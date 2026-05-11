@@ -111,6 +111,31 @@ describe("OrderExperience", () => {
     );
   });
 
+  it("routes a location with orderingUrl externally with safe rel attrs", () => {
+    const withExternal: Location[] = [
+      {
+        ...locations[0],
+        orderingUrl: "https://shreveport.hrpos.com",
+      },
+      locations[1],
+    ];
+    render(<OrderExperience locations={withExternal} />);
+    const shreveport = screen.getByRole("link", {
+      name: /order online from shreveport/i,
+    });
+    expect(shreveport).toHaveAttribute("href", "https://shreveport.hrpos.com");
+    expect(shreveport).toHaveAttribute("target", "_blank");
+    // Anti-tabnabbing — rel must include both keywords (order-independent).
+    const rel = shreveport.getAttribute("rel") ?? "";
+    expect(rel).toMatch(/noopener/);
+    expect(rel).toMatch(/noreferrer/);
+    // Location without orderingUrl still routes internally.
+    const norman = screen.getByRole("link", {
+      name: /start order from norman/i,
+    });
+    expect(norman).toHaveAttribute("href", "/order/norman-w-main-ok");
+  });
+
   it("renders a tel: phone link on every location", () => {
     render(<OrderExperience locations={locations} />);
     expect(
