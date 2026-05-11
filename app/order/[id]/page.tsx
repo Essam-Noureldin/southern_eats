@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { LOCATIONS } from "@/lib/locations";
 import LocationMenu from "@/components/order/LocationMenu";
+import { restaurantLd, jsonLdScript } from "@/lib/json-ld";
 
 /**
  * WHAT: /order/[id] — per-location menu page. Server component:
@@ -47,6 +48,21 @@ export default async function OrderLocationPage({ params }: PageProps) {
 
   return (
     <main>
+      {/*
+       * Per-location Restaurant JSON-LD. Lets Google surface this
+       * branch in "Sam's Southern Eatery near me" results with its real
+       * address, phone, coords, and hours. branchOf links back to the
+       * site-wide Organization @id emitted in app/layout.tsx.
+       */}
+      <script
+        {...jsonLdScript(
+          restaurantLd(
+            location,
+            process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+          ),
+        )}
+      />
+
       {/*
        * Demo-prices banner. Prices on /order are placeholder values
        * anchored against typical casual-Southern price bands (see
