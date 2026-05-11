@@ -185,9 +185,10 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 32.4522114, lng: -93.8622371 },
     hours: D7("10:00", "22:00"),
     // PLACEHOLDER — needs the franchise's real per-store HungerRush URL
-    // before public launch. Format mirrors HungerRush's typical
-    // <storename>.hrpos.com subdomain pattern but the host is invented.
-    orderingUrl: "https://shreveport-greenwood.hrpos.com",
+    // before public launch. Uses example.com (IANA-reserved) so the demo
+    // routing lands on a recognisable "Example Domain" page rather than
+    // a real third-party site. The path carries the intent.
+    orderingUrl: "https://example.com/sams-shreveport-greenwood/order",
   },
   {
     id: "vivian-hwy-1-la",
@@ -416,7 +417,7 @@ export const LOCATIONS: readonly Location[] = [
     coords: { lat: 35.2183695, lng: -97.4484078 },
     hours: MS6_S1({ open: "10:00", close: "21:00" }, { open: "11:00", close: "20:00" }),
     // PLACEHOLDER — see note on shreveport-greenwood-rd-la above.
-    orderingUrl: "https://norman-mainst.hrpos.com",
+    orderingUrl: "https://example.com/sams-norman-mainst/order",
   },
   {
     id: "midwest-city-ne-10th-ok",
