@@ -1,0 +1,78 @@
+# WHAT: GitHub Actions workflow that runs the project's quality gates
+#       (typecheck + lint + jest) on every push to main and every PR.
+# WHY:  Husky pre-push runs jest on Essam's laptop, which is great for
+#       fast local feedback — but it only runs ON ESSAM's MACHINE. CI on
+#       GitHub gives:
+#         - A green/red badge on every commit so the GitHub history shows
+#           which commits actually passed at the time they landed.
+#         - The basis for a branch-protection rule that requires checks
+#           to pass before a PR can merge into main.
+#         - A second-opinion check if Essam ever bypasses Husky (--no-verify)
+#           or commits from a fresh machine without hooks installed.
+#       Mirrors the exact commands Husky runs locally, with one addition:
+#       `npm run build` is also exercised here so a deploy regression is
+#       caught at PR time rather than on the next Vercel deploy.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Manual trigger from the Actions tab — useful if Essam wants to
+  # re-run on demand without pushing a no-op commit.
+  workflow_dispatch:
+
+# Cancel in-flight runs for the same ref when a newer commit arrives.
+# Saves CI minutes on rapid pushes; the latest commit is always what
+# matters.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Typecheck • Lint • Jest • Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        # npm ci honours package-lock.json exactly (no drift) and is
+        # faster than npm install in CI.
+        run: npm ci
+
+      - name: TypeScript type-check
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint -- --max-warnings 0
+
+      - name: Jest
+        # Mirrors package.json's test:ci (jest --ci --coverage
+        # --detectOpenHandles --maxWorkers=2 --passWithNoTests).
+        # The 2-worker cap matters less on Ubuntu CI runners than on
+        # Essam's 16 GB Windows laptop, but kept identical for parity.
+        run: npm run test:ci
+
+      - name: Next build
+        # Catches deploy-time regressions (e.g. server/client boundary
+        # mistakes, env validation, withSentryConfig wrap issues) that
+        # tsc / eslint / jest don't see.
+        env:
+          NEXT_PUBLIC_SITE_URL: "https://ci.example.com"
+          CONTACT_FORM_TO_EMAIL: "ci@example.com"
+          RATE_LIMIT_MAX: "3"
+          RATE_LIMIT_WINDOW_MS: "600000"
+          COOKIE_CONSENT_REQUIRED: "true"
+        run: npm run build
