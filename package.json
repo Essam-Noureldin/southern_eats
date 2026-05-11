@@ -14,7 +14,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --ci --coverage --detectOpenHandles --passWithNoTests",
+    "test:ci": "jest --ci --coverage --detectOpenHandles --maxWorkers=2 --passWithNoTests",
     "test:unit": "jest --testPathPattern=unit --passWithNoTests",
     "test:integration": "jest --testPathPattern=integration --passWithNoTests",
     "prepare": "husky"

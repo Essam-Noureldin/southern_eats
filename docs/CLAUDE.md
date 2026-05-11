@@ -82,6 +82,18 @@ sams-southern-eatery/
 - **Scan after every change.** `npx tsc --noEmit && npx eslint . --max-warnings 0 && npx jest`. Build only if pages/routes/deps/config changed.
 - **Track deviations.** Append to `MASTER_PROMPT_DEVIATIONS.md` (project root) as they happen.
 
+## Memory hygiene (binding — Windows 16 GB laptop)
+
+> ⚠️ A previous session crashed the host by piling up Node processes. Treat these rules as load-bearing.
+
+- **Kill background dev/test processes before running `npm run build` or `npm test`.** Dev server + jest watcher + a fresh build is what OOMs the machine. Run `powershell -File scripts/kill-background-node.ps1` to inspect; add `-Kill` to terminate. Always inspect first — don't kill blindly if the user might have something else running.
+- **Only one long-lived Node process at a time.** If you started `npm run dev` with `run_in_background: true`, kill it before kicking off a build. Same rule for `jest --watch`.
+- **Jest is capped at 2 workers.** `test:ci` uses `--maxWorkers=2`. Don't raise this — default (one per CPU core) easily eats 12 GB on this project.
+- **Don't `Read` raw dish JPEGs into context.** Files in `public/images/dish-*.jpeg` are 1–3 MB each; reading them base64-inlines them into the transcript and they're held for the rest of the session. If you need to check an image exists, use `Glob` or `ls`, not `Read`.
+- **Cap Node heap on dev environments.** `$env:NODE_OPTIONS = "--max-old-space-size=3072"` in the shell session ensures a single runaway process gets OOM-killed by V8 instead of dragging the OS into swap.
+- **`scripts/compress-images.mjs` is already sequential** (`for...of await`). Don't refactor it to `Promise.all` — that's how sharp/libvips spikes to 2 GB on 36 images.
+- **Suspect node.exe orphans first** when the laptop feels sluggish. Task Manager → sort by Memory → look for multiple `node.exe` entries. If there are more Node processes than terminals you have open, something leaked.
+
 ## Jargon used in this project
 
 > Single project-wide jargon table. Other docs link here rather than redefining.
@@ -125,3 +137,4 @@ sams-southern-eatery/
 | Deploying / managing the live site | `docs/MAINTENANCE.md` |
 | Owner-facing guide | `docs/USER_GUIDE.md` |
 | Final delivery gate | `../DELIVERY_CHECKLIST.md` |
+| Killing orphaned Node processes | `scripts/kill-background-node.ps1` |
