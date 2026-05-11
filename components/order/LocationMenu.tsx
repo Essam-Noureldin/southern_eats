@@ -24,7 +24,7 @@ import { useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Location } from "@/lib/locations";
-import { menu, categories } from "@/lib/menu";
+import { getMenuForLocation, categories } from "@/lib/menu";
 import { useCart } from "@/components/order/CartContext";
 
 interface Props {
@@ -46,19 +46,27 @@ export default function LocationMenu({ location }: Props) {
     setLocation(location.id);
   }, [location.id, setLocation]);
 
+  // The per-location menu applies any `menuOverride` set on this location
+  // (hide / priceOverrides / addItems) on top of the base list. Without
+  // an override the result is identical to importing `menu` directly.
+  const locationMenu = useMemo(
+    () => getMenuForLocation(location.id),
+    [location.id],
+  );
+
   // Only items with a real price can be added to the cart — the menu
   // file leaves price undefined for items where the live brand site
   // doesn't publish one. See the SECURITY/no-fabrication block in
   // lib/menu.ts for the why.
   const orderableByCategory = useMemo(() => {
-    const priced = menu.filter((m) => typeof m.price === "number");
+    const priced = locationMenu.filter((m) => typeof m.price === "number");
     return categories
       .map((c) => ({
         ...c,
         items: priced.filter((m) => m.category === c.id),
       }))
       .filter((c) => c.items.length > 0);
-  }, []);
+  }, [locationMenu]);
 
   function getQty(id: string): number {
     return cart.lines.find((l) => l.id === id)?.qty ?? 0;
@@ -68,12 +76,12 @@ export default function LocationMenu({ location }: Props) {
     () =>
       cart.lines
         .map((line) => {
-          const item = menu.find((m) => m.id === line.id);
+          const item = locationMenu.find((m) => m.id === line.id);
           if (!item || typeof item.price !== "number") return null;
           return { ...line, item, lineTotal: line.qty * item.price };
         })
         .filter((x): x is NonNullable<typeof x> => x !== null),
-    [cart.lines],
+    [cart.lines, locationMenu],
   );
 
   const subtotal = cartItems.reduce((s, x) => s + x.lineTotal, 0);

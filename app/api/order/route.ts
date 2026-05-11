@@ -25,7 +25,7 @@ import {
 } from "@/lib/honeypot";
 import { sendOrderEmail } from "@/lib/email";
 import { LOCATIONS } from "@/lib/locations";
-import { menu } from "@/lib/menu";
+import { getMenuForLocation } from "@/lib/menu";
 import { getClientIp } from "@/lib/client-ip";
 
 const HP_FIELD = getHoneypotFieldName();
@@ -115,9 +115,14 @@ export async function POST(req: NextRequest) {
   }
 
   // 4. Cart line validation. Every id must resolve to a priced menu item.
-  //    Look up server-side prices — NEVER trust client-supplied prices.
+  //    Look up server-side prices via getMenuForLocation so per-location
+  //    overrides (hide/priceOverrides/addItems) are honoured — a tampered
+  //    cart that ships the base price for an item priced differently at
+  //    this location is rejected because the server's price wins.
+  //    NEVER trust client-supplied prices.
+  const locationMenu = getMenuForLocation(data.locationId);
   const resolved = data.lines.map((line) => {
-    const item = menu.find((m) => m.id === line.id);
+    const item = locationMenu.find((m) => m.id === line.id);
     if (!item || typeof item.price !== "number") return null;
     return {
       id: item.id,

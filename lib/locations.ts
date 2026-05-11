@@ -27,6 +27,7 @@
  *     business panel hadn't published hours at research time.
  */
 import type { LatLng } from "./distance";
+import type { MenuOverride } from "./menu";
 
 
 export interface Hours {
@@ -61,6 +62,19 @@ export interface Location {
    * the mock reviews in lib/reviews.ts (offline-safe, CI-safe).
    */
   googlePlaceId?: string;
+  /**
+   * Per-location menu override. Lets a franchise location drop items,
+   * retag prices, or add house specials on top of the base `menu` array
+   * in lib/menu.ts.
+   *
+   * Read through `getMenuForLocation(id)` — never combine the override
+   * with the base menu by hand at the consumer level. `/api/order` uses
+   * the helper for server-side cart validation so per-location prices
+   * are the trust boundary.
+   *
+   * When unset, the location serves the base menu unchanged.
+   */
+  menuOverride?: MenuOverride;
 }
 
 // 7-day uniform schedules — common Sam's patterns, defined once for

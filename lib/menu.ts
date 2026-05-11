@@ -1,3 +1,5 @@
+import { LOCATIONS } from "./locations";
+
 /**
  * WHAT: Menu data — single source of truth for dish information.
  *       Lifted verbatim from lovable-demo/src/data/menu.ts with the
@@ -192,4 +194,63 @@ export const menu: MenuItem[] = [
 export function getMenuItem(slug: string): MenuItem | undefined {
   if (!slug) return undefined;
   return menu.find((m) => m.id === slug);
+}
+
+/**
+ * Per-location overrides to the base `menu` array. Three independent
+ * dimensions, all optional:
+ *   - hide:           item ids removed from the menu at this location
+ *   - priceOverrides: item id → new price (replaces base, other fields kept)
+ *   - addItems:       extra MenuItems only available at this location
+ *
+ * Override semantics are deliberately simple — no "swap an image", no
+ * "rename an item", no "move to a different category". Those would expand
+ * the surface without serving a demoable use case. If a location truly
+ * needs a different dish, they `hide` the base one and `addItems` the new one.
+ */
+export interface MenuOverride {
+  hide?: string[];
+  priceOverrides?: Record<string, number>;
+  addItems?: MenuItem[];
+}
+
+/**
+ * WHAT: Return the menu as it should be served for a specific location id.
+ * WHY:  Some franchise locations need to drop items, retag prices, or add
+ *       house specials. This helper is the single read path that applies
+ *       those overrides on top of the base menu — every consumer (the
+ *       LocationMenu UI, /api/order's server-side cart validation, future
+ *       JSON-LD per-location pages) routes through it so the per-location
+ *       view is consistent.
+ *
+ *       Importantly, /api/order recomputes line totals using this function
+ *       too — that's the trust boundary. A tampered cart that ships the
+ *       base-menu price for an item priced higher at the location is
+ *       rejected because the server's price is what wins.
+ * IF REMOVED: every consumer would import the raw `menu` array and the
+ *       per-location variation would silently bypass server-side validation.
+ * COMMON MISTAKE: mutating the base `menu` array when applying overrides.
+ *       Always copy items before modifying them — the base export is shared
+ *       across consumers and a mutation here would leak globally.
+ */
+export function getMenuForLocation(locationId: string): MenuItem[] {
+  const loc = LOCATIONS.find((l) => l.id === locationId);
+  const override = loc?.menuOverride;
+  if (!override) return menu.slice();
+
+  const hideSet = new Set(override.hide ?? []);
+  const priceMap = override.priceOverrides ?? {};
+
+  const base = menu
+    .filter((m) => !hideSet.has(m.id))
+    .map((m) => {
+      const newPrice = priceMap[m.id];
+      if (typeof newPrice === "number") return { ...m, price: newPrice };
+      return { ...m };
+    });
+
+  if (override.addItems && override.addItems.length > 0) {
+    return [...base, ...override.addItems.map((m) => ({ ...m }))];
+  }
+  return base;
 }
