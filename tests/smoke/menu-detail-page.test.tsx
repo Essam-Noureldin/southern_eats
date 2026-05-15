@@ -26,7 +26,9 @@ describe("DishDetail (renders /menu/[slug] body)", () => {
 
   it("renders the dish price formatted as $X.XX", () => {
     render(<DishDetail slug="jumbo-shrimp-15" />);
-    expect(screen.getByText("$13.99")).toBeInTheDocument();
+    // Real samsofmobile.com price (12-pc Shrimp, nearest portion to our
+    // 15-count item) — see the PRICES note in lib/menu.ts.
+    expect(screen.getByText("$16.99")).toBeInTheDocument();
   });
 
   it("renders the dish description", () => {
