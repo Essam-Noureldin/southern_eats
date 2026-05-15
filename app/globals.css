@@ -57,9 +57,26 @@
    * looking sluggish.
    */
   --animate-marquee: marquee 40s linear infinite;
+
+  /*
+   * Dish conveyor belt — the "What we're known for" section scrolls
+   * its signature cards forever, same seamless technique as the text
+   * marquee (3 copies, translate -1/REPEATS). Slower (60s) because the
+   * cards are large and meant to be read as they pass, not skimmed.
+   */
+  --animate-dish-marquee: dish-marquee 60s linear infinite;
 }
 
 @keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-33.3333%);
+  }
+}
+
+@keyframes dish-marquee {
   from {
     transform: translateX(0);
   }
@@ -238,6 +255,15 @@
     animation-duration: 40s !important;
     animation-iteration-count: infinite !important;
   }
+
+  /*
+   * Note: .animate-dish-marquee is deliberately NOT re-enabled here.
+   * Unlike the decorative brand band, the dish belt carries meaningful
+   * content (dish names, prices). For a reduced-motion user the correct
+   * behaviour is to FREEZE it — the universal kill above does that,
+   * leaving a static, readable row of cards plus the always-present
+   * "See the full menu" link as the escape hatch. Do not add it here.
+   */
 
 
   /*

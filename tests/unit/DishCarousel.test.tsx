@@ -1,16 +1,23 @@
 /**
- * WHAT: Unit tests for components/sections/DishCarousel.
- * WHY:  Test-first per master prompt. Locks the contract:
- *       - section landmark with a heading containing "known for"
- *       - "See the full menu" link points at /menu
- *       - renders one DishCard per signature menu item (filtered
- *         from lib/menu — currently 5 signature items)
- *       - prev/next buttons exist with accessible names and call
- *         scrollBy on the scroll container in opposite directions
+ * WHAT: Unit tests for components/sections/DishCarousel — the infinite
+ *       conveyor belt of signature dishes.
+ * WHY:  Locks the new contract after the redesign from a button-driven
+ *       scroll-snap carousel to a pure-CSS marquee belt:
+ *       - section landmark + heading containing "known"
+ *       - "See the full menu" link → /menu
+ *       - every signature dish is announced exactly once (the loop
+ *         duplicates render aria-hidden, so they're out of the a11y tree)
+ *       - the belt renders REPEATS (3) copies for the seamless loop
+ *       - the track carries the marquee animation + hover-pause
+ *       - the old prev/next buttons are gone (a forever-loop has no page)
  */
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import DishCarousel from "@/components/sections/DishCarousel";
 import { menu } from "@/lib/menu";
+
+const REPEATS = 3;
+const signatures = menu.filter((m) => m.signature);
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 describe("DishCarousel", () => {
   it("renders a section heading naming what the brand is known for", () => {
@@ -21,7 +28,6 @@ describe("DishCarousel", () => {
 
   it("links to the full menu at /menu", () => {
     render(<DishCarousel />);
-    // Desktop and mobile each render their own visible-at-breakpoint link
     const links = screen.getAllByRole("link", { name: /full menu/i });
     expect(links.length).toBeGreaterThan(0);
     for (const link of links) {
@@ -29,50 +35,38 @@ describe("DishCarousel", () => {
     }
   });
 
-  it("renders a card for each signature menu item", () => {
+  it("has at least one signature dish to put on the belt", () => {
+    expect(signatures.length).toBeGreaterThan(0);
+  });
+
+  it("announces each signature dish exactly once (loop copies aria-hidden)", () => {
     render(<DishCarousel />);
-    const expected = menu.filter((m) => m.signature).slice(0, 6);
-    expect(expected.length).toBeGreaterThan(0);
-    // Names contain regex specials like "(", ")", "'" — escape them.
-    const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    for (const item of expected) {
-      expect(
-        screen.getByRole("heading", {
-          name: new RegExp(escape(item.name), "i"),
-        }),
-      ).toBeInTheDocument();
+    for (const item of signatures) {
+      // getAllByRole ignores aria-hidden subtrees, so despite REPEATS
+      // copies in the DOM the heading resolves to exactly one node.
+      const headings = screen.getAllByRole("heading", {
+        name: new RegExp(escape(item.name), "i"),
+      });
+      expect(headings).toHaveLength(1);
     }
   });
 
-  it("renders previous and next buttons with accessible names", () => {
+  it("renders REPEATS copies of every signature card for a seamless loop", () => {
     render(<DishCarousel />);
-    expect(
-      screen.getByRole("button", { name: /previous/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /next/i })).toBeInTheDocument();
+    const cards = screen.getAllByTestId("dish-belt-card");
+    expect(cards).toHaveLength(signatures.length * REPEATS);
   });
 
-  it("scrolls the carousel forward when next is clicked", () => {
-    const scrollBy = jest.fn();
-    Element.prototype.scrollBy = scrollBy;
+  it("drives the belt with the css marquee animation and pauses on hover", () => {
     render(<DishCarousel />);
-    act(() => {
-      fireEvent.click(screen.getByRole("button", { name: /next/i }));
-    });
-    expect(scrollBy).toHaveBeenCalled();
-    const arg = scrollBy.mock.calls[0][0];
-    expect(arg.left).toBeGreaterThan(0);
+    const track = screen.getByTestId("dish-belt-track");
+    expect(track.className).toContain("animate-dish-marquee");
+    expect(track.className).toContain("[animation-play-state:paused]");
   });
 
-  it("scrolls the carousel backward when previous is clicked", () => {
-    const scrollBy = jest.fn();
-    Element.prototype.scrollBy = scrollBy;
+  it("no longer renders prev/next buttons", () => {
     render(<DishCarousel />);
-    act(() => {
-      fireEvent.click(screen.getByRole("button", { name: /previous/i }));
-    });
-    expect(scrollBy).toHaveBeenCalled();
-    const arg = scrollBy.mock.calls[0][0];
-    expect(arg.left).toBeLessThan(0);
+    expect(screen.queryByRole("button", { name: /previous/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /next/i })).toBeNull();
   });
 });

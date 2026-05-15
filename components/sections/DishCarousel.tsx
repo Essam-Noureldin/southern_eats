@@ -1,39 +1,39 @@
 /**
- * WHAT: Homepage "What we're known for" section. Filters the menu
- *       to signature items and renders a horizontally scrollable
- *       carousel of DishCards with explicit prev/next buttons.
- * WHY:  Above-the-fold appetite-bait. The carousel is still CSS
- *       scroll-snap (no library), but we drive it with buttons that
- *       call scrollBy on the container. The native scrollbar is
- *       hidden via .no-scrollbar so the only horizontal control on
- *       the section is the two buttons (mobile swipe still works).
- * IF REMOVED: homepage skips straight from hero to next section
- *       without showing what the brand actually serves.
- * COMMON MISTAKE: building this with a heavy carousel library when
- *       native scroll-snap already gives you the same UX with zero
- *       bundle weight and works without JS.
+ * WHAT: Homepage "What we're known for" section. Signature dishes ride
+ *       an infinite conveyor belt — a pure-CSS marquee of DishCards
+ *       that scrolls sideways forever and pauses on hover. Same
+ *       seamless technique as components/sections/Marquee.tsx (the
+ *       brand text band): REPEATS copies of the card set, the track
+ *       translated by exactly -1/REPEATS so copy 2 lands where copy 1
+ *       began — no visible seam.
+ * WHY:  Above-the-fold appetite-bait that never stops moving reads as
+ *       a busy, generous kitchen — on-brand for "huge portions" Sam's.
+ *       Pure CSS keyframes run on the compositor thread: 60fps, zero
+ *       JS, no carousel library, works without hydration. The old
+ *       button-driven scroll-snap version is gone — a belt that loops
+ *       forever has no "page" to step through.
+ * IF REMOVED: homepage jumps hero → next section with no taste of the
+ *       menu.
+ * COMMON MISTAKE: forgetting to aria-hide the duplicate copies. The
+ *       loop needs the cards on screen 3x; a screen reader must hear
+ *       them once. Only copy 0 is in the a11y tree; copies 1..n are
+ *       aria-hidden. Also: don't add .animate-dish-marquee to the
+ *       reduced-motion carve-out in globals.css — this content is
+ *       meaningful, so freezing (the default) is the correct a11y
+ *       behaviour, unlike the decorative brand band.
  */
-"use client";
-import { useRef } from "react";
+import { Fragment } from "react";
 import Link from "next/link";
 import { menu } from "@/lib/menu";
 import DishCard from "./DishCard";
 
-export default function DishCarousel() {
-  const signatures = menu.filter((m) => m.signature).slice(0, 6);
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
+// Three copies = seamless loop on any reasonable viewport, matching
+// Marquee.tsx. The animation translates the track by -33.333%
+// (1 / REPEATS) so copy 2 ends exactly where copy 1 started.
+const REPEATS = 3;
 
-  /*
-   * Scroll-by-page approach. clientWidth * 0.9 leaves a peek of the
-   * adjacent card so users see there's more content; falls back to a
-   * sensible fixed amount in jsdom (where clientWidth is 0).
-   */
-  const scrollByPage = (direction: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const distance = (el.clientWidth || 320) * 0.9 * direction;
-    el.scrollBy({ left: distance, behavior: "smooth" });
-  };
+export default function DishCarousel() {
+  const signatures = menu.filter((m) => m.signature);
 
   return (
     <section
@@ -48,91 +48,54 @@ export default function DishCarousel() {
           >
             What we&apos;re <em>known</em> for.
           </h2>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/menu"
-              className="hidden text-sm font-medium underline underline-offset-4 hover:text-sams-red md:inline"
-            >
-              See the full menu &rarr;
-            </Link>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                aria-label="Previous dishes"
-                onClick={() => scrollByPage(-1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal/20 bg-cream text-charcoal transition-colors hover:bg-sams-red hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                aria-label="Next dishes"
-                onClick={() => scrollByPage(1)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-charcoal/20 bg-cream text-charcoal transition-colors hover:bg-sams-red hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        {/*
-         * Negative horizontal margins on the scroll container bleed
-         * the carousel to the edges of the parent's padding, then the
-         * inner flex re-applies the same padding so the FIRST card's
-         * left edge lines up exactly with the heading above. Without
-         * this nesting, the previous version had overflow-x-auto on a
-         * full-viewport-width div outside max-w-7xl, which let cards
-         * extend past the heading's right edge on wide screens (the
-         * bug Essam flagged: ~510px left gutter vs ~120px right).
-         */}
-        <div
-          ref={scrollerRef}
-          className="no-scrollbar -mx-4 overflow-x-auto md:-mx-8"
-        >
-          <div className="flex snap-x snap-mandatory gap-4 px-4 pb-4 md:gap-6 md:px-8">
-            {signatures.map((item) => (
-              <div
-                key={item.id}
-                className="w-[78%] shrink-0 snap-start sm:w-[45%] md:w-[31%] lg:w-[24%]"
-              >
-                <DishCard item={item} />
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Mobile-only tail link, since the desktop "See the full menu" lives in the header row above */}
-        <div className="mt-4 md:hidden">
           <Link
             href="/menu"
-            className="text-sm font-medium underline underline-offset-4 hover:text-sams-red"
+            className="hidden shrink-0 text-sm font-medium underline underline-offset-4 hover:text-sams-red md:inline"
           >
             See the full menu &rarr;
           </Link>
         </div>
+      </div>
+
+      {/*
+       * Full-bleed belt: overflow-hidden clips the off-screen copies.
+       * The track is w-max (sized to its content) so the translate
+       * percentages are stable. Pause on hover so a visitor can
+       * actually look at a dish — same affordance as the brand band.
+       */}
+      <div className="overflow-hidden">
+        <ul
+          data-testid="dish-belt-track"
+          className="animate-dish-marquee flex w-max gap-4 px-4 hover:[animation-play-state:paused] md:gap-6 md:px-8"
+        >
+          {Array.from({ length: REPEATS }).map((_, copyIndex) => (
+            <Fragment key={copyIndex}>
+              {signatures.map((item) => (
+                <li
+                  key={`${copyIndex}-${item.id}`}
+                  data-testid="dish-belt-card"
+                  className="w-72 shrink-0 md:w-80"
+                  // Copies 1..n are visual padding for the loop only —
+                  // hide them from the accessibility tree so the cards
+                  // are announced exactly once.
+                  aria-hidden={copyIndex === 0 ? undefined : true}
+                >
+                  <DishCard item={item} />
+                </li>
+              ))}
+            </Fragment>
+          ))}
+        </ul>
+      </div>
+
+      {/* Mobile tail link — the desktop one sits in the header row. */}
+      <div className="mx-auto mt-6 max-w-7xl px-4 md:hidden">
+        <Link
+          href="/menu"
+          className="text-sm font-medium underline underline-offset-4 hover:text-sams-red"
+        >
+          See the full menu &rarr;
+        </Link>
       </div>
     </section>
   );
