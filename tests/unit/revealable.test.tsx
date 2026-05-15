@@ -99,6 +99,30 @@ describe("Revealable", () => {
     expect(lastObserved).toBeNull();
   });
 
+  it("reveals via the safety timeout even if the observer never fires (the mobile blank-page bug)", () => {
+    // Regression guard: a Revealable wrapping a block too tall for its
+    // IntersectionObserver to ever fire (the /menu single-column mobile
+    // case) must still become visible. lastCallback is never invoked.
+    jest.useFakeTimers();
+    try {
+      setReducedMotion(false);
+      render(
+        <Revealable>
+          <p>tall content</p>
+        </Revealable>,
+      );
+      const wrapper = screen.getByTestId("revealable");
+      expect(wrapper.className).not.toMatch(/is-revealed/);
+      act(() => {
+        jest.advanceTimersByTime(1200);
+      });
+      expect(wrapper.className).toMatch(/is-revealed/);
+    } finally {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    }
+  });
+
   it("applies the optional delay as inline animationDelay", () => {
     setReducedMotion(false);
     render(

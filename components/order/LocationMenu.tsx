@@ -91,6 +91,7 @@ export default function LocationMenu({ location }: Props) {
   const isEmpty = cartItems.length === 0;
 
   return (
+    <>
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-2">
         {orderableByCategory.map((cat) => (
@@ -238,5 +239,37 @@ export default function LocationMenu({ location }: Props) {
         </div>
       </aside>
     </div>
+
+      {/*
+       * Mobile-only sticky cart bar. On phones the <aside> cart renders
+       * AFTER the entire (single-column) menu — ~70 items down — so the
+       * running total and checkout button were effectively unreachable.
+       * This fixed bar keeps the balance visible and checkout one tap
+       * away on mobile. Hidden on lg+ where the sticky sidebar already
+       * does that job. Only shown once there's something in the cart.
+       * (The global MobileOrderBar is suppressed on /order/* so these
+       * two bottom bars never stack.)
+       */}
+      {!isEmpty && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-cream/95 px-4 py-3 backdrop-blur lg:hidden">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+            <div className="text-sm">
+              <span className="font-semibold text-charcoal">
+                {itemCount} {itemCount === 1 ? "item" : "items"}
+              </span>
+              <span className="ml-2 text-muted-foreground">
+                ${total.toFixed(2)} incl. tax
+              </span>
+            </div>
+            <Link
+              href={`/order/${location.id}/checkout`}
+              className="inline-flex items-center justify-center rounded-full bg-sams-red px-6 py-3 text-sm font-semibold text-cream transition-colors hover:bg-sams-red/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sams-red focus-visible:ring-offset-2"
+            >
+              Checkout &rarr;
+            </Link>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

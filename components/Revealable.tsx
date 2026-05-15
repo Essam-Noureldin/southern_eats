@@ -45,20 +45,41 @@ export default function Revealable({
     if (revealed) return;
     const el = ref.current;
     if (!el) return;
+
+    // threshold: 0 — fire the moment ANY pixel of the wrapper enters
+    // the viewport. The old `threshold: 0.2` was a real bug: it only
+    // fired when 20% of the wrapper was on-screen at once, but a
+    // wrapper around a tall block (e.g. a whole /menu category grid in
+    // a single mobile column) can be 5×+ the viewport height, so its
+    // max intersectionRatio never reaches 0.2 — the callback never
+    // ran and the content stayed at opacity:0 forever on mobile.
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.intersectionRatio > 0) {
+          // isIntersecting is the correct signal with threshold 0;
+          // the `> 0` keeps older tests that pass only a ratio working.
+          if (entry.isIntersecting || entry.intersectionRatio > 0) {
             setRevealed(true);
             observer.disconnect();
             break;
           }
         }
       },
-      { threshold: 0.2 },
+      { threshold: 0 },
     );
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Hard safety net: under NO circumstances may wrapped content stay
+    // invisible. If the observer hasn't fired within 1.2s (offscreen
+    // content, a mobile IO quirk, a detached element, anything), reveal
+    // anyway. This makes the component's "content is never stuck
+    // hidden" contract actually true.
+    const failsafe = window.setTimeout(() => setRevealed(true), 1200);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(failsafe);
+    };
   }, [revealed]);
 
   return (

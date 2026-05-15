@@ -145,6 +145,28 @@ describe("LocationMenu", () => {
     expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
   });
 
+  it("shows a mobile cart bar with the balance + a checkout link once an item is added (mobile-cart regression)", () => {
+    render(<LocationMenu location={location} />);
+    // Empty: no mobile bar (no "incl. tax" balance line anywhere).
+    expect(screen.queryByText(/incl\. tax/i)).not.toBeInTheDocument();
+    const addBtn = screen.getByRole("button", {
+      name: new RegExp(`add ${SAMPLE.name} to cart`, "i"),
+    });
+    act(() => {
+      fireEvent.click(addBtn);
+    });
+    // The mobile bar surfaces the running balance...
+    const bar = screen.getByText(/incl\. tax/i);
+    expect(bar.textContent).toMatch(/\$\d+\.\d{2}/);
+    // ...and a Checkout link distinct from the desktop "Continue to
+    // checkout" CTA, both pointing at the same checkout route.
+    const checkoutLinks = screen.getAllByRole("link", { name: /checkout/i });
+    expect(checkoutLinks.length).toBeGreaterThanOrEqual(2);
+    for (const l of checkoutLinks) {
+      expect(l).toHaveAttribute("href", `/order/${location.id}/checkout`);
+    }
+  });
+
   it("activates the Continue to checkout link once items are added", () => {
     render(<LocationMenu location={location} />);
     const addBtn = screen.getByRole("button", {

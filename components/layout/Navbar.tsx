@@ -13,7 +13,8 @@
  *       mobile) without keying them differently — React warns. Here the
  *       desktop and mobile renders use distinct keyed maps.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 
 const NAV_LINKS = [
@@ -54,6 +55,77 @@ const CloseIcon = () => (
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  // No "mounted" guard needed: `open` is false during SSR (initial
+  // state), so the portal/createPortal branch is never reached on the
+  // server. It only runs client-side after a user opens the menu, when
+  // document.body is guaranteed to exist.
+
+  // Lock background scroll while the menu is open so the page behind
+  // can't scroll under the overlay on mobile.
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  /*
+   * The mobile overlay is rendered via a portal to <body>, NOT inside
+   * <header>. CRITICAL: the header has `backdrop-blur` — any element
+   * with backdrop-filter/filter/transform becomes the containing block
+   * for its `position: fixed` descendants. If the overlay stayed inside
+   * the header, `fixed inset-0` would be clamped to the 64px header
+   * box, the opaque background would only cover that sliver, and the
+   * nav text would spill transparently over the page (the exact mobile
+   * glitch this fixes). Portalling to <body> escapes that containing
+   * block so `fixed inset-0` covers the real viewport.
+   */
+  const overlay = open
+    ? createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile navigation menu"
+            className="fixed inset-0 z-[60] flex h-dvh flex-col overflow-y-auto bg-cream md:hidden"
+          >
+            <div className="flex h-16 shrink-0 items-center justify-between px-4">
+              <span className="font-display text-xl font-black italic text-sams-red">
+                Sam&apos;s
+              </span>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="p-2 text-charcoal"
+                aria-label="Close menu"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <nav className="flex flex-col gap-6 px-6 pt-8 font-display text-3xl italic">
+              {NAV_LINKS.map((n) => (
+                <Link
+                  key={`mobile-${n.href}`}
+                  href={n.href}
+                  onClick={() => setOpen(false)}
+                  className="text-charcoal hover:text-sams-red"
+                >
+                  {n.label}
+                </Link>
+              ))}
+              <Link
+                href="/order"
+                onClick={() => setOpen(false)}
+                className="mt-4 inline-flex w-fit rounded-full bg-sams-red px-6 py-3 font-body text-base font-semibold not-italic text-cream"
+              >
+                Order Online
+              </Link>
+            </nav>
+          </div>,
+          document.body,
+        )
+      : null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-charcoal/10 bg-cream/90 backdrop-blur supports-[backdrop-filter]:bg-cream/75">
@@ -98,47 +170,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {open ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile navigation menu"
-          className="fixed inset-0 z-50 flex flex-col bg-cream md:hidden"
-        >
-          <div className="flex h-16 items-center justify-between px-4">
-            <span className="font-display text-xl font-black italic text-sams-red">
-              Sam&apos;s
-            </span>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              className="p-2 text-charcoal"
-              aria-label="Close menu"
-            >
-              <CloseIcon />
-            </button>
-          </div>
-          <nav className="flex flex-col gap-6 px-6 pt-8 font-display text-3xl italic">
-            {NAV_LINKS.map((n) => (
-              <Link
-                key={`mobile-${n.href}`}
-                href={n.href}
-                onClick={() => setOpen(false)}
-                className="text-charcoal hover:text-sams-red"
-              >
-                {n.label}
-              </Link>
-            ))}
-            <Link
-              href="/order"
-              onClick={() => setOpen(false)}
-              className="mt-4 inline-flex w-fit rounded-full bg-sams-red px-6 py-3 font-body text-base font-semibold not-italic text-cream"
-            >
-              Order Online
-            </Link>
-          </nav>
-        </div>
-      ) : null}
+      {overlay}
     </header>
   );
 }

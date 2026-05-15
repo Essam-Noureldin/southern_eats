@@ -74,6 +74,32 @@ describe("Navbar — mobile menu", () => {
     expect(screen.queryByRole("dialog", { name: /mobile/i })).not.toBeInTheDocument();
   });
 
+  it("portals the open overlay OUT of the header banner (containing-block regression)", async () => {
+    // The bug: the header has `backdrop-blur`, which makes it the
+    // containing block for any `position: fixed` descendant — so a
+    // fixed overlay nested in the header is clamped to the 64px header
+    // instead of the viewport. The overlay MUST be portalled to <body>,
+    // i.e. NOT a descendant of the banner element.
+    const user = userEvent.setup();
+    render(<Navbar />);
+    await user.click(screen.getByRole("button", { name: /open menu/i }));
+    const banner = screen.getByRole("banner");
+    const dialog = screen.getByRole("dialog", { name: /mobile/i });
+    expect(dialog).toBeInTheDocument();
+    expect(banner.contains(dialog)).toBe(false);
+    expect(document.body.contains(dialog)).toBe(true);
+  });
+
+  it("locks body scroll while open and restores it on close", async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+    expect(document.body.style.overflow).not.toBe("hidden");
+    await user.click(screen.getByRole("button", { name: /open menu/i }));
+    expect(document.body.style.overflow).toBe("hidden");
+    await user.click(screen.getByRole("button", { name: /close menu/i }));
+    expect(document.body.style.overflow).not.toBe("hidden");
+  });
+
   it("closes the mobile overlay when a nav link inside it is clicked", async () => {
     const user = userEvent.setup();
     render(<Navbar />);
